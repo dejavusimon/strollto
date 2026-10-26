@@ -469,6 +469,14 @@
 <x-import component-from-global-scope="StrollTO.WalkSpine" legs="{{spine.legs}}" labels="{{spine.labels}}" label="{{spine.label}}"></x-import>
 <p style="margin: 0; font-size: 13px; line-height: 1.38; color: var(--muted);">Stops are spaced by walking time. Numbers close together are stops a minute or two apart.</p>
 </section>
+<section aria-labelledby="ov-cautions" style="display: flex; flex-direction: column; gap: 8px; margin-top: -4px;">
+<h3 id="ov-cautions" style="margin: 0; font-size: 16px; line-height: 1.25; font-weight: 600;">Cautions on this walk</h3>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 14px; background: var(--surface-soft);">
+<sc-for list="{{s.cautionItems}}" as="w" hint-placeholder-count="1">
+<p style="margin: 0; display: flex; gap: 8px; align-items: flex-start; font-size: 14px; line-height: 1.43; font-weight: 500;"><x-import component-from-global-scope="StrollTO.Icon" name="{{w.icon}}" size="{{n18}}"></x-import><span>{{w.text}}</span></p>
+</sc-for>
+</div>
+</section>
 <section ref="{{setPlan}}" aria-labelledby="plan-title" style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 14px; background: var(--surface-card); border: 1px solid var(--hairline);">
 <div style="display: flex; flex-direction: column; gap: 4px;">
 <h3 id="plan-title" style="margin: 0; font-size: 20px; line-height: 1.2; font-weight: 600; letter-spacing: -0.18px;">Plan your walk</h3>
@@ -518,11 +526,6 @@
 </section>
 </sc-if>
 <p style="margin: 0; display: flex; gap: 8px; align-items: center; font-size: 14px; line-height: 1.43; color: var(--body);"><svg width="18" height="24" viewBox="0 0 18 24" aria-hidden="true" style="flex: none;"><rect x="2" y="2" width="14" height="20" rx="7" style="fill: var(--accent); stroke: var(--on-accent); stroke-width: 1.5;"></rect><circle cx="7" cy="9" r="1.3" style="fill: var(--on-accent);"></circle><circle cx="11" cy="9" r="1.3" style="fill: var(--on-accent);"></circle></svg><span>Optional: a walking buddy can lead you between stops.</span></p>
-<div style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 14px; background: var(--surface-soft);">
-<sc-for list="{{s.cautionItems}}" as="w" hint-placeholder-count="1">
-<p style="margin: 0; display: flex; gap: 8px; align-items: flex-start; font-size: 14px; line-height: 1.43; font-weight: 500;"><x-import component-from-global-scope="StrollTO.Icon" name="{{w.icon}}" size="{{n18}}"></x-import><span>{{w.text}}</span></p>
-</sc-for>
-</div>
 <div><button type="button" class="st-btn st-btn-secondary st-btn-sm" aria-haspopup="dialog" onClick="{{openShare}}"><x-import component-from-global-scope="StrollTO.Icon" name="share"></x-import><span>Share stroll</span></button></div>
 <hr style="margin: 4px 0; border: 0; height: 1px; background: var(--hairline);">
 <section style="display: flex; flex-direction: column; gap: 12px;">
@@ -929,7 +932,7 @@
 </ul>
 </section>
 </sc-if>
-<p style="margin: 0; font-size: 13px; line-height: 1.38; color: var(--muted);">Lines join the stops in walking order. They don’t show the exact path. Use the directions below, or Open in Maps.</p>
+<p style="margin: 0; font-size: 13px; line-height: 1.38; color: var(--muted);">{{mapNote}}</p>
 <sc-if value="{{off.isQuiet}}" hint-placeholder-val="{{false}}"><div style="display: flex; gap: 10px; align-items: flex-start; padding: 12px; border-radius: 14px; background: var(--surface-soft); font-size: 14px; line-height: 1.43; color: var(--ink);"><x-import component-from-global-scope="StrollTO.Icon" name="walk" size="{{n18}}"></x-import><div style="min-width: 0; display: flex; flex-direction: column; gap: 2px;"><p style="margin: 0; font-weight: 600;">Exploring off the route</p><p style="margin: 0;">Take your time. The route is here whenever you want it.</p><div style="margin-left: -12px;"><x-import component-from-global-scope="StrollTO.Button" variant="tertiary" size="sm" icon="route" on-click="{{off.showWay}}">Show the way back</x-import></div></div></div></sc-if>
 <sc-if value="{{off.canSim}}" hint-placeholder-val="{{false}}"><button type="button" class="st-focus" onClick="{{off.sim}}" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; border: 2px dashed var(--ink); border-radius: 8px; background: var(--surface-card); color: var(--ink); font: inherit; font-size: 13px; line-height: 1.23; font-weight: 600; cursor: pointer;"><x-import component-from-global-scope="StrollTO.Icon" name="walk" size="{{n18}}"></x-import><span>{{off.simLabel}}</span></button></sc-if>
 <sc-if value="{{locOff}}" hint-placeholder-val="{{false}}">
@@ -1967,7 +1970,7 @@ var STROLLS = [
     hook: 'Start at an 1867 stone cottage, then walk into a forest garden where pieces of old downtown buildings stand above Lake Ontario.',
     scene: 'park', walkPhoto: '/_blob/b7d1d9fbc91e684c5a159c1ea06bdd9e', cover: '/_blob/573708219d90d993998f9ca0fbbee346', coverAlt: 'Tall stone columns and arches of the Greek Theatre in Guild Park',
     tags: [{ label: 'History', icon: 'landmark' }, { label: 'Art', icon: 'art' }, { label: 'Nature', icon: 'tree' }],
-    walkMin: 105, walkText: 'about 1 hr 45 min', distance: '8.0 km',
+    walkMin: 124, walkText: 'about 2 hr 5 min', distance: '9.6 km', // legs routed along real streets and park paths (OpenStreetMap foot routing, 26 Oct 2026)
     // Getting there, using the transit map's logic: nearest rapid transit to Stop 1 within a 15-min walk; otherwise say so and give the real options.
     // rapid: null = no subway or LRT within walking range (Line 3 closed in 2023). walkM is measured along Kingston Rd on the City centreline, not from the transit map.
     access: {
@@ -2019,7 +2022,7 @@ var STROLLS = [
         ask: 'Look up at the pointed gable. What shapes can you see cut into the wooden trim?',
         story: 'This heritage listed stone cottage dates back to 1867, when it was constructed as a home for Scarborough Councillor Jeremiah Annis and his family.',
         more: 'Its notable architectural features include extensive exterior stonework, handmade wooden trim around the roof, and a Gothic centre gable. The building now houses a local pub, with a historical plaque inside the front door documenting the Annis family history.',
-        toNext: { m: 700, min: 9, dir: 'Head east to the small parkette at 61 Guildwood Pkwy.', photo: '/_blob/469b64884e2641040140668bd9110120' } },
+        toNext: { m: 965, min: 12, dir: 'Walk north-east along Kingston Rd, about 350 m. Turn right onto Guildwood Pkwy and follow it south as it bends east, about 600 m, to the small parkette at 61 Guildwood Pkwy.', path: [[43.74708,-79.20895],[43.74695,-79.20874],[43.74795,-79.2078],[43.7478,-79.20748],[43.74945,-79.2059],[43.74911,-79.20518],[43.74888,-79.20495],[43.74756,-79.2046],[43.74701,-79.20461],[43.74667,-79.20456],[43.74633,-79.20428],[43.7461,-79.20382],[43.746,-79.20339],[43.74602,-79.20296],[43.74612,-79.20269],[43.74609,-79.2025]], photo: '/_blob/469b64884e2641040140668bd9110120' } },
       { name: 'Guildwood Village', cat: 'community', lat: 43.74608848, lon: -79.20250041,
         photos: [
           { src: '/_blob/4a09f1b896cad1ae683bb7c7eed79d5e', alt: 'Guildwood Village welcome sign with a coat of arms on a stone base planted with flowers', cap: 'Guildwood Village welcome sign' },
@@ -2029,7 +2032,7 @@ var STROLLS = [
         ask: 'If you could plan a whole neighbourhood, what would you build first?',
         story: 'A historical plaque in Rosa and Spencer Clark Parkette commemorates Guildwood Village, which was a dream of Spencer and Rosa Clark, founder of the Guild Inn of All Arts, to transform the area into a garden community.',
         more: 'The Clarks envisaged creating a community for 7,000 people, complete with schools, community centres, churches, and shops. Design features included winding and secluded streets with mature trees, and a lack of overhead wires. When the first phase of the community had its grand opening in August 1957, a staggering 25,000 people showed up to see the furnished, architect-designed homes and it was thought to be the largest demonstration of this nature in Canada.',
-        toNext: { m: 1160, min: 15, dir: 'Head east along Guildwood Pkwy to the Guild Park gates at 201 Guildwood Pkwy.' } },
+        toNext: { m: 1076, min: 14, dir: 'Keep going east along Guildwood Pkwy, about 800 m, to the Guild Park gates at 201 Guildwood Pkwy. Go in and follow the main path about 300 m to the garden.', path: [[43.74609,-79.2025],[43.74611,-79.20255],[43.74621,-79.20252],[43.74678,-79.20173],[43.74695,-79.20133],[43.74748,-79.19888],[43.74774,-79.19797],[43.74865,-79.19374],[43.74794,-79.19302],[43.74773,-79.19265],[43.7477,-79.19226],[43.7479,-79.19182],[43.74786,-79.19144],[43.74756,-79.1915],[43.74761,-79.19171]] } },
       { name: 'Guild Park and Gardens', cat: 'nature', lat: 43.74771606, lon: -79.19166629,
         stamp: { n: 2, code: 'GW-2', where: 'at the park gates (placement to be confirmed)' },
         photos: [
@@ -2042,14 +2045,14 @@ var STROLLS = [
         ask: 'Pick one carved figure on the wall. What do you think it is holding?',
         story: 'This scenic and historic 36-hectare park, formerly Guildwood Park, is a sculpture sanctuary within beautiful gardens. It has an interesting history that reflects famous artists, powerful political figures and contributions made to the art community.',
         more: 'The land was transformed into gardens and parkland by Rosa and Spencer Clark in the 1930s. The property and the architectural fragments ornamenting the gardens were sold to the Metro Toronto and Region Conservation Authority and the Province of Ontario in 1978 to be maintained as a public park. The land is also significant for its rare tract of Carolinian forest. The park is an important site for migratory and nesting birds, and mammals such as deer and fox. A notable architectural fragment found within the park is from the Temple Building, one of Toronto’s first skyscrapers. It housed the office of the Independent Order of Foresters, whose Chief Ranger was Dr. Oronhyatekha, a Mohawk doctor and one of Canada’s first physicians. You can still see the IOF initials carved in the red sandstone blocks under the moose’s head.',
-        toNext: { m: 40, min: 1, dir: 'Bickford House is right beside the garden, about 40 m west.' } },
+        toNext: { m: 104, min: 1, dir: 'Bickford House is just west of the garden, about 100 m along the path.', path: [[43.74761,-79.19171],[43.74756,-79.1915],[43.74786,-79.19144],[43.7479,-79.19182],[43.74778,-79.19204]] } },
       { name: 'The Guild Inn Estate', cat: 'history', lat: 43.74779328, lon: -79.19204981, street: true,
         photos: [{ src: '/_blob/7bd49b63c8b2266bddea822904982913', alt: 'Long white house with a dark roof and a wood-and-stone entrance porch', cap: 'Bickford House, front entrance' }],
         lookFor: 'a long white house with a dark roof and a wood-and-stone porch at the front door.',
         ask: 'Which part of this house looks oldest to you?',
         story: 'General Harold Child Bickford purchased this property in 1914, named it Ranelagh Park Country Estate, and built the well-known Bickford House.',
         more: 'In 1932, Rosa and Spencer Clark founded the Guild of All Arts here: an artist colony with a shop, a tea room, and studios for painting, sculpture, weaving, leather, ceramics, metal work, wood carving and batik. After the war it grew to include a hotel, restaurant and formal gardens, known as the Guild Inn. As downtown buildings were demolished from the 1960s, Spencer Clark rescued their facades and displayed them on the grounds. Today the restored Bickford House is home to the Guild Inn Estate, a restaurant, banquet hall and event space.',
-        toNext: { m: 100, min: 1, dir: 'Walk about 100 m north to a small wooden cabin.' } },
+        toNext: { m: 153, min: 2, dir: 'Follow the path north about 150 m to a small wooden cabin.', path: [[43.74778,-79.19204],[43.7477,-79.1923],[43.74851,-79.1927],[43.7486,-79.1923]] } },
       { name: 'Sculptor’s Cabin', cat: 'art', lat: 43.74850438, lon: -79.19198719, street: true,
         notice: 'Private property. Please look at the cabin from the outside only.',
         photos: [{ src: '/_blob/2a66d837de9c6844e36ffe3cf74210e5', alt: 'Small wooden cabin with carved Norse faces beside the door and barred windows', cap: 'Carved faces by the cabin door' }],
@@ -2057,7 +2060,7 @@ var STROLLS = [
         ask: 'How many carved faces can you count by the door?',
         story: 'The Sculptor’s Cabin was built in 1940 by Danish wood sculptor Aage Madsen. It is the last remaining example of one of the many cabins built to house artists for the Guild of All Arts.',
         more: 'Over the years, it has been home and studio for many sculpture artists. Local Scarborough artist Dorsey James carved the Norse mythology ornamentation on the face of the building in 1979.',
-        toNext: { m: 280, min: 4, dir: 'Head south through the park, about 280 m, to the stone columns.' } },
+        toNext: { m: 527, min: 7, dir: 'Head back south along the park paths, about 500 m, to the stone columns.', path: [[43.7486,-79.1923],[43.74851,-79.1927],[43.7477,-79.1923],[43.7479,-79.19182],[43.74786,-79.19144],[43.74756,-79.1915],[43.74762,-79.19185],[43.74752,-79.19204],[43.74749,-79.19229],[43.74697,-79.19287],[43.74713,-79.19321],[43.7471,-79.19326],[43.74692,-79.19278],[43.74666,-79.19233],[43.74652,-79.19227]] } },
       { name: 'The Greek Theatre', cat: 'art', lat: 43.74655446, lon: -79.19216136, street: true,
         realVoice: { who: 'Guild Festival Theatre', whoLong: 'A member of the theatre company that performs on this stage', ask: 'What is it like to perform between these old bank columns?', kind: 'Short video, about 1 min' },
         stamp: { n: 3, code: 'GW-3', where: 'beside the stage (placement to be confirmed)' },
@@ -2066,7 +2069,7 @@ var STROLLS = [
         ask: 'Stand on the stage for a moment. What would you perform here?',
         story: 'The Clarks built this open-air theatre from remnants of the historic Bank of Toronto building, which was demolished around 1960.',
         more: 'The stage is adorned with eight limestone columns, and Corinthian capitals and arches that were repurposed from the façade of the building. Today, the Greek Theatre is used for events all year round and animated by the Guild Festival Theatre in the summer.',
-        toNext: { m: 170, min: 2, dir: 'Walk north-west about 170 m to the modern white building.' } },
+        toNext: { m: 139, min: 2, dir: 'Walk north-west about 150 m to the modern white building.', path: [[43.74652,-79.19227],[43.74666,-79.19233],[43.74692,-79.19278],[43.7471,-79.19326],[43.74704,-79.19359]] } },
       { name: 'Clark Centre for the Arts', cat: 'art', lat: 43.74707998, lon: -79.19362154,
         realVoice: { who: 'An artist or instructor at the Clark Centre', whoLong: 'Someone who makes or teaches art in these studios', ask: 'What are people making here this season?', kind: 'Short video or audio, about 1 min' },
         photos: [{ src: '/_blob/9980f674f5141cf21bb6ef04525d746c', alt: 'Modern white building raised on thin columns, with a large carved stone capital in the garden', cap: 'Clark Centre for the Arts' }],
@@ -2074,7 +2077,7 @@ var STROLLS = [
         ask: 'Can you spot old carved stone mixed in with the new building?',
         story: 'Located inside Guild Park and Gardens, the Clark Centre for the Arts is a cultural facility with art studios and gallery spaces that Toronto residents and visitors can enjoy year-round.',
         more: 'The Centre offers rental opportunities and close to 85 accessible arts programs each year, including art courses, workshops and talks.',
-        toNext: { m: 200, min: 3, dir: 'Head south about 200 m to the log cabin.' } },
+        toNext: { m: 303, min: 4, dir: 'Head south along the path, about 300 m, to the log cabin.', path: [[43.74704,-79.19359],[43.7471,-79.19326],[43.74692,-79.19278],[43.74666,-79.19233],[43.74598,-79.19209],[43.74579,-79.19252],[43.74565,-79.19325]] } },
       { name: 'Osterhout Cabin', cat: 'history', lat: 43.7456801, lon: -79.19335675, street: true,
         notice: 'Private property. Please look at the cabin from the outside only.',
         photos: [
@@ -2085,14 +2088,14 @@ var STROLLS = [
         story: 'The log cabin was built in approximately 1850. It is commonly referred to as the Osterhout Cabin.',
         more: 'The site was provisioned to William Osterhout in 1805, but the property exchanged hands many times before the cabin was even built. It was later purchased by Rosa and Spencer Clark and modernized as an artist residence and studio for the Guild of All Arts. It was last occupied by sculptor Elizabeth Fraser Williamson, who used the cabin as a studio into the 1990s. Today, the cabin is part of the Clark Centre for the Arts.',
         fieldNote: 'On site: the plaque on the stone marker says the cabin was built in 1795. The City and the Friends of Guild Park date it to about 1850.',
-        toNext: { m: 1450, min: 19, dir: 'Take the path to the lake from Guild Park. The lakeside trail has very few access points.', caution: 'Steep, unpaved trail with uneven ground down to the lake.', short: 'Steep, unpaved trail' } },
+        toNext: { m: 2702, min: 35, dir: 'Follow the park paths east, then take the trail down the bluffs to the lake. At the bottom, turn right and walk west along the waterfront trail, about 1.5 km, to South Marine Drive Park.', path: [[43.74565,-79.19325],[43.74579,-79.19252],[43.74611,-79.19183],[43.74637,-79.19141],[43.74689,-79.19169],[43.74694,-79.19166],[43.74696,-79.19173],[43.74752,-79.19204],[43.74762,-79.19185],[43.74756,-79.1915],[43.74786,-79.19144],[43.7479,-79.19182],[43.7477,-79.19226],[43.74773,-79.19265],[43.74794,-79.19302],[43.74865,-79.19374],[43.74932,-79.19056],[43.74904,-79.19049],[43.74878,-79.19061],[43.74864,-79.19057],[43.74845,-79.1904],[43.7483,-79.1902],[43.74802,-79.18953],[43.74727,-79.18862],[43.74701,-79.18885],[43.74511,-79.19099],[43.74378,-79.19261],[43.74248,-79.19433],[43.74171,-79.19514],[43.74158,-79.19532],[43.74136,-79.19589],[43.74119,-79.19611],[43.74082,-79.19645],[43.73936,-79.19755],[43.7389,-79.19813],[43.73713,-79.20065]], caution: 'Steep, unpaved trail with uneven ground down to the lake.', short: 'Steep, unpaved trail' } },
       { name: 'South Marine Drive Park', cat: 'nature', lat: 43.737133, lon: -79.200656,
         photos: [],
         lookFor: 'a trail along the water, with rocks and old building material piled on the shore.',
         ask: 'Is the lake calm or rough today?',
         story: 'This park along the Scarborough Bluffs contains hard shorelines of old construction material, intended to protect the bluffs from further erosion. A trail runs along the lake offering water and bluffs views.',
         more: 'The trail has very few access points. In this neighbourhood it is best reached by the path to the lake from Guild Park; it cannot be reached from the parkette of the same name at 5 Rogate Place.',
-        toNext: { m: 2840, min: 36, dir: 'Climb back up through Guild Park, then head north-east to 96 Dearham Wood Dr.', caution: 'Steep climb back up from the lake, then a long walk (about 35 min).', short: 'Steep climb' } },
+        toNext: { m: 2631, min: 34, dir: 'Walk back east along the waterfront trail, about 1.5 km, and take the trail back up the bluffs into Guild Park. Leave the park by Guildwood Pkwy and walk north-east through the neighbourhood, about 800 m, to 96 Dearham Wood.', path: [[43.73713,-79.20065],[43.7389,-79.19813],[43.73936,-79.19755],[43.74082,-79.19645],[43.74119,-79.19611],[43.74136,-79.19589],[43.74158,-79.19532],[43.74171,-79.19514],[43.74248,-79.19433],[43.74378,-79.19261],[43.74511,-79.19099],[43.74701,-79.18885],[43.74727,-79.18862],[43.74802,-79.18953],[43.7483,-79.1902],[43.74864,-79.19057],[43.74878,-79.19061],[43.74904,-79.19049],[43.74932,-79.19056],[43.74955,-79.1895],[43.74973,-79.18956],[43.75042,-79.1864],[43.75148,-79.18691],[43.75269,-79.18709],[43.75332,-79.18733],[43.75346,-79.18655],[43.75356,-79.18658],[43.75367,-79.186]], caution: 'Steep climb back up from the lake, then a long walk (about 35 min).', short: 'Steep climb' } },
       { name: 'Chris Perez and Leyland Adams Mural', cat: 'art', lat: 43.75372533, lon: -79.18602631, street: true,
         realVoice: { who: 'The muralists', whoLong: 'The artists who painted this wall', ask: 'What did you want people walking past to feel?', kind: 'Short video, about 1 min' },
         photos: [{ src: '/_blob/e84ac23be5c3a11e3bc08b4b57d2e83b', alt: 'Mural with the word Guildwood in black-and-white script surrounded by painted roses on a blue background', cap: 'The Guildwood mural (low-resolution photo, reshoot needed)' }],
@@ -2100,7 +2103,7 @@ var STROLLS = [
         ask: 'Which flower in the mural would you pick?',
         story: 'This mural was painted by Leyland Adams and Chris Perez with the intention to “paint something beautiful for the community that really represented the people, the culture, and just the sense of community.”',
         more: 'This mural is part of the StART project, which provides materials for graffiti art and murals on walls with a history of repeated graffiti vandalism.',
-        toNext: { m: 1070, min: 14, dir: 'Head east about 1 km to Grey Abbey Park at 180 Greyabbey Trail.', caution: 'Grey Abbey Park has no paved paths. Stay behind the fences: the bluffs are unstable.', short: 'Unpaved, unstable bluffs' } },
+        toNext: { m: 1037, min: 13, dir: 'Head east along Dearham Wood, about 450 m, then follow the side streets to Greyabbey Trail. Turn right into Grey Abbey Park at 180 Greyabbey Trail, about 150 m in.', path: [[43.75367,-79.186],[43.75371,-79.18587],[43.75363,-79.18584],[43.75369,-79.18567],[43.75356,-79.18561],[43.7547,-79.1806],[43.75471,-79.1803],[43.75329,-79.17968],[43.75369,-79.17869],[43.75362,-79.17865],[43.75418,-79.17728],[43.754,-79.17702],[43.754,-79.17657],[43.75411,-79.17637],[43.75419,-79.17606],[43.7544,-79.17574]], caution: 'Grey Abbey Park has no paved paths. Stay behind the fences: the bluffs are unstable.', short: 'Unpaved, unstable bluffs' } },
       { name: 'Grey Abbey Park', cat: 'nature', lat: 43.75452104, lon: -79.17586877,
         stamp: { n: 4, code: 'GW-4', where: 'near the bench by the fence (placement to be confirmed)' },
         photos: [{ src: '/_blob/75da0e8207488c12f89c9ad98845fe17', alt: 'Wooden fence along the bluff edge, a lawn and a bench, with Lake Ontario on the left', cap: 'Fence and bench along the bluffs' }],
@@ -2342,12 +2345,13 @@ function buildMap(s, focus, H, minSpan, opts) {
       label(st.name, c, 4);
     });
   }
-  var legs = s.stops.slice(0, -1).map(function (t, i) { return [xy[i]].concat(s.geo ? [] : (t.via || []), [xy[i + 1]]); });
+  var legs = s.stops.slice(0, -1).map(function (t, i) { return [xy[i]].concat(s.geo ? (t.toNext && t.toNext.path ? pr(t.toNext.path) : []) : (t.via || []), [xy[i + 1]]); });
   var cautions = [];
   s.stops.forEach(function (t, i) {
     if (t.toNext && t.toNext.caution && s.stops[i + 1]) {
       var p = xy[i], n = xy[i + 1];
-      var at = (!s.geo && t.toNext.at) || [Math.round((p[0] + n[0]) / 2), Math.round((p[1] + n[1]) / 2)];
+      var lg = legs[i];
+      var at = (!s.geo && t.toNext.at) || (lg.length > 2 ? [Math.round(lg[Math.floor(lg.length / 2)][0]), Math.round(lg[Math.floor(lg.length / 2)][1])] : [Math.round((p[0] + n[0]) / 2), Math.round((p[1] + n[1]) / 2)]);
       cautions.push([at[0], at[1], t.toNext.short + ' between stops ' + (i + 1) + ' and ' + (i + 2), i]);
     }
   });
@@ -2822,6 +2826,14 @@ class Component extends DCLogic {
       me: loc ? [here[0] + 13, here[1] + 15] : null,
       label: isLast ? 'Map of the whole route. You are at the last stop.' : 'Map: walk from stop ' + n + ' to stop ' + (nx + 1) + ', ' + next.name + (nx > idx + 1 ? '. Skipped stops are shown faded.' : '')
     }, isLast ? M : idx);
+    if (!isLast) {
+      var kA = inc.indexOf(idx), actL = kA >= 0 ? stopMap.legs[kA] : null;
+      if (actL && actL.length > 2) stopMap.legs = stopMap.legs.map(function (lg, k) {
+        if (k <= kA || lg.length < 3) return lg;
+        var near = lg.filter(function (pt) { return actL.some(function (a) { return Math.abs(a[0] - pt[0]) < 7 && Math.abs(a[1] - pt[1]) < 7; }); }).length;
+        return near / lg.length > 0.4 ? [lg[lg.length - 1]] : lg;
+      });
+    }
     var cat = CATS[st.cat] || CATS.street;
     var photos = st.photos || [];
     var pIdx = Math.min(S.photoIdx || 0, Math.max(photos.length - 1, 0));
@@ -4076,6 +4088,7 @@ class Component extends DCLogic {
       playLabel: playing ? 'Pause clip' : 'Play clip (' + (realVoice ? realVoice.length : '') + ')',
       togglePlay: function () { self.setState({ playing: !playing }); },
       mapTitle: isLast ? 'Your whole route' : 'Route to Stop ' + (nx + 1) + ': ' + next.name,
+      mapNote: s.stops.some(function (t) { return t.toNext && t.toNext.path; }) ? 'The line follows the streets and park paths. Trails can close, so check the signs on site, or Open in Maps.' : 'Lines join the stops in walking order. They don’t show the exact path. Use the directions below, or Open in Maps.',
       stopMap: stopMap,
       locOff: !loc,
       locOffText: isLast ? 'You’re at the dark pin, number ' + n + ', the last stop.' : 'You’re at the dark pin, number ' + n + '. Follow the blue line to the blue-ringed pin, number ' + (nx + 1) + '.' + (nx > idx + 1 ? ' Faded pins are stops you skipped.' : ''),
