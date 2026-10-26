@@ -1,0 +1,216 @@
+/* StrollTO components. Every value comes from tokens.css; class prefix st- */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font-sans); background: var(--canvas); color: var(--ink); -webkit-font-smoothing: antialiased; text-size-adjust: 100%; }
+
+/* Translation & script safety: no negative tracking outside Latin, taller leading for tall scripts */
+:is(:lang(zh), :lang(ja), :lang(ko), :lang(ar), :lang(fa), :lang(ur), :lang(pa), :lang(hi), :lang(ta), :lang(bn), :lang(gu)) :is(h1, h2, h3, h4, p, span, button, a, li, div) { letter-spacing: 0; }
+:is(:lang(ar), :lang(fa), :lang(ur), :lang(pa), :lang(hi), :lang(ta), :lang(bn), :lang(gu)) :is(h1, h2, h3, h4, p, span, button, a, li) { line-height: 1.6; }
+:is(:lang(zh), :lang(ja), :lang(ko)) :is(h1, h2, h3, h4, p, span, button, a, li) { line-height: 1.5; }
+
+.st-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.st-icon { width: 20px; height: 20px; flex: none; display: block; }
+
+/* ---------- Button ---------- */
+.st-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm); min-height: var(--size-button); max-width: 100%; padding: 13px 23px; border: 1px solid transparent; border-radius: var(--radius-sm); font: inherit; font-size: 16px; font-weight: 500; line-height: 1.25; text-align: center; white-space: normal; overflow-wrap: anywhere; cursor: pointer; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.st-btn-primary { background: var(--primary); color: var(--on-primary); }
+.st-btn-primary:active { background: var(--primary-active); }
+.st-btn-secondary { background: var(--surface-card); color: var(--ink); border-color: var(--ink); }
+.st-btn-secondary:active { background: var(--surface-soft); }
+.st-btn-tertiary { background: transparent; color: var(--link); text-decoration: underline; text-underline-offset: 3px; padding-left: var(--space-md); padding-right: var(--space-md); }
+.st-btn-tertiary:active { color: var(--primary-active); }
+.st-btn:disabled, .st-btn[aria-disabled="true"] { background: var(--primary-disabled); color: var(--muted); border-color: transparent; cursor: not-allowed; text-decoration: none; }
+.st-btn-sm { min-height: var(--size-target-min); padding: 11px 19px; font-size: 14px; line-height: 1.29; }
+.st-btn-full { display: flex; width: 100%; }
+.st-focus:focus-visible, .st-btn:focus-visible, .st-iconbtn:focus-visible, .st-stop:focus-visible, .st-sheet-handle:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* ---------- IconButton ---------- */
+.st-iconbtn { display: inline-grid; place-items: center; flex: none; width: var(--size-icon-button); height: var(--size-icon-button); padding: 0; border: 1px solid transparent; border-radius: var(--radius-full); background: var(--surface-card); color: var(--ink); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.st-iconbtn-float { box-shadow: var(--shadow-float); }
+.st-iconbtn-outline { border-color: var(--border-strong); }
+.st-iconbtn-soft { background: var(--surface-strong); }
+.st-iconbtn-on-primary { background: transparent; color: var(--on-primary); }
+.st-iconbtn-on-primary:active { background: var(--primary-active); }
+.st-iconbtn[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+
+/* ---------- Badge ---------- */
+.st-badge { display: inline-flex; align-items: center; gap: var(--space-xs); min-height: 24px; padding: var(--space-xs) 10px; border-radius: var(--radius-full); font-size: 12px; font-weight: 600; line-height: 1.33; white-space: nowrap; }
+.st-badge .st-icon { width: 14px; height: 14px; }
+.st-badge-neutral { background: var(--surface-card); color: var(--ink); box-shadow: var(--shadow-float); }
+.st-badge-primary { background: var(--primary-soft); color: var(--primary); }
+.st-badge-current { background: var(--primary); color: var(--on-primary); }
+.st-badge-success { background: var(--success-soft); color: var(--success-ink); }
+.st-badge-reward { background: var(--accent-soft); color: var(--accent-ink); box-shadow: inset 0 0 0 1px var(--accent); }
+.st-badge-new { background: var(--primary); color: var(--on-primary); font-weight: 700; letter-spacing: 0.32px; text-transform: uppercase; padding: 2px var(--space-sm); }
+
+/* ---------- AppHeader ---------- */
+.st-header { display: flex; align-items: center; gap: var(--space-xs); min-height: var(--size-header); padding: var(--space-xs); background: var(--primary); color: var(--on-primary); }
+.st-header-text { flex: 1; min-width: 0; padding: var(--space-xs) var(--space-xs); }
+.st-header-title { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
+.st-header-sub { margin: 0; font-size: 13px; line-height: 1.23; color: var(--on-primary-muted); overflow-wrap: anywhere; }
+.st-header-brand { font-weight: 700; letter-spacing: 0; }
+
+/* ---------- PhotoPlate ---------- */
+.st-photo { position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: var(--radius-md); background: var(--surface-strong); }
+.st-photo > svg { display: block; width: 100%; height: 100%; }
+.st-photo-sky { fill: var(--primary-soft); }
+.st-photo-far { fill: var(--surface-strong); }
+.st-photo-mid { fill: var(--border-strong); }
+.st-photo-near { fill: var(--body); }
+.st-photo-green { fill: var(--map-park); }
+.st-photo-ground { fill: var(--hairline); }
+.st-photo-3x2 { aspect-ratio: 3 / 2; }
+.st-photo-16x9 { aspect-ratio: 16 / 9; }
+.st-photo-flush { border-radius: 0; }
+.st-photo-fill { aspect-ratio: auto; width: 100%; height: 100%; }
+
+/* ---------- StopCard ---------- */
+.st-stop { position: relative; display: flex; flex-direction: column; gap: var(--space-md); min-width: 0; color: var(--ink); text-decoration: none; border-radius: var(--radius-md); }
+.st-stop-media { position: relative; }
+.st-stop-num { position: absolute; top: var(--space-md); left: var(--space-md); }
+.st-stop-action { position: absolute; top: var(--space-sm); right: var(--space-sm); }
+.st-stop-meta { display: flex; flex-direction: column; gap: var(--space-xxs); min-width: 0; }
+.st-stop-title { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
+.st-stop-sub { margin: 0; font-size: 14px; line-height: 1.43; color: var(--muted); overflow-wrap: anywhere; }
+.st-stop-line { display: inline-flex; align-items: center; gap: var(--space-xs); }
+.st-stop-line .st-icon { width: 16px; height: 16px; }
+.st-stop-badges { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-sm); }
+.st-stop-row { flex-direction: row; align-items: flex-start; gap: var(--space-md); padding: var(--space-md); background: var(--surface-card); border: 1px solid var(--hairline); }
+.st-stop-row .st-stop-media { flex: none; width: 88px; }
+.st-stop-row .st-photo { aspect-ratio: 1; border-radius: var(--radius-sm); }
+.st-stop-row .st-stop-badges { margin-top: var(--space-xs); }
+.st-stop-row.is-current { border: 2px solid var(--primary); padding: 11px; }
+
+/* ---------- ProgressIndicator ---------- */
+.st-progress { display: flex; flex-direction: column; gap: var(--space-sm); min-width: 0; }
+.st-progress-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-xs) var(--space-md); }
+.st-progress-label { margin: 0; font-size: 14px; font-weight: 500; line-height: 1.29; color: var(--ink); }
+.st-progress-label strong { font-weight: 700; color: var(--success-ink); }
+.st-progress-dist { margin: 0; font-size: 14px; line-height: 1.43; color: var(--muted); }
+.st-progress-track { display: flex; gap: var(--space-xs); }
+.st-seg { flex: 1; height: 10px; border-radius: var(--radius-full); border: 1.5px solid var(--border-strong); background: var(--surface-card); }
+.st-seg.is-done { background: var(--success); border-color: var(--success); }
+.st-seg.is-current { background: var(--primary); border-color: var(--primary); }
+
+/* ---------- StampBadge ---------- */
+.st-stamp { display: inline-flex; flex-direction: column; align-items: center; gap: var(--space-sm); width: 104px; text-align: center; }
+.st-stamp svg { display: block; }
+.st-stamp-fill { fill: var(--accent); }
+.st-stamp-ring { fill: none; stroke: var(--on-accent); stroke-width: 2.5; }
+.st-stamp-inner { fill: none; stroke: var(--on-accent); stroke-width: 1.5; stroke-dasharray: 3 4; }
+.st-stamp-glyph { fill: var(--on-accent); }
+.st-stamp.is-locked .st-stamp-fill { fill: var(--surface-strong); }
+.st-stamp.is-locked .st-stamp-ring { stroke: var(--border-strong); stroke-dasharray: 6 5; }
+.st-stamp.is-locked .st-stamp-inner { display: none; }
+.st-stamp.is-locked .st-stamp-glyph { fill: none; stroke: var(--muted); stroke-width: 1.75; stroke-linejoin: round; }
+.st-stamp-label { margin: 0; font-size: 14px; font-weight: 500; line-height: 1.29; color: var(--ink); overflow-wrap: anywhere; }
+.st-stamp-date { margin: 0; font-size: 13px; line-height: 1.23; color: var(--muted); }
+.st-stamp-lg { width: 200px; }
+.st-stamp-lg .st-stamp-label { font-size: 20px; font-weight: 600; line-height: 1.2; }
+
+/* ---------- RouteMap ---------- */
+.st-map { position: absolute; inset: 0; overflow: hidden; background: var(--map-land); }
+.st-map svg { display: block; width: 100%; height: 100%; }
+.st-map-park { fill: var(--map-park); }
+.st-map-water { fill: var(--map-water); }
+.st-map-road { stroke: var(--map-road); stroke-linecap: round; fill: none; }
+.st-map-street { fill: var(--muted); font-family: var(--font-sans); font-size: 12px; font-weight: 500; }
+.st-map-done { stroke: var(--success); stroke-width: 6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.st-map-active { stroke: var(--primary); stroke-width: 6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.st-map-ahead { stroke: var(--route-upcoming); stroke-width: 4; fill: none; stroke-linecap: round; stroke-dasharray: 1 9; }
+.st-pin-hit { fill: transparent; cursor: pointer; }
+.st-pin { stroke: var(--surface-card); stroke-width: 3; }
+.st-pin.is-done { fill: var(--success); }
+.st-pin.is-current { fill: var(--primary); }
+.st-pin.is-upcoming { fill: var(--surface-card); stroke: var(--ink); stroke-width: 2; }
+.st-pin.is-here { fill: var(--ink); }
+.st-pin.is-next { fill: var(--surface-card); stroke: var(--primary); stroke-width: 4; }
+.st-pin.is-skipped { fill: var(--surface-soft); stroke: var(--muted); stroke-width: 2; stroke-dasharray: 3 3; }
+.st-pin-num.is-skipped { fill: var(--muted); font-size: 11px; font-weight: 600; }
+.st-pin-num { font-family: var(--font-sans); font-size: 13px; font-weight: 700; text-anchor: middle; dominant-baseline: central; fill: var(--ink); }
+.st-pin-num.on-fill { fill: var(--on-primary); }
+.st-pin-num.on-next { fill: var(--primary); }
+.st-pin-check { stroke: var(--on-success); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.st-me-halo { fill: var(--primary); fill-opacity: 0.16; }
+.st-me { fill: var(--primary); stroke: var(--surface-card); stroke-width: 3; }
+.st-map-caution { fill: var(--surface-card); stroke: var(--ink); stroke-width: 2; }
+.st-map-caution-glyph { fill: none; stroke: var(--ink); stroke-width: 1.75; stroke-linejoin: round; }
+.st-map-caution-mark { fill: none; stroke: var(--ink); stroke-width: 1.75; stroke-linecap: round; }
+/* RouteMap getting-there layer: the walk from a station to Stop 1, and the station. */
+.st-map-walk { fill: none; stroke: var(--primary); stroke-width: 3; stroke-dasharray: 7 5; stroke-linecap: round; stroke-linejoin: round; }
+.st-map-station { fill: var(--ink); stroke: var(--surface-card); stroke-width: 2; }
+.st-map-station-glyph { fill: none; stroke: var(--surface-card); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- WalkSpine ---------- */
+.st-spine { display: block; width: 100%; height: auto; overflow: visible; }
+.st-spine-line { stroke: var(--primary); stroke-width: 3; stroke-linecap: round; }
+.st-spine-line.is-done { stroke: var(--success); }
+.st-spine-line.is-longest { stroke-width: 7; }
+.st-spine-tick { fill: var(--surface-card); stroke: var(--primary); stroke-width: 2; }
+.st-spine-tick.is-done { fill: var(--success); stroke: var(--success); }
+.st-spine-here { fill: var(--ink); stroke: var(--surface-card); stroke-width: 2.5; }
+.st-spine-num { font-family: var(--font-sans); font-size: 12px; font-weight: 600; text-anchor: middle; fill: var(--body); }
+.st-spine-num.is-here { fill: var(--ink); font-weight: 700; }
+.st-spine-long { font-family: var(--font-sans); font-size: 12px; font-weight: 600; text-anchor: middle; fill: var(--ink); }
+
+/* ---------- StrollMap ---------- */
+/* Transit lines keep TTC's own colours (an exception to the colour roles) so the map matches station signs. */
+.st-cmap { position: relative; overflow: hidden; background: var(--map-land); touch-action: none; user-select: none; }
+.st-cmap svg { display: block; }
+.st-cmap-water { fill: var(--map-water); }
+.st-cmap-land { fill: var(--map-land); }
+.st-cmap-street { fill: none; stroke: var(--map-road); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.st-cmap-street.is-major { stroke-width: 3.5; }
+.st-cmap-car { fill: none; stroke: #DA251D; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-opacity: 0.85; }
+.st-cmap-line { fill: none; stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; }
+.st-cmap-station { fill: var(--surface-card); stroke: var(--ink); stroke-width: 1.5; }
+.st-cmap-station.is-on { fill: var(--ink); stroke: var(--surface-card); stroke-width: 3; }
+.st-cmap-stlabel { font: 600 11px var(--font-sans); fill: var(--body); paint-order: stroke; stroke: var(--map-land); stroke-width: 3px; }
+.st-cmap-stlabel.is-on { font-size: 13px; font-weight: 700; fill: var(--ink); }
+.st-cmap-hit { fill: transparent; }
+.st-cmap-cluster { fill: var(--surface-card); stroke: var(--body); stroke-width: 2; }
+.st-cmap-clnum, .st-cmap-pinnum, .st-cmap-mininum, .st-cmap-stopnum { font-family: var(--font-sans); font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+.st-cmap-clnum { font-size: 13px; fill: var(--ink); }
+.st-cmap-pin { fill: var(--surface-card); stroke: var(--muted); stroke-width: 2; }
+.st-cmap-pin.is-pilot { fill: var(--primary); stroke: var(--surface-card); stroke-width: 3; }
+.st-cmap-pinnum { font-size: 11px; fill: var(--ink); }
+.st-cmap-pinnum.is-pilot { font-size: 13px; fill: var(--on-primary); }
+.st-cmap-far { fill: var(--surface-card); stroke: var(--ink); stroke-width: 1.5; }
+.st-cmap-farmark { stroke: var(--ink); stroke-width: 1.75; stroke-linecap: round; }
+.st-cmap-tag { fill: var(--surface-card); stroke: var(--primary); stroke-width: 1.5; }
+.st-cmap-tagtext { font: 700 11px var(--font-sans); fill: var(--primary); text-anchor: middle; dominant-baseline: central; }
+.st-cmap-mini { fill: var(--surface-card); stroke: var(--muted); stroke-width: 1.5; }
+.st-cmap-mininum { font-size: 10px; fill: var(--ink); }
+.st-cmap-route { fill: none; stroke: var(--primary); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.st-cmap-stop { fill: var(--primary); stroke: var(--surface-card); stroke-width: 2.5; }
+.st-cmap-stop.is-on { fill: var(--ink); }
+.st-cmap-stopnum { font-size: 12px; fill: var(--on-primary); }
+.st-cmap-cat { fill: var(--surface-card); stroke: var(--primary); stroke-width: 1.5; }
+.st-cmap-catglyph { fill: none; stroke: var(--primary); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.st-cmap-reach { stroke: var(--primary); stroke-width: 1.5; stroke-dasharray: 3 4; stroke-opacity: 0.7; }
+.st-cmap-zoom { position: absolute; right: 12px; top: 12px; display: flex; flex-direction: column; gap: 8px; }
+
+/* ---------- PassportBadge ---------- */
+/* Rewards are the one place marigold appears: collected pieces fill with accent, missing pieces stay dashed grey. */
+.st-pp { display: inline-flex; flex-direction: column; align-items: center; gap: var(--space-xs); text-align: center; }
+.st-pp svg { display: block; }
+.st-pp-piece { fill: var(--surface-strong); stroke: var(--border-strong); stroke-width: 1.5; stroke-dasharray: 4 3; stroke-linejoin: round; }
+.st-pp-piece.is-on { fill: var(--accent); stroke: var(--on-accent); stroke-width: 2; stroke-dasharray: none; }
+.st-pp-num { font-family: var(--font-sans); font-size: 11px; font-weight: 700; text-anchor: middle; dominant-baseline: central; fill: var(--muted); }
+.st-pp-glyph { fill: none; stroke: var(--on-accent); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.st-pp-hub { fill: var(--surface-card); stroke: var(--border-strong); stroke-width: 1.5; }
+.st-pp-hub.is-done { fill: var(--accent); stroke: var(--on-accent); stroke-width: 2; }
+.st-pp-star { fill: var(--on-accent); stroke: none; }
+.st-pp-label { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.29; color: var(--ink); }
+.st-pp-status { margin: 0; font-size: 13px; line-height: 1.23; color: var(--muted); }
+
+/* ---------- BottomSheet ---------- */
+.st-sheet { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; max-height: 88%; background: var(--surface-card); border-radius: var(--radius-lg) var(--radius-lg) 0 0; box-shadow: var(--shadow-sheet); }
+.st-sheet-float { position: absolute; right: var(--space-base); bottom: calc(100% + var(--space-base)); display: flex; flex-direction: column; gap: var(--space-sm); }
+.st-sheet-handle { display: grid; place-items: center; width: 100%; min-height: var(--size-target-min); padding: 0; border: 0; border-radius: var(--radius-lg) var(--radius-lg) 0 0; background: transparent; cursor: grab; }
+.st-sheet-handle span { display: block; width: 40px; height: 5px; border-radius: var(--radius-full); background: var(--border-strong); }
+.st-sheet-body { display: flex; flex-direction: column; gap: var(--space-base); padding: 0 var(--space-base) var(--space-lg); overflow-y: auto; }
+.st-sheet-eyebrow { margin: 0; font-size: 14px; font-weight: 500; line-height: 1.29; color: var(--muted); }
+.st-sheet-title { margin: 0; font-size: 20px; font-weight: 600; line-height: 1.2; letter-spacing: -0.18px; overflow-wrap: anywhere; }
+.st-sheet-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+.st-sheet-actions > .st-btn { flex: 1 1 140px; }
+.st-sheet-divider { height: 1px; margin: 0; border: 0; background: var(--hairline-soft); }

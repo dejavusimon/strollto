@@ -1,0 +1,64 @@
+/* StrollTO — generated from tokens.json */
+:root, [data-theme="light"] {
+  --primary: #274490;
+  --primary-active: #1b3070;
+  --primary-soft: #e6ebf5;
+  --primary-disabled: #dee3ee;
+  --on-primary: #ffffff;
+  --on-primary-muted: #d3dbee;
+  --accent: #f2a900;
+  --accent-soft: #fdf0cf;
+  --on-accent: #1f2430;
+  --accent-ink: #6e4d00;
+  --success: #2e7d4f;
+  --success-soft: #e3f1e8;
+  --success-ink: #1f5e3a;
+  --on-success: #ffffff;
+  --error: #b42318;
+  --error-soft: #fdecea;
+  --on-error: #ffffff;
+  --ink: #1f2430;
+  --body: #3a4050;
+  --muted: #596070;
+  --hairline: #e3dfd8;
+  --hairline-soft: #eeeae4;
+  --border-strong: #878d99;
+  --canvas: #faf8f5;
+  --surface-card: #ffffff;
+  --surface-soft: #f3f0ea;
+  --surface-strong: #ece8e1;
+  --scrim: #1f243080;
+  --map-land: #edebe4;
+  --map-park: #d3e6cf;
+  --map-water: #c9ddec;
+  --map-road: #ffffff;
+  --route-upcoming: #6f7584;
+  --link: var(--primary);
+  --shadow-float: 0 0 0 1px #1f243005, 0 2px 6px #1f24300a, 0 4px 8px #1f24301a;
+  --shadow-sheet: 0 0 0 1px #1f243008, 0 -2px 6px #1f24300a, 0 -6px 16px #1f24301f;
+  --focus-ring: 0 0 0 2px #faf8f5, 0 0 0 5px #274490;
+}
+:root {
+  --space-xxs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-base: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
+  --space-section: 64px;
+  --radius-none: 0px;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+  --size-target-min: 44px;
+  --size-button: 48px;
+  --size-icon-button: 44px;
+  --size-header: 56px;
+  --size-input: 56px;
+  --font-sans: "Noto Sans", "Noto Sans SC", "Noto Sans TC", "Noto Sans Arabic", "Noto Sans Gurmukhi", "Noto Sans Tamil", "Noto Sans Devanagari", system-ui, sans-serif;
+}

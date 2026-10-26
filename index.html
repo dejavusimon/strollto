@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#2a4590">
+<title>StrollTO prototype</title>
+<meta name="description" content="Prototype for review: plan a City of Toronto StrollTO walk on a computer, then walk it with your phone.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+</head>
+<body>
+<header class="pg-bar">
+  <p class="pg-title">StrollTO walk companion</p>
+  <span class="pg-tag">Prototype for review</span>
+  <span class="pg-note">Sample content. Not a City of Toronto service. Nothing you do here is sent anywhere.</span>
+  <span class="pg-sp"></span>
+  <button type="button" class="pg-btn" data-help>How to try it</button>
+  <button type="button" class="pg-btn" data-restart>Start over</button>
+</header>
+<main class="pg-stage"><div id="fit" class="pg-fit"><div id="frame" class="pg-frame"></div></div></main>
+<div id="inset-probe" aria-hidden="true"></div>
+
+<div id="help" class="pg-help" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
+  <div class="pg-card">
+    <h2 id="help-title">How to try the prototype</h2>
+    <p><strong>What is StrollTO?</strong> StrollTO is the City of Toronto’s set of free, self-guided walks through neighbourhoods across the city. Each stroll is a short route of stops, such as a historic building, a mural or a park, with a few lines about each one. This prototype is a companion for those walks: you plan a stroll on a computer, then walk it with your phone.</p>
+
+    <div id="help-computer">
+      <p><strong>Try it:</strong> you start on the website, the way you would plan a walk on a computer. Then you hand it to your phone and walk it. About 5 minutes.</p>
+      <ol>
+        <li><strong>Find a stroll.</strong> On Explore, answer “What do you enjoy?” or pick a card under Featured this week, then press <strong>See this stroll</strong>.</li>
+        <li><strong>Plan it.</strong> Under <strong>Plan your walk</strong>, pick a shorter plan or untick stops. Time and distance update.</li>
+        <li><strong>Send it to your phone.</strong> Press <strong>Send to my phone</strong> and scan the QR code with your phone’s camera. No phone handy? Click the code to preview the phone here.</li>
+        <li><strong>Walk it.</strong> On the phone, press <strong>Start stroll</strong>, then <strong>Next stop</strong>. Try <strong>Skip this stop</strong> once. On the last stop, press <strong>Finish stroll</strong>.</li>
+        <li><strong>Look around.</strong> Map and Compare are in the website’s top menu.</li>
+      </ol>
+    </div>
+
+    <div id="help-phone" hidden>
+      <p><strong>Try it:</strong> this is the phone app you would carry on the walk. About 5 minutes.</p>
+      <ol>
+        <li><strong>Find a stroll.</strong> On Explore, answer “What do you enjoy?”, or switch to List or Map, then open a stroll.</li>
+        <li><strong>Plan it.</strong> Under <strong>Plan your walk</strong>, pick a shorter plan or untick stops.</li>
+        <li><strong>Walk it.</strong> Press <strong>Start stroll</strong>, then <strong>Next stop</strong>. Try <strong>Skip this stop</strong> once. On the last stop, press <strong>Finish stroll</strong>.</li>
+      </ol>
+      <p>You don’t need to be at the stops: the app works from anywhere. The website version is best on a computer.</p>
+    </div>
+
+    <p class="pg-small">Stroll stops and stories are from the City of Toronto’s StrollTO open data. Titles, “Look for” lines, featured picks, community posts and the walk buddy are team drafts or samples. Photo credits are still being confirmed. Built by Toronto Metropolitan University Master of Digital Media students.</p>
+    <div class="pg-actions">
+      <button type="button" class="pg-btn primary" data-close>Start</button>
+      <button type="button" class="pg-btn" data-restart>Start over from the beginning</button>
+    </div>
+  </div>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

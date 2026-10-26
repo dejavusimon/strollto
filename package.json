@@ -1,0 +1,27 @@
+{
+  "name": "strollto",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "StrollTO walk companion prototype (TMU Master of Digital Media project with the City of Toronto).",
+  "scripts": {
+    "import": "node scripts/import-design.mjs",
+    "dev": "vite",
+    "build": "node scripts/import-design.mjs && vite build",
+    "preview": "vite preview --port 4173",
+    "test": "node --test tests/logic.test.mjs",
+    "test:e2e": "playwright test",
+    "check": "npm test && npm run build && npm run test:e2e"
+  },
+  "dependencies": {
+    "qrcode-generator": "^2.0.4",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "htmlparser2": "^9.1.0",
+    "vite": "^5.4.21"
+  },
+  "engines": { "node": ">=20" }
+}
