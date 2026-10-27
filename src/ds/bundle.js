@@ -365,6 +365,11 @@
       });
     };
     var base = props.base || {}, kids = [];
+    /* layers: which overlays are on. showTransit:false still turns every transit layer off (older callers). */
+    var L = Object.assign({ lines: true, cars: true, bus: false, hoods: false, order: false }, props.layers || {});
+    if (props.showTransit === false) { L.lines = false; L.cars = false; L.bus = false; }
+    var normSt = function (n) { return String(n || '').toUpperCase().replace(/ STATION$/, '').replace(/[^A-Z0-9]+/g, ' ').trim(); };
+    var accOf = function (n) { var e = base.elev || {}; return e[normSt(n)] || null; };
     // water: the lake south of the shoreline, then the islands and the spit back on top as land
     var S = base.shore || [];
     if (S.length) {
@@ -372,29 +377,43 @@
       kids.push(h('path', { key: 'lake', className: 'st-cmap-water', d: mapPath(ring, P) + 'Z' }));
       [base.islands, base.spit].forEach(function (poly, i) { if (poly) kids.push(h('path', { key: 'isl' + i, className: 'st-cmap-land', d: mapPath(poly, P) + 'Z' })); });
     }
+    // islands and landfill as land, then inland water (harbour, ponds) on top: in this order, or Trout Pond fills in
+    (base.isles || []).forEach(function (poly, i) { kids.push(h('path', { key: 'isle' + i, className: 'st-cmap-land', d: poly.map(function (r) { return mapPath(r, P) + 'Z'; }).join('') })); });
+    (base.ponds || []).forEach(function (poly, i) { kids.push(h('path', { key: 'pond' + i, className: 'st-cmap-water', d: poly.map(function (r) { return mapPath(r, P) + 'Z'; }).join('') })); });
     var showMinor = view.mpp <= 30;
     (base.streets || []).forEach(function (st, i) {
       if (!st.major && !showMinor) return;
       st.parts.forEach(function (pt, j) { kids.push(h('path', { key: 's' + i + '-' + j, className: cx('st-cmap-street', st.major && 'is-major'), d: mapPath(pt, P) })); });
     });
-    if (props.showTransit !== false) {
-      (base.cars || []).forEach(function (c, i) { c.parts.forEach(function (pt, j) { kids.push(h('path', { key: 'c' + i + '-' + j, className: 'st-cmap-car', d: mapPath(pt, P) })); }); });
-      (base.lines || []).forEach(function (l, i) {
-        kids.push(h('path', { key: 'l' + i, className: 'st-cmap-line', style: { stroke: l.color }, d: mapPath(l.stops.map(function (s) { return [s[1], s[2]]; }), P) }));
+    // neighbourhoods: thin outlines, names once zoomed in
+    if (L.hoods) {
+      (base.hoods || []).forEach(function (hd, i) { kids.push(h('path', { key: 'hd' + i, className: 'st-cmap-hood', d: hd.rings.map(function (r) { return mapPath(r, P) + 'Z'; }).join('') })); });
+      if (view.mpp <= 14) (base.hoods || []).forEach(function (hd, i) {
+        var q = P(hd.c[0], hd.c[1]); if (!inView(q, -20)) return;
+        kids.push(h('text', { key: 'hl' + i, className: 'st-cmap-hoodlabel', x: q[0], y: q[1] }, hd.name));
       });
     }
+    if (L.bus) (base.bus || []).forEach(function (b, i) { b.parts.forEach(function (pt, j) { kids.push(h('path', { key: 'b' + i + '-' + j, className: 'st-cmap-bus', d: mapPath(pt, P) })); }); });
+    if (L.cars) (base.cars || []).forEach(function (c, i) { c.parts.forEach(function (pt, j) { kids.push(h('path', { key: 'c' + i + '-' + j, className: 'st-cmap-car', d: mapPath(pt, P) })); }); });
+    if (L.lines) (base.lines || []).forEach(function (l, i) {
+      if (l.path) l.path.forEach(function (pt, j) { kids.push(h('path', { key: 'l' + i + '-' + j, className: 'st-cmap-line', style: { stroke: l.color }, d: mapPath(pt, P) })); });
+      else kids.push(h('path', { key: 'l' + i, className: 'st-cmap-line', style: { stroke: l.color }, d: mapPath(l.stops.map(function (s) { return [s[1], s[2]]; }), P) }));
+    });
     // stations: always shown when transit is on, larger and tappable when picking a station
     var pick = !!props.pickStation, seen = {};
-    if (props.showTransit !== false || pick) {
+    if (L.lines || pick) {
       (base.lines || []).forEach(function (l) {
         l.stops.forEach(function (s) {
           if (seen[s[0]]) return; seen[s[0]] = 1;
           var q = P(s[1], s[2]); if (!inView(q)) return;
           var on = props.station && props.station.name === s[0];
-          var r = on ? 8 : pick ? 6 : (view.mpp > 30 ? 2.6 : 4);
-          kids.push(h('g', { key: 'st' + s[0], onClick: pick && props.onStation ? function () { if (!moved.current) props.onStation(s[0]); } : undefined, style: pick ? { cursor: 'pointer' } : undefined },
-            pick ? h('circle', { className: 'st-cmap-hit', cx: q[0], cy: q[1], r: 22 }) : null,
-            h('circle', { className: cx('st-cmap-station', on && 'is-on'), cx: q[0], cy: q[1], r: r })));
+          var acc = accOf(s[0]), off = !!props.stepFreeOnly && acc !== 'Yes';
+          var canPick = pick && !off;
+          var r = on ? 8 : canPick ? 6 : off ? 2.4 : (view.mpp > 30 ? 2.6 : 4);
+          kids.push(h('g', { key: 'st' + s[0], onClick: canPick && props.onStation ? function () { if (!moved.current) props.onStation(s[0]); } : undefined, style: canPick ? { cursor: 'pointer' } : undefined },
+            canPick ? h('circle', { className: 'st-cmap-hit', cx: q[0], cy: q[1], r: 22 }) : null,
+            props.stepFreeOnly && !off ? h('circle', { className: 'st-cmap-acc', cx: q[0], cy: q[1], r: r + 3 }) : null,
+            h('circle', { className: cx('st-cmap-station', on && 'is-on', off && 'is-off'), cx: q[0], cy: q[1], r: r })));
           if (on || (view.mpp <= 7 && !pick)) kids.push(h('text', { key: 'stl' + s[0], className: cx('st-cmap-stlabel', on && 'is-on'), x: q[0] + (on ? 12 : 7), y: q[1] - (on ? 10 : 6) }, s[0]));
         });
       });
@@ -406,6 +425,60 @@
         if (props.reachIds.indexOf(r.id) < 0) return;
         var q = P(r.lat, r.lon);
         kids.push(h('line', { key: 'rl' + r.id, className: 'st-cmap-reach', x1: sp[0], y1: sp[1], x2: q[0], y2: q[1] }));
+      });
+    }
+    // street names once zoomed in: arterials first, then collectors; each name once, along its longest visible stretch
+    if (view.mpp <= 7) {
+      var placed = [], streetsByRank = (base.streets || []).filter(function (st) { return st.name && (st.major || view.mpp <= 5); });
+      var padL = props.padLeft || 0, X0 = padL + 8, X1 = W - 64, Y0 = 24, Y1 = H - 24;
+      // clip a segment to the labelling area (Liang-Barsky), so long straight streets still count where they cross the view
+      var clipSeg = function (a, b) {
+        var t0 = 0, t1 = 1, dx = b[0] - a[0], dy = b[1] - a[1];
+        var ok = [[-dx, a[0] - X0], [dx, X1 - a[0]], [-dy, a[1] - Y0], [dy, Y1 - a[1]]].every(function (pq) {
+          var p = pq[0], q = pq[1];
+          if (p === 0) return q >= 0;
+          var r = q / p;
+          if (p < 0) { if (r > t1) return false; if (r > t0) t0 = r; } else { if (r < t0) return false; if (r < t1) t1 = r; }
+          return true;
+        });
+        if (!ok || t1 <= t0) return null;
+        return [[a[0] + dx * t0, a[1] + dy * t0], [a[0] + dx * t1, a[1] + dy * t1], t0 > 0, t1 < 1];
+      };
+      streetsByRank.sort(function (a, b) { return (b.major ? 1 : 0) - (a.major ? 1 : 0); });
+      streetsByRank.forEach(function (st, i) {
+        // the longest visible, fairly straight run of the street (segments joined while the bend stays under ~25 degrees)
+        var best = null, bl = 0;
+        st.parts.forEach(function (pt) {
+          var run = null, len = 0, ang0 = null;
+          var close = function () { if (run && len > bl) { bl = len; best = [run[0], run[run.length - 1]]; } run = null; len = 0; ang0 = null; };
+          for (var j = 0; j < pt.length - 1; j++) {
+            var cs = clipSeg(P(pt[j][0], pt[j][1]), P(pt[j + 1][0], pt[j + 1][1]));
+            if (!cs) { close(); continue; }
+            var a = cs[0], b = cs[1];
+            if (cs[2]) close();
+            var an = Math.atan2(b[1] - a[1], b[0] - a[0]);
+            if (run && Math.abs(Math.atan2(Math.sin(an - ang0), Math.cos(an - ang0))) > 0.44) close();
+            if (!run) { run = [a]; ang0 = an; }
+            run.push(b); len += Math.hypot(b[0] - a[0], b[1] - a[1]);
+            if (cs[3]) close();
+          }
+          close();
+        });
+        var tw = st.name.length * 6.3 + 10;
+        if (!best || bl < tw) return;
+        var ang = Math.atan2(best[1][1] - best[0][1], best[1][0] - best[0][0]) * 180 / Math.PI;
+        if (ang > 90) ang -= 180; if (ang < -90) ang += 180;
+        var rad = tw / 2, mx = null, my = null;
+        // try the middle of the run, then further along either way, so crossing streets can both keep a name
+        [0.5, 0.3, 0.7, 0.2, 0.8].some(function (t) {
+          if (bl * Math.min(t, 1 - t) * 2 < tw * 0.9) return false;
+          var x = best[0][0] + (best[1][0] - best[0][0]) * t, y = best[0][1] + (best[1][1] - best[0][1]) * t;
+          if (placed.some(function (q) { return Math.hypot(q[0] - x, q[1] - y) < (q[2] + rad) * 0.55; })) return false;
+          mx = x; my = y; return true;
+        });
+        if (mx == null) return;
+        placed.push([mx, my, rad]);
+        kids.push(h('text', { key: 'sn' + i, className: cx('st-cmap-strlabel', st.major && 'is-major'), x: mx, y: my, transform: 'rotate(' + ang.toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1) + ')' }, st.name));
       });
     }
     var level = view.mpp > 45 ? 'cluster' : view.mpp > 4 ? 'pin' : 'stop';
@@ -425,6 +498,11 @@
       }
       return h('g', { key: 'p' + r.id, opacity: faded(r) ? 0.3 : 1, onClick: click(function () { props.onSelect && props.onSelect(r.id); }), style: { cursor: 'pointer' } }, g);
     };
+    // walking order: each stroll's stops joined in the City's order (zoomed in, not on the chosen stroll)
+    if (L.order && level !== 'cluster') strolls.forEach(function (r) {
+      if (r.id === sel || !r.stops || r.stops.length < 2) return;
+      kids.push(h('path', { key: 'ord' + r.id, className: 'st-cmap-order', opacity: faded(r) ? 0.3 : 1, d: mapPath(r.stops, P) }));
+    });
     var pilots = [], others = [];
     strolls.forEach(function (r) { if (r.id === sel) return; (r.pilot ? pilots : others).push(r); });
     if (level === 'cluster') {
@@ -494,7 +572,20 @@
     var onUp = function () { drag.current = null; setTimeout(function () { moved.current = false; }, 0); };
     return h('div', { className: cx('st-cmap', props.className), style: { height: H }, role: 'region', 'aria-label': props.label || 'Map of Toronto strolls' },
       h('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, 'aria-hidden': 'true', onPointerDown: onDown, onPointerMove: onMove, onPointerUp: onUp, onPointerLeave: onUp,
-        onWheel: function (e) { zoom(e.deltaY < 0 ? 1.25 : 0.8); } }, kids),
+        onWheel: function (e) {
+          /* Smooth zoom: scaled by how far the wheel or trackpad moved, anchored at the pointer. A mouse notch (~100)
+             zooms ~1.2x; a trackpad's many small events add up gently; pinch (ctrlKey) gets a little more. */
+          var dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1);
+          dy = Math.max(-240, Math.min(240, dy));
+          var k = Math.exp(-dy * (e.ctrlKey ? 0.008 : 0.0018));
+          var rc = e.currentTarget.getBoundingClientRect();
+          var px = (e.clientX - rc.left) * (W / (rc.width || W)), py = (e.clientY - rc.top) * (H / (rc.height || H));
+          setView(function (v) {
+            var mpp = Math.max(1.2, Math.min(160, v.mpp / k));
+            var la = v.lat - (py - H / 2) * v.mpp / MKY, lo = v.lon + (px - W / 2) * v.mpp / MKX;
+            return { lat: la + (py - H / 2) * mpp / MKY, lon: lo - (px - W / 2) * mpp / MKX, mpp: mpp };
+          });
+        } }, kids),
       h('div', { className: 'st-cmap-zoom', style: props.controlsTop != null ? { top: props.controlsTop } : undefined },
         h('button', { type: 'button', className: 'st-iconbtn st-iconbtn-float', 'aria-label': props.zoomInLabel || 'Zoom in', onClick: function () { zoom(1.8); } }, h(Icon, { name: 'plus' })),
         h('button', { type: 'button', className: 'st-iconbtn st-iconbtn-float', 'aria-label': props.zoomOutLabel || 'Zoom out', onClick: function () { zoom(1 / 1.8); } }, h(Icon, { name: 'minus' }))));

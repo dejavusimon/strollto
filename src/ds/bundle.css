@@ -188,6 +188,15 @@ body { margin: 0; font-family: var(--font-sans); background: var(--canvas); colo
 .st-cmap-catglyph { fill: none; stroke: var(--primary); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .st-cmap-reach { stroke: var(--primary); stroke-width: 1.5; stroke-dasharray: 3 4; stroke-opacity: 0.7; }
 .st-cmap-zoom { position: absolute; right: 12px; top: 12px; display: flex; flex-direction: column; gap: 8px; }
+/* StrollMap layers (layer panel): ten-minute buses, neighbourhood outlines, walking order, step-free stations. */
+.st-cmap-bus { fill: none; stroke: #2a7f8f; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; stroke-opacity: 0.8; }
+.st-cmap-hood { fill: none; stroke: #7d74a6; stroke-width: 1.1; stroke-dasharray: 5 3; stroke-linejoin: round; }
+.st-cmap-hoodlabel { font: 500 11px var(--font-sans); fill: #564d7d; text-anchor: middle; dominant-baseline: central; paint-order: stroke; stroke: var(--map-land); stroke-width: 3px; }
+.st-cmap-order { fill: none; stroke: var(--muted); stroke-width: 1.75; stroke-dasharray: 2 4; stroke-linecap: round; stroke-linejoin: round; }
+.st-cmap-station.is-off { fill: var(--surface-soft); stroke: var(--border-strong); stroke-width: 1; }
+.st-cmap-acc { fill: none; stroke: var(--success); stroke-width: 2; }
+.st-cmap-strlabel { font: 500 10.5px var(--font-sans); fill: var(--muted); text-anchor: middle; dominant-baseline: central; paint-order: stroke; stroke: var(--map-land); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.st-cmap-strlabel.is-major { font-size: 11.5px; font-weight: 600; fill: var(--body); }
 
 /* ---------- PassportBadge ---------- */
 /* Rewards are the one place marigold appears: collected pieces fill with accent, missing pieces stay dashed grey. */
