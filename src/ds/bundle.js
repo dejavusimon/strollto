@@ -360,7 +360,7 @@
     var W = props.width || 375, H = props.height || 600;
     var f = props.focus || { lat: 43.705, lon: -79.385, mpp: 115, key: 'init' };
     var vs = React.useState({ lat: f.lat, lon: f.lon, mpp: f.mpp }), view = vs[0], setView = vs[1];
-    var drag = React.useRef(null), moved = React.useRef(false);
+    var drag = React.useRef(null), moved = React.useRef(false), ptrs = React.useRef({}), pinch = React.useRef(null);
     React.useEffect(function () { setView({ lat: f.lat, lon: f.lon, mpp: f.mpp }); }, [f.key]);
     var P = function (lat, lon) { return [W / 2 + (lon - view.lon) * MKX / view.mpp, H / 2 - (lat - view.lat) * MKY / view.mpp]; };
     var inView = function (q, m) { m = m || 30; return q[0] > -m && q[0] < W + m && q[1] > -m && q[1] < H + m; };
@@ -571,17 +571,53 @@
       kids.push(h('circle', { key: 'mh', className: 'st-me-halo', cx: mq[0], cy: mq[1], r: 18 }));
       kids.push(h('circle', { key: 'm', className: 'st-me', cx: mq[0], cy: mq[1], r: 8 }));
     }
-    var onDown = function (e) { drag.current = { x: e.clientX, y: e.clientY, lat: view.lat, lon: view.lon }; moved.current = false; };
+    /* Gestures: one finger (or the mouse) drags; two fingers pinch to zoom around their midpoint and pan as they move. */
+    var viewNow = React.useRef(view); viewNow.current = view;
+    var svgPt = function (el, x, y) { var rc = el.getBoundingClientRect(); return [(x - rc.left) * (W / (rc.width || W)), (y - rc.top) * (H / (rc.height || H))]; };
+    var two = function () { var ks = Object.keys(ptrs.current); return ks.length >= 2 ? [ptrs.current[ks[0]], ptrs.current[ks[1]]] : null; };
+    var startPinch = function (el) {
+      var t = two(); if (!t) return;
+      var v = viewNow.current, m = svgPt(el, (t[0].x + t[1].x) / 2, (t[0].y + t[1].y) / 2);
+      pinch.current = { d: Math.max(10, Math.hypot(t[0].x - t[1].x, t[0].y - t[1].y)), mpp: v.mpp,
+        la: v.lat - (m[1] - H / 2) * v.mpp / MKY, lo: v.lon + (m[0] - W / 2) * v.mpp / MKX };
+      drag.current = null; moved.current = true;
+    };
+    var onDown = function (e) {
+      ptrs.current[e.pointerId] = { x: e.clientX, y: e.clientY };
+      if (Object.keys(ptrs.current).length >= 2) { startPinch(e.currentTarget); return; }
+      drag.current = { x: e.clientX, y: e.clientY, lat: view.lat, lon: view.lon }; moved.current = false;
+    };
     var onMove = function (e) {
+      if (ptrs.current[e.pointerId]) ptrs.current[e.pointerId] = { x: e.clientX, y: e.clientY };
+      var pz = pinch.current, t = pz && two();
+      if (pz && t) {
+        busy();
+        var k = Math.hypot(t[0].x - t[1].x, t[0].y - t[1].y) / pz.d;
+        var mpp = Math.max(1.2, Math.min(props.maxMpp || 160, pz.mpp / k));
+        var m = svgPt(e.currentTarget, (t[0].x + t[1].x) / 2, (t[0].y + t[1].y) / 2);
+        setView({ lat: pz.la + (m[1] - H / 2) * mpp / MKY, lon: pz.lo - (m[0] - W / 2) * mpp / MKX, mpp: mpp });
+        return;
+      }
       var d = drag.current; if (!d) return;
       var dx = e.clientX - d.x, dy = e.clientY - d.y;
       if (!moved.current && Math.abs(dx) + Math.abs(dy) < 6) return;
       moved.current = true; busy();
       setView({ lat: d.lat + dy * view.mpp / MKY, lon: d.lon - dx * view.mpp / MKX, mpp: view.mpp });
     };
-    var onUp = function () { drag.current = null; setTimeout(function () { moved.current = false; }, 0); };
+    var onUp = function (e) {
+      if (e && e.pointerId != null) delete ptrs.current[e.pointerId]; else ptrs.current = {};
+      var left = Object.keys(ptrs.current);
+      if (pinch.current && left.length < 2) {
+        pinch.current = null;
+        // the finger still down carries on as a drag, from where the map is now
+        if (left.length === 1) { var q = ptrs.current[left[0]], v = viewNow.current; drag.current = { x: q.x, y: q.y, lat: v.lat, lon: v.lon }; }
+        else drag.current = null;
+        return;
+      }
+      if (!left.length) { drag.current = null; setTimeout(function () { moved.current = false; }, 0); }
+    };
     return h('div', { className: cx('st-cmap', props.className), style: { height: H }, role: 'region', 'aria-label': props.label || 'Map of Toronto strolls' },
-      h('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, 'aria-hidden': 'true', onPointerDown: onDown, onPointerMove: onMove, onPointerUp: onUp, onPointerLeave: onUp,
+      h('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, 'aria-hidden': 'true', onPointerDown: onDown, onPointerMove: onMove, onPointerUp: onUp, onPointerCancel: onUp, onPointerLeave: onUp,
         /* onTap: a single tap on the map itself (not a drag, and not on a pin, which stops the click) */
         onClick: function () { if (!moved.current && props.onTap) props.onTap(); },
         onWheel: function (e) {

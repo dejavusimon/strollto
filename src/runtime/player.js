@@ -38,7 +38,7 @@ function styleObj(s) {
 }
 var ATTR = { 'class': 'className', 'for': 'htmlFor', tabindex: 'tabIndex', readonly: 'readOnly', autocomplete: 'autoComplete', autocapitalize: 'autoCapitalize',
   inputmode: 'inputMode', spellcheck: 'spellCheck', maxlength: 'maxLength', colspan: 'colSpan', rowspan: 'rowSpan', enterkeyhint: 'enterKeyHint', crossorigin: 'crossOrigin', srcset: 'srcSet' };
-var EVENTS = { onClick: 'onClick', onInput: 'onChange', onChange: 'onChange', onSubmit: 'onSubmit', onKeyDown: 'onKeyDown', onFocus: 'onFocus', onBlur: 'onBlur', onScroll: 'onScroll', onPointerDown: 'onPointerDown', onPointerUp: 'onPointerUp', onWheel: 'onWheel', onTouchStart: 'onTouchStart', onTouchMove: 'onTouchMove' };
+var EVENTS = { onClick: 'onClick', onInput: 'onChange', onChange: 'onChange', onSubmit: 'onSubmit', onKeyDown: 'onKeyDown', onFocus: 'onFocus', onBlur: 'onBlur', onScroll: 'onScroll', onPointerDown: 'onPointerDown', onPointerUp: 'onPointerUp', onWheel: 'onWheel', onTouchStart: 'onTouchStart', onTouchMove: 'onTouchMove', onPointerMove: 'onPointerMove', onPointerCancel: 'onPointerCancel' };
 var BOOL = { hidden: 1, disabled: 1, checked: 1, multiple: 1, required: 1, open: 1, readOnly: 1, autoFocus: 1, download: 0 };
 
 function flat(kids, out) { (kids || []).forEach(function (k) { if (Array.isArray(k)) flat(k, out); else if (k && k.type === React.Fragment) flat([].concat(k.props.children), out); else out.push(k); }); return out; }
