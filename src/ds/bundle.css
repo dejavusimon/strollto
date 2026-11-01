@@ -198,6 +198,30 @@ body { margin: 0; font-family: var(--font-sans); background: var(--canvas); colo
 .st-cmap-strlabel { font: 500 10.5px var(--font-sans); fill: var(--muted); text-anchor: middle; dominant-baseline: central; paint-order: stroke; stroke: var(--map-land); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
 .st-cmap-strlabel.is-major { font-size: 11.5px; font-weight: 600; fill: var(--body); }
 
+/* ---------- Motion and scroll behaviour (see README: Motion) ---------- */
+/* Timing: short ease, no bounce. Idle reveal waits ~1.2 s of stillness; a tray waits ~1 s. */
+:root { --motion-fast: 180ms; --motion-base: 240ms; --motion-morph: 260ms; --motion-ease: ease; --idle-reveal: 1200ms; --idle-tray: 1000ms; --shadow-action: 0 3px 10px rgba(31,36,48,0.22); }
+.st-pill { border-radius: var(--radius-full) !important; }
+/* Floating action: 48px tall, pill, thin hairline edge (no ink border), soft shadow. Primary = City blue fill. */
+.st-action { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 48px; height: 48px; padding: 0 16px; border: 1px solid var(--hairline); border-radius: var(--radius-full); background: var(--surface-card); color: var(--ink); font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; box-shadow: var(--shadow-action); cursor: pointer; text-decoration: none; position: relative; }
+.st-action-primary { border-color: var(--primary); background: var(--primary); color: var(--on-primary); font-size: 16px; }
+.st-action-on { border-color: #3a4050; background: #3a4050; color: #fff; }
+.st-action-stack { display: flex; flex-direction: column; gap: var(--space-sm); }
+/* Round <-> pill morph: the label collapses to width 0 (icon-only circle) and opens back out. */
+.st-morph { transition: padding var(--motion-morph) var(--motion-ease); }
+.st-morph.is-round { padding: 0; }
+.st-morph-label { display: inline-block; overflow: hidden; white-space: nowrap; max-width: 240px; margin-left: 8px; opacity: 1; transition: max-width var(--motion-morph) var(--motion-ease), margin-left var(--motion-morph) var(--motion-ease), opacity 200ms var(--motion-ease); }
+.st-morph.is-round .st-morph-label { max-width: 0; margin-left: 0; opacity: 0; }
+/* Slide-aways: a header or top bars collapse upward; a tray or sheet drops below the edge; a floating group fades down. */
+.st-slide-up { overflow: hidden; transition: max-height var(--motion-base) var(--motion-ease); }
+.st-slide-down { transition: transform var(--motion-morph) var(--motion-ease), height var(--motion-morph) var(--motion-ease); }
+.st-slide-down.is-hidden { transform: translateY(110%); }
+.st-fade-away { transition: opacity var(--motion-fast) var(--motion-ease), transform var(--motion-fast) var(--motion-ease), visibility var(--motion-fast); }
+.st-fade-away.is-hidden { opacity: 0; transform: translateY(12px); visibility: hidden; pointer-events: none; }
+/* The round back button left behind when a header slides away: white circle, City blue arrow. */
+.st-back-float { background: var(--on-primary) !important; color: var(--primary) !important; box-shadow: var(--shadow-action); }
+@media (prefers-reduced-motion: reduce) { .st-morph, .st-morph-label, .st-slide-up, .st-slide-down, .st-fade-away { transition: none; } }
+
 /* ---------- PassportBadge ---------- */
 /* Rewards are the one place marigold appears: collected pieces fill with accent, missing pieces stay dashed grey. */
 .st-pp { display: inline-flex; flex-direction: column; align-items: center; gap: var(--space-xs); text-align: center; }

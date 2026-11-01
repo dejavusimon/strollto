@@ -28,6 +28,9 @@
     play: ['M8 5.5v13l10.5-6.5z'],
     globe: ['M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z', 'M3 12h18', 'M12 3c2.4 2.6 3.6 5.6 3.6 9s-1.2 6.4-3.6 9c-2.4-2.6-3.6-5.6-3.6-9S9.6 5.6 12 3z'],
     star: ['M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z'],
+    'star-filled': ['M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z'],
+    'arrow-up': ['M12 19V5', 'M6 11l6-6 6 6'],
+    user: ['M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', 'M4.5 20a7.5 7.5 0 0 1 15 0'],
     layers: ['M12 4l9 5-9 5-9-5z', 'M3 14l9 5 9-5'],
     stepfree: ['M9 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z', 'M9 8v6h6l2 5', 'M6.5 11.5A5 5 0 1 0 13 18'],
     heart: ['M12 20s-7.5-4.6-7.5-10A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 7.5 3c0 5.4-7.5 10-7.5 10z'],
@@ -62,11 +65,15 @@
     walk: ['M13.5 5.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z', 'M10 21l2-6 2.5 2.5V21', 'M8 12l1.5-4 3.5-.5 2 3.5 2.5 1', 'M12.5 15l-1-7'],
     'chevron-down': ['M6 9l6 6 6-6'],
     'chevron-up': ['M6 15l6-6 6 6'],
-    'arrow-right': ['M5 12h14', 'M13 6l6 6-6 6']
+    'arrow-right': ['M5 12h14', 'M13 6l6 6-6 6'],
+    people: ['M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z', 'M2.5 20a6.5 6.5 0 0 1 13 0', 'M16 4.6a3.5 3.5 0 0 1 0 6.8', 'M18 14.2a6.5 6.5 0 0 1 3.5 5.8'],
+    reset: ['M4.5 13a7.5 7.5 0 1 0 2.2-6.3', 'M4 4v4.5h4.5']
   };
-  var FILLED = { play: 1, 'heart-filled': 1 };
+  var FILLED = { play: 1, 'heart-filled': 1, 'star-filled': 1 };
   function Icon(props) {
-    var d = PATHS[props.name] || PATHS.pin;
+    // An unknown name draws nothing (and warns) instead of a pin, so a stale bundle never shows a wrong icon.
+    var d = PATHS[props.name] || [];
+    if (!PATHS[props.name] && typeof console !== 'undefined') console.warn('StrollTO.Icon: no icon named "' + props.name + '"');
     var fill = !!FILLED[props.name];
     return h('svg', {
       className: cx('st-icon', props.className), viewBox: '0 0 24 24', width: props.size || 20, height: props.size || 20,
@@ -357,9 +364,12 @@
     React.useEffect(function () { setView({ lat: f.lat, lon: f.lon, mpp: f.mpp }); }, [f.key]);
     var P = function (lat, lon) { return [W / 2 + (lon - view.lon) * MKX / view.mpp, H / 2 - (lat - view.lat) * MKY / view.mpp]; };
     var inView = function (q, m) { m = m || 30; return q[0] > -m && q[0] < W + m && q[1] > -m && q[1] < H + m; };
+    /* onMove: tells the page the map is being operated (drag, wheel, pinch, zoom buttons), so it can move its own bars out of the way */
+    var busy = function () { if (props.onMove) props.onMove(); };
     var zoom = function (k, at) {
+      busy();
       setView(function (v) {
-        var mpp = Math.max(1.2, Math.min(160, v.mpp / k));
+        var mpp = Math.max(1.2, Math.min(props.maxMpp || 160, v.mpp / k));
         if (!at) return { lat: v.lat, lon: v.lon, mpp: mpp };
         return { lat: at[0], lon: at[1], mpp: mpp };
       });
@@ -566,22 +576,25 @@
       var d = drag.current; if (!d) return;
       var dx = e.clientX - d.x, dy = e.clientY - d.y;
       if (!moved.current && Math.abs(dx) + Math.abs(dy) < 6) return;
-      moved.current = true;
+      moved.current = true; busy();
       setView({ lat: d.lat + dy * view.mpp / MKY, lon: d.lon - dx * view.mpp / MKX, mpp: view.mpp });
     };
     var onUp = function () { drag.current = null; setTimeout(function () { moved.current = false; }, 0); };
     return h('div', { className: cx('st-cmap', props.className), style: { height: H }, role: 'region', 'aria-label': props.label || 'Map of Toronto strolls' },
       h('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, 'aria-hidden': 'true', onPointerDown: onDown, onPointerMove: onMove, onPointerUp: onUp, onPointerLeave: onUp,
+        /* onTap: a single tap on the map itself (not a drag, and not on a pin, which stops the click) */
+        onClick: function () { if (!moved.current && props.onTap) props.onTap(); },
         onWheel: function (e) {
           /* Smooth zoom: scaled by how far the wheel or trackpad moved, anchored at the pointer. A mouse notch (~100)
              zooms ~1.2x; a trackpad's many small events add up gently; pinch (ctrlKey) gets a little more. */
+          busy();
           var dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1);
           dy = Math.max(-240, Math.min(240, dy));
           var k = Math.exp(-dy * (e.ctrlKey ? 0.008 : 0.0018));
           var rc = e.currentTarget.getBoundingClientRect();
           var px = (e.clientX - rc.left) * (W / (rc.width || W)), py = (e.clientY - rc.top) * (H / (rc.height || H));
           setView(function (v) {
-            var mpp = Math.max(1.2, Math.min(160, v.mpp / k));
+            var mpp = Math.max(1.2, Math.min(props.maxMpp || 160, v.mpp / k));
             var la = v.lat - (py - H / 2) * v.mpp / MKY, lo = v.lon + (px - W / 2) * v.mpp / MKX;
             return { lat: la + (py - H / 2) * mpp / MKY, lon: lo - (px - W / 2) * mpp / MKX, mpp: mpp };
           });

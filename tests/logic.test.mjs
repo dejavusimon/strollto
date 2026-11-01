@@ -59,3 +59,17 @@ test('compare holds 3 on the website and 2 on the phone', () => {
 test('team-only notes are not in the build', () => {
   assert.equal(JSON.stringify(M).includes('Mauricio'), false);
 });
+
+test('every icon the screens use exists in the design system bundle', async () => {
+  const fs = await import('node:fs');
+  const bundle = fs.readFileSync(new URL('../src/ds/bundle.js', import.meta.url), 'utf8');
+  const proto = fs.readFileSync(new URL('../src/generated/prototype.js', import.meta.url), 'utf8');
+  const block = bundle.slice(bundle.indexOf('var PATHS = {'), bundle.indexOf('\n  };', bundle.indexOf('var PATHS = {')));
+  const have = new Set([...block.matchAll(/^\s*'?([a-z][a-z-]*)'?\s*:/gm)].map((m) => m[1]));
+  const used = new Set();
+  for (const m of proto.matchAll(/"StrollTO\.Icon","name":"([a-z][a-z-]*)"/g)) used.add(m[1]);
+  for (const m of proto.matchAll(/"icon":"([a-z][a-z-]*)"/g)) used.add(m[1]);
+  for (const m of proto.matchAll(/\b(?:icon|heart|catIcon|typeIcon|tagIcon|starIcon)\s*:\s*([^,}\n]+)/g)) for (const q of m[1].matchAll(/'([a-z][a-z-]*)'/g)) used.add(q[1]);
+  const missing = [...used].filter((n) => !have.has(n));
+  assert.deepEqual(missing, [], 'src/ds/bundle.js is out of date. Missing icons: ' + missing.join(', ') + '. Upload the latest src/ds/bundle.js.');
+});
