@@ -362,6 +362,22 @@
     var vs = React.useState({ lat: f.lat, lon: f.lon, mpp: f.mpp }), view = vs[0], setView = vs[1];
     var drag = React.useRef(null), moved = React.useRef(false), ptrs = React.useRef({}), pinch = React.useRef(null);
     React.useEffect(function () { setView({ lat: f.lat, lon: f.lon, mpp: f.mpp }); }, [f.key]);
+    /* The page itself must not zoom or scroll while the pointer is on the map: a trackpad pinch (wheel + ctrlKey),
+       Safari's gesture events and the wheel all belong to the map. React's wheel listener is passive and can't stop
+       the browser, so a native, non-passive listener does it. */
+    var rootEl = React.useRef(null);
+    React.useEffect(function () {
+      var el = rootEl.current; if (!el || !el.addEventListener) return;
+      var stop = function (e) { if (e.cancelable) e.preventDefault(); };
+      var opt = { passive: false };
+      el.addEventListener('wheel', stop, opt);
+      el.addEventListener('gesturestart', stop, opt); el.addEventListener('gesturechange', stop, opt); el.addEventListener('gestureend', stop, opt);
+      el.addEventListener('touchmove', function (e) { if (e.touches && e.touches.length > 1 && e.cancelable) e.preventDefault(); }, opt);
+      return function () {
+        el.removeEventListener('wheel', stop, opt);
+        el.removeEventListener('gesturestart', stop, opt); el.removeEventListener('gesturechange', stop, opt); el.removeEventListener('gestureend', stop, opt);
+      };
+    }, []);
     var P = function (lat, lon) { return [W / 2 + (lon - view.lon) * MKX / view.mpp, H / 2 - (lat - view.lat) * MKY / view.mpp]; };
     var inView = function (q, m) { m = m || 30; return q[0] > -m && q[0] < W + m && q[1] > -m && q[1] < H + m; };
     /* onMove: tells the page the map is being operated (drag, wheel, pinch, zoom buttons), so it can move its own bars out of the way */
@@ -619,7 +635,7 @@
       }
       if (!left.length) { if (moved.current) settle(0); drag.current = null; setTimeout(function () { moved.current = false; }, 0); }
     };
-    return h('div', { className: cx('st-cmap', props.className), style: { height: H }, role: 'region', 'aria-label': props.label || 'Map of Toronto strolls' },
+    return h('div', { ref: rootEl, className: cx('st-cmap', props.className), style: { height: H }, role: 'region', 'aria-label': props.label || 'Map of Toronto strolls' },
       h('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, 'aria-hidden': 'true', onPointerDown: onDown, onPointerMove: onMove, onPointerUp: onUp, onPointerCancel: onUp, onPointerLeave: onUp,
         /* onTap: a single tap on the map itself (not a drag, and not on a pin, which stops the click) */
         onClick: function () { if (!moved.current && props.onTap) props.onTap(); },
