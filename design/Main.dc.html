@@ -235,7 +235,7 @@
 </sc-if>
 <sc-if value="{{lm.isMap}}" hint-placeholder-val="{{false}}">
 <div style="position: absolute; inset: 0; z-index: 1; overflow: hidden;">
-<x-import component-from-global-scope="StrollTO.StrollMap" base="{{mp.base}}" strolls="{{mp.strolls}}" selected-id="{{mp.selId}}" active-stop="{{mp.activeStop}}" show-transit="{{mp.transit}}" pick-station="{{mp.pick}}" station="{{mp.station}}" reach-ids="{{mp.reachIds}}" me="{{mp.me}}" max-mpp="{{mp.maxMpp}}" layers="{{mp.layers}}" step-free-only="{{mp.stepFree}}" controls-top="{{mp.ctrlTop}}" on-move="{{mp.onMove}}" on-tap="{{mp.onTap}}" focus="{{mp.focus}}" width="{{mp.w}}" height="{{mp.h}}" on-select="{{mp.onSelect}}" on-stop="{{mp.onStop}}" on-station="{{mp.onStation}}" label="{{mp.label}}"></x-import>
+<x-import component-from-global-scope="StrollTO.StrollMap" base="{{mp.base}}" strolls="{{mp.strolls}}" selected-id="{{mp.selId}}" active-stop="{{mp.activeStop}}" show-transit="{{mp.transit}}" pick-station="{{mp.pick}}" station="{{mp.station}}" reach-ids="{{mp.reachIds}}" me="{{mp.me}}" max-mpp="{{mp.maxMpp}}" layers="{{mp.layers}}" step-free-only="{{mp.stepFree}}" controls-top="{{mp.ctrlTop}}" on-move="{{mp.onMove}}" on-tap="{{mp.onTap}}" on-idle="{{mp.onIdle}}" focus="{{mp.focus}}" width="{{mp.w}}" height="{{mp.h}}" on-select="{{mp.onSelect}}" on-stop="{{mp.onStop}}" on-station="{{mp.onStation}}" label="{{mp.label}}"></x-import>
 <div class="top-follow" style="position: absolute; left: 12px; top: {{mp.btnTop}}; right: 64px; display: flex; flex-wrap: wrap; gap: 8px; z-index: 2;"><sc-if value="{{mp.notClean}}" hint-placeholder-val="{{false}}"><button type="button" class="st-btn st-btn-secondary st-btn-sm" onClick="{{mp.startClean}}" style="box-shadow: var(--shadow-float);"><x-import component-from-global-scope="StrollTO.Icon" name="reset"></x-import><span>Start clean</span></button></sc-if></div>
 <section class="sheet-slide" aria-label="Strolls on the map" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; transform: {{mp.sheetT}}; height: {{mp.sheetH}}px; display: flex; flex-direction: column; background: var(--surface-card); border-radius: 20px 20px 0 0; box-shadow: var(--shadow-sheet);">
 <button type="button" class="st-sheet-handle sheet-grab" aria-expanded="{{mp.openStr}}" aria-label="{{mp.handleLabel}}" onClick="{{mp.toggleSheet}}" onPointerDown="{{mp.onHandleDown}}" onPointerMove="{{mp.onHandleMove}}" onPointerUp="{{mp.onHandleUp}}" onPointerCancel="{{mp.onHandleUp}}"><span></span></button>
@@ -247,10 +247,21 @@
 </div>
 </div>
 </sc-if>
-<div onScroll="{{mp.onSheetScroll}}" onWheel="{{mp.onSheetWheel}}" onTouchStart="{{mp.onSheetTouch}}" onTouchMove="{{mp.onSheetDrag}}" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 14px;">
+<div ref="{{mp.setSheetList}}" onScroll="{{mp.onSheetScroll}}" onWheel="{{mp.onSheetWheel}}" onTouchStart="{{mp.onSheetTouch}}" onTouchMove="{{mp.onSheetDrag}}" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 14px;">
 
 <sc-if value="{{mp.isDetail}}" hint-placeholder-val="{{false}}">
 <div style="margin-left: -12px;"><button type="button" class="st-btn st-btn-tertiary st-btn-sm h-back" onClick="{{mp.closeDetail}}"><x-import component-from-global-scope="StrollTO.Icon" name="back"></x-import><span>All strolls</span></button></div>
+<sc-if value="{{d.stopCard}}" hint-placeholder-val="{{false}}">
+<section aria-labelledby="mstop-title" class="offin" style="display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 14px; background: var(--primary-soft); border: 1.5px solid var(--primary);">
+<div style="display: flex; gap: 10px; align-items: flex-start;"><span aria-hidden="true" style="flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 9999px; background: var(--primary); color: var(--on-primary); font-size: 15px; font-weight: 700;">{{d.stopCard.n}}</span><div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;"><p style="margin: 0; font-size: 13px; line-height: 1.23; color: var(--body);">Stop {{d.stopCard.n}} of {{d.stopCard.of}} on this stroll</p><h3 id="mstop-title" style="margin: 0; font-size: 18px; line-height: 1.3; font-weight: 700; color: var(--ink);">{{d.stopCard.title}}</h3></div><button type="button" class="st-iconbtn" aria-label="Close stop details" onClick="{{d.stopCard.close}}" style="flex: none; margin: -6px -6px 0 0; background: transparent;"><x-import component-from-global-scope="StrollTO.Icon" name="close"></x-import></button></div>
+<sc-if value="{{d.stopCard.hasCat}}" hint-placeholder-val="{{true}}"><div style="display: flex;"><x-import component-from-global-scope="StrollTO.Badge" tone="primary" icon="{{d.stopCard.icon}}">{{d.stopCard.cat}}</x-import></div></sc-if>
+<sc-if value="{{d.stopCard.hasAddress}}" hint-placeholder-val="{{false}}"><p style="margin: 0; display: flex; gap: 6px; align-items: flex-start; font-size: 14px; line-height: 1.43; color: var(--body);"><x-import component-from-global-scope="StrollTO.Icon" name="pin" size="{{n16}}"></x-import><span>{{d.stopCard.address}}</span></p></sc-if>
+<sc-if value="{{d.stopCard.hasStory}}" hint-placeholder-val="{{false}}"><p style="margin: 0; font-size: 15px; line-height: 1.47; color: var(--ink);">{{d.stopCard.story}}</p></sc-if>
+<p style="margin: 0; display: flex; gap: 6px; align-items: center; font-size: 14px; line-height: 1.43; font-weight: 600; color: var(--primary);"><x-import component-from-global-scope="StrollTO.Icon" name="walk" size="{{n16}}"></x-import><span>{{d.stopCard.nextLine}}</span></p>
+<div role="group" aria-label="Other stops" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;"><button type="button" class="st-btn st-btn-secondary st-btn-sm" disabled="{{d.stopCard.noPrev}}" onClick="{{d.stopCard.prev}}" style="justify-content: center;"><x-import component-from-global-scope="StrollTO.Icon" name="back"></x-import><span>Previous stop</span></button><button type="button" class="st-btn st-btn-secondary st-btn-sm" disabled="{{d.stopCard.noNext}}" onClick="{{d.stopCard.next}}" style="justify-content: center;"><span>Next stop</span><x-import component-from-global-scope="StrollTO.Icon" name="arrow-right"></x-import></button></div>
+</section>
+<p style="margin: -4px 0 0; font-size: 13px; line-height: 1.38; color: var(--muted);">About the whole stroll</p>
+</sc-if>
 <x-import component-from-global-scope="StrollTO.PhotoPlate" scene="{{d.scene}}" src="{{d.cover}}" alt="{{d.coverAlt}}" class-name="st-photo-16x9"></x-import>
 <sc-if value="{{d.standIn}}" hint-placeholder-val="{{false}}"><p style="margin: -8px 0 0; font-size: 13px; line-height: 1.38; color: var(--muted);">{{d.standInText}}</p></sc-if>
 <div style="display: flex; flex-wrap: wrap; gap: 6px;"><sc-for list="{{d.badges}}" as="t" hint-placeholder-count="2"><x-import component-from-global-scope="StrollTO.Badge" tone="{{t.tone}}" icon="{{t.icon}}">{{t.text}}</x-import></sc-for></div>
@@ -2832,6 +2843,33 @@ class Component extends DCLogic {
   }
   renderVals() {
     var self = this, P = this.props, S = this.state || {};
+    // Headers follow the scroll: they slide up exactly as far, and as fast, as the page moves; back down the same way.
+    // When the finger rests mid-way the header settles to fully shown or fully hidden.
+    self.follow = function (e, flag) {
+      var t = e && e.target; if (!t) return;
+      if (t !== self.fT) {
+        self.fT = t; self.fY = t.scrollTop; self.fOff = 0; self.fEl = null;
+        for (var a = t.parentElement; a && !self.fEl; a = a.parentElement) self.fEl = a.querySelector ? a.querySelector('.hdr-slide, .top-slide') : null;
+      }
+      var el = self.fEl; if (!el) return;
+      var H = el.scrollHeight || 0, y = Math.max(0, t.scrollTop), dy = y - self.fY; self.fY = y;
+      var off = Math.max(0, Math.min(H, Math.min(y, (self.fOff || 0) + dy)));
+      self.fOff = off;
+      var put = function (o, anim) {
+        el.style.transition = anim ? '' : 'none';
+        el.style.setProperty('--hh', H + 'px'); el.style.setProperty('--hoff', o + 'px');
+        el.style.overflow = o > 0 ? 'hidden' : '';
+      };
+      put(off, false);
+      var hid = off >= H && H > 0;
+      if (hid !== !!(self.state && self.state[flag])) { var pt = {}; pt[flag] = hid; self.setState(pt, function () { put(self.fOff, false); }); }
+      if (self.fSnap) clearTimeout(self.fSnap);
+      self.fSnap = setTimeout(function () {
+        self.fSnap = null; var o = self.fOff || 0; if (o <= 0 || o >= H) { el.style.transition = ''; return; }
+        var to = o > H / 2 && t.scrollTop > H ? H : 0; self.fOff = to; put(to, true);
+        var h2 = to >= H; if (h2 !== !!(self.state && self.state[flag])) { var p2 = {}; p2[flag] = h2; self.setState(p2, function () { put(to, true); }); }
+      }, 160);
+    };
     self.trackTop = function (e) {
       var el = e && e.target; if (!el) return;
       var y = el.scrollTop, max = Math.max(1, el.scrollHeight - el.clientHeight), last = self.ttY || 0; self.ttY = y; self.ttEl = el;
@@ -3637,6 +3675,20 @@ class Component extends DCLogic {
         open: function () { openStroll(selR.id); },
         cityUrl: STROLLTO_URL,
         hasStops: selR.stops.length > 0,
+        stopCard: (function () {
+          var p = mStop != null ? selR.stops[mStop] : null; if (!p) return null;
+          var full = STROLL_BY[selR.id], fs = full && full.stops[mStop] && full.stops[mStop].name === p[3] ? full.stops[mStop] : null;
+          var catL = null; Object.keys(CATS).forEach(function (k) { if (!catL && CATS[k].icon === p[2]) catL = CATS[k].label; });
+          var lg = selR.legs[mStop], story = fs ? String(fs.story || '') : '';
+          if (story.length > 180) story = story.slice(0, 177).replace(/\s+\S*$/, '') + '…';
+          var go = function (k) { var q = selR.stops[k]; if (!q) return; mapSet({ mapStop: k, mapFocus: mapFit([[q[0] - 0.0015, q[1] - 0.002], [q[0] + 0.0015, q[1] + 0.002]], mapH, sheetH, 'stop:' + k + ':' + Date.now()) }); };
+          return { n: mStop + 1, of: selR.stops.length, title: p[3], icon: p[2] || 'pin', cat: catL || 'Stop', hasCat: !!catL,
+            story: story, hasStory: !!story, address: fs && fs.address ? fs.address : '', hasAddress: !!(fs && fs.address),
+            nextLine: lg && selR.stops[mStop + 1] ? 'Next: Stop ' + (mStop + 2) + ' · ' + (lg.minutes != null ? '~' + lg.minutes + ' min walk' : '') : 'Last stop on this stroll',
+            canPrev: mStop > 0, canNext: mStop < selR.stops.length - 1, noPrev: mStop <= 0, noNext: mStop >= selR.stops.length - 1,
+            prev: function () { go(mStop - 1); }, next: function () { go(mStop + 1); },
+            close: function () { mapSet({ mapStop: null }); } };
+        })(),
         stops: selR.stops.map(function (p, i) {
           return { n: i + 1, title: p[3], icon: p[2], current: mStop === i ? 'true' : 'false',
             pick: function () { mapSet({ mapStop: i, mapFocus: mapFit([[p[0] - 0.0015, p[1] - 0.002], [p[0] + 0.0015, p[1] + 0.002]], mapH, sheetH, 'stop:' + i + ':' + Date.now()) }); } };
@@ -3676,8 +3728,9 @@ class Component extends DCLogic {
       lyrPopMaxH: Math.max(220, mapH - MAP_TOP - sheetH - 96) + 'px',
       ctrlTop: (S.mapBusy ? 12 : MAP_TOP + 12), btnTop: (S.mapBusy ? 12 : MAP_TOP + 12) + 'px', sheetT: S.mapBusy ? 'translateY(105%)' : 'none',
       // operating the map hides the bars and the drawer; they stay away until a single tap on the map brings them back
-      onMove: function () { if (!(self.state && self.state.mapBusy)) self.setState({ mapBusy: true }); },
-      onTap: function () { if (self.state && self.state.mapBusy) self.setState({ mapBusy: false }); },
+      onMove: function () { if (self.mapIdleT) { clearTimeout(self.mapIdleT); self.mapIdleT = null; } if (!(self.state && self.state.mapBusy)) self.setState({ mapBusy: true }); },
+      onTap: function () { if (self.mapIdleT) { clearTimeout(self.mapIdleT); self.mapIdleT = null; } if (self.state && self.state.mapBusy) self.setState({ mapBusy: false }); },
+      onIdle: function () { if (self.mapIdleT) clearTimeout(self.mapIdleT); self.mapIdleT = setTimeout(function () { self.mapIdleT = null; if (self.state && self.state.mapBusy) self.setState({ mapBusy: false }); }, 1000); },
       clearStation: function () { mapSet({ mapStation: null, mapPick: false }); },
       // Start clean: the whole city, nothing chosen, default layers and filters, and forget the last stroll
       notClean: !!(selR || mStation || mPick || mNear || mQ || mHideFar || mInts.length || mListOpen || S.mapFocus || S.focusStroll || JSON.stringify(mL) !== JSON.stringify(LYR_DEF)),
@@ -3686,8 +3739,9 @@ class Component extends DCLogic {
       selId: selR ? selR.id : null, activeStop: mStop, transit: mTransit, pick: view === 'pick',
       station: mStation, reachIds: mStation ? reachList.map(function (x) { return x.r.id; }) : null, me: mMe,
       label: 'Map of Toronto with ' + MAP_STROLLS.length + ' strolls. The list below has every stroll, stop and station on the map.',
-      onSelect: function (id) { selectStroll(id); },
-      onStop: function (i) { mapSet({ mapStop: i, mapOpen: true }); },
+      onSelect: function (id) { if (self.mapIdleT) { clearTimeout(self.mapIdleT); self.mapIdleT = null; } self.setState({ mapBusy: false }); selectStroll(id); },
+      onStop: function (i) { if (self.mapIdleT) { clearTimeout(self.mapIdleT); self.mapIdleT = null; } mapSet({ mapStop: i, mapOpen: true, mapBusy: false, sheetFull: false, mapPanel: false }); if (self.sheetListEl) self.sheetListEl.scrollTop = 0; },
+      setSheetList: function (el) { if (el) self.sheetListEl = el; },
       onStation: function (name) { var s = MAP_STATIONS.filter(function (x) { return x.name === name; })[0]; if (s && stationOk(s)) stationRowOf(s).pick(); },
       transitStr: mTransit ? 'true' : 'false', transitLabel: mTransit ? 'Transit on' : 'Transit off',
       toggleTransit: function () { mapSet({ mapTransit: !mTransit }); },
@@ -4442,12 +4496,11 @@ class Component extends DCLogic {
         var hid = landingMode === 'map' ? (!!S.mapBusy || !!S.sheetFull) : !!S.landHide;
         var dir = function (e) {
           self.trackTop(e);
-          var y = e && e.target ? e.target.scrollTop : 0, last = self.landY || 0; self.landY = y;
-          var want = y < 48 ? false : y > last + 2 ? true : y < last - 6 ? false : null;
-          if (want !== null && want !== !!(self.state && self.state.landHide)) self.setState({ landHide: want });
+          var y = e && e.target ? e.target.scrollTop : 0; self.landY = y;
+          self.follow(e, 'landHide');
           return y;
         };
-        return { hidden: hid, h: hid ? '0px' : '320px', ov: hid ? 'hidden' : 'visible', onScroll: dir,
+        return { hidden: hid, h: hid ? '0px' : landingMode === 'map' ? '320px' : 'calc(var(--hh, 320px) - var(--hoff, 0px))', ov: hid ? 'hidden' : 'visible', onScroll: dir,
           trayT: S.listMoving ? 'translateY(110%)' : 'none',
           // the Compare tray belongs to Explore and List; the Map tab has its own drawer and Layers, so it stays out of the way there
           trayOn: cmp.has && landingMode !== 'map',
@@ -4472,12 +4525,10 @@ class Component extends DCLogic {
       // overview, Saved and Compare: the blue bar slides away while scrolling down; the round back button stays
       hdr: (function () {
         var hid = !!S.hdrHide;
-        return { hidden: hid, h: hid ? '0px' : '120px',
+        return { hidden: hid, h: hid ? '0px' : 'calc(var(--hh, 120px) - var(--hoff, 0px))',
           onScroll: function (e) {
             self.trackTop(e);
-            var y = e && e.target ? e.target.scrollTop : 0, last = self.hdrY || 0; self.hdrY = y;
-            var want = y < 48 ? false : y > last + 2 ? true : y < last - 6 ? false : null;
-            if (want !== null && want !== !!(self.state && self.state.hdrHide)) self.setState({ hdrHide: want });
+            self.follow(e, 'hdrHide');
           } };
       })(),
       // buddy view: Map view is a circle while walking and opens into a pill when standing still (prototype: simulated)
@@ -4494,9 +4545,7 @@ class Component extends DCLogic {
           onScroll: function (e) {
             self.trackTop(e);
             var y = e && e.target ? e.target.scrollTop : 0, last = self.ovY || 0; self.ovY = y;
-            var hy = self.hdrY || 0; self.hdrY = y;
-            var hw = y < 48 ? false : y > hy + 2 ? true : y < hy - 6 ? false : null;
-            if (hw !== null && hw !== !!(self.state && self.state.hdrHide)) self.setState({ hdrHide: hw });
+            self.follow(e, 'hdrHide');
             if (y > 0 && Math.abs(y - last) > 1 && !(self.state && self.state.ovMoving)) self.setState({ ovMoving: true });
             if (self.ovT) clearTimeout(self.ovT);
             self.ovT = setTimeout(function () { self.ovT = null; if (self.state && self.state.ovMoving) self.setState({ ovMoving: false }); }, 1200);
@@ -4517,15 +4566,14 @@ class Component extends DCLogic {
           // Buddy and Board: always on screen as round icon buttons; they open into labelled pills while scrolling up
           padX: po ? '16px' : '0px', labW: po ? '72px' : '0px', labM: po ? '8px' : '0px', labO: po ? '1' : '0', cntPos: po ? 'static' : 'absolute', cntM: po ? '8px' : '0px',
           // Next stop and Skip: out of the way while scrolling either way, back after 1 s of stillness
-          actT: mv ? 'translateY(16px)' : 'none', actO: mv ? '0' : '1', actV: mv ? 'hidden' : 'visible', actPE: mv ? 'none' : 'auto', actHidden: mv ? 'true' : 'false', hdrH: c ? '0px' : '120px', floatT: c ? 'translateY(12px)' : 'none', floatO: c ? '0' : '1', floatV: c ? 'hidden' : 'visible', floatPE: c ? 'none' : 'auto', floatHidden: c ? 'true' : 'false',
+          actT: mv ? 'translateY(16px)' : 'none', actO: mv ? '0' : '1', actV: mv ? 'hidden' : 'visible', actPE: mv ? 'none' : 'auto', actHidden: mv ? 'true' : 'false', hdrH: c ? '0px' : 'calc(var(--hh, 120px) - var(--hoff, 0px))', floatT: c ? 'translateY(12px)' : 'none', floatO: c ? '0' : '1', floatV: c ? 'hidden' : 'visible', floatPE: c ? 'none' : 'auto', floatHidden: c ? 'true' : 'false',
           onScroll: function (e) {
             self.trackTop(e);
             var y = e && e.target ? e.target.scrollTop : 0, last = self.lastY || 0; self.lastY = y;
-            var want = y < 48 ? false : y > last + 2 ? true : y < last - 6 ? false : null;
+            self.follow(e, 'stopCollapsed');
             var patch = {}, up = y < last - 6, down = y > last + 2;
             if (up && !(self.state && self.state.pillsOpen)) patch.pillsOpen = true;
             if (down && self.state && self.state.pillsOpen) patch.pillsOpen = false;
-            if (want !== null && want !== !!(self.state && self.state.stopCollapsed)) patch.stopCollapsed = want;
             var fold = !!(self.state && self.state.routeFold);
             if (!fold && down && y > 60) patch.routeFold = true; else if (fold && y < 24) patch.routeFold = false;
             if (y > 0 && Math.abs(y - last) > 1 && !(self.state && self.state.stopMoving)) patch.stopMoving = true;

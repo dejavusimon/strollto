@@ -365,9 +365,11 @@
     var P = function (lat, lon) { return [W / 2 + (lon - view.lon) * MKX / view.mpp, H / 2 - (lat - view.lat) * MKY / view.mpp]; };
     var inView = function (q, m) { m = m || 30; return q[0] > -m && q[0] < W + m && q[1] > -m && q[1] < H + m; };
     /* onMove: tells the page the map is being operated (drag, wheel, pinch, zoom buttons), so it can move its own bars out of the way */
-    var busy = function () { if (props.onMove) props.onMove(); };
+    var idleT = React.useRef(null);
+    var settle = function (ms) { if (idleT.current) clearTimeout(idleT.current); idleT.current = setTimeout(function () { idleT.current = null; if (props.onIdle) props.onIdle(); }, ms); };
+    var busy = function () { if (idleT.current) { clearTimeout(idleT.current); idleT.current = null; } if (props.onMove) props.onMove(); };
     var zoom = function (k, at) {
-      busy();
+      busy(); settle(350);
       setView(function (v) {
         var mpp = Math.max(1.2, Math.min(props.maxMpp || 160, v.mpp / k));
         if (!at) return { lat: v.lat, lon: v.lon, mpp: mpp };
@@ -608,13 +610,14 @@
       if (e && e.pointerId != null) delete ptrs.current[e.pointerId]; else ptrs.current = {};
       var left = Object.keys(ptrs.current);
       if (pinch.current && left.length < 2) {
+        if (!left.length) settle(0);
         pinch.current = null;
         // the finger still down carries on as a drag, from where the map is now
         if (left.length === 1) { var q = ptrs.current[left[0]], v = viewNow.current; drag.current = { x: q.x, y: q.y, lat: v.lat, lon: v.lon }; }
         else drag.current = null;
         return;
       }
-      if (!left.length) { drag.current = null; setTimeout(function () { moved.current = false; }, 0); }
+      if (!left.length) { if (moved.current) settle(0); drag.current = null; setTimeout(function () { moved.current = false; }, 0); }
     };
     return h('div', { className: cx('st-cmap', props.className), style: { height: H }, role: 'region', 'aria-label': props.label || 'Map of Toronto strolls' },
       h('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, 'aria-hidden': 'true', onPointerDown: onDown, onPointerMove: onMove, onPointerUp: onUp, onPointerCancel: onUp, onPointerLeave: onUp,
@@ -623,7 +626,7 @@
         onWheel: function (e) {
           /* Smooth zoom: scaled by how far the wheel or trackpad moved, anchored at the pointer. A mouse notch (~100)
              zooms ~1.2x; a trackpad's many small events add up gently; pinch (ctrlKey) gets a little more. */
-          busy();
+          busy(); settle(350);
           var dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1);
           dy = Math.max(-240, Math.min(240, dy));
           var k = Math.exp(-dy * (e.ctrlKey ? 0.008 : 0.0018));
