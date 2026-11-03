@@ -654,7 +654,7 @@
             return { lat: la + (py - H / 2) * mpp / MKY, lon: lo - (px - W / 2) * mpp / MKX, mpp: mpp };
           });
         } }, kids),
-      h('div', { className: 'st-cmap-zoom', style: props.controlsTop != null ? { top: props.controlsTop } : undefined },
+      props.hideZoom ? null : h('div', { className: 'st-cmap-zoom', style: props.controlsBottom != null ? { top: 'auto', bottom: props.controlsBottom } : props.controlsTop != null ? { top: props.controlsTop } : undefined },
         h('button', { type: 'button', className: 'st-iconbtn st-iconbtn-float', 'aria-label': props.zoomInLabel || 'Zoom in', onClick: function () { zoom(1.8); } }, h(Icon, { name: 'plus' })),
         h('button', { type: 'button', className: 'st-iconbtn st-iconbtn-float', 'aria-label': props.zoomOutLabel || 'Zoom out', onClick: function () { zoom(1 / 1.8); } }, h(Icon, { name: 'minus' }))));
   }
