@@ -37,3 +37,4 @@ A prototype walk companion for the City of Toronto's StrollTO self-guided stroll
 ## Where this is heading
 
 `docs/ROADMAP.md` has the plan for replacing the Claude Design runtime with real React components, one screen at a time, while keeping `npm run check` green.
+- Installable app: `public/manifest.webmanifest` and `public/icons/` (with Apple tags in `index.html`). Android opens scanned links in the installed app (`handle_links`, `launch_handler`). For iPhone home-screen testing, Send to my phone shows a temporary 4-character plan code (`planCode` / `readPlanCode` in the design file); the installed phone app (`installed` prop, or `?app=1` to fake it) has "Have a code from the website?" on Explore.

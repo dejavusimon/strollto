@@ -52,8 +52,20 @@
 </div>
 <div style="flex: none; position: relative; z-index: 30; margin: 0 16px 8px;"><div role="search" style="position: relative;"><label for="q-ph" class="st-sr">{{srch.label}}</label><span aria-hidden="true" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); display: flex; color: var(--muted); pointer-events: none;"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M20 20l-4.6-4.6"></path></svg></span><input id="q-ph" ref="{{srch.setEl}}" type="search" autocomplete="off" spellcheck="false" placeholder="{{srch.placeholder}}" aria-controls="q-ph-list" onInput="{{srch.onInput}}" onKeyDown="{{srch.onKey}}" class="wq-in" style="box-sizing: border-box; width: 100%; min-height: 48px; padding: 0 48px 0 44px; border: 1.5px solid var(--border-strong); border-radius: 9999px; background: var(--canvas); color: var(--ink); font: inherit; font-size: 16px;"><sc-if value="{{srch.q}}" hint-placeholder-val="{{false}}"><button type="button" class="st-focus" aria-label="Clear search" onClick="{{srch.clear}}" style="position: absolute; right: 2px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 44px; height: 44px; margin: 0; padding: 0; border: 0; border-radius: 9999px; background: transparent; color: var(--muted); cursor: pointer;"><x-import component-from-global-scope="StrollTO.Icon" name="close" size="{{n18}}"></x-import></button></sc-if></div><p role="status" class="st-sr">{{srch.status}}</p><sc-if value="{{srch.has}}" hint-placeholder-val="{{false}}"><div id="q-ph-list" aria-label="Search suggestions" style="position: absolute; left: 0; right: 0; top: calc(100% + 6px); max-height: 420px; overflow-y: auto; padding: 6px 0; border-radius: 14px; border: 1px solid var(--hairline); background: var(--surface-card); box-shadow: var(--shadow-sheet);"><sc-for list="{{srch.groups}}" as="g" hint-placeholder-count="3"><div role="group" aria-label="{{g.head}}" style="padding: 2px 0 4px;"><p aria-hidden="true" style="margin: 0; padding: 8px 16px 4px; font-size: 12px; line-height: 1.3; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: var(--muted);">{{g.head}}</p><sc-for list="{{g.items}}" as="h" hint-placeholder-count="2"><button type="button" data-hit="1" class="st-focus wq" aria-label="{{h.aria}}" onClick="{{h.pick}}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; margin: 0; padding: 6px 16px; border: 0; background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer;"><span aria-hidden="true" style="flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9999px; background: var(--primary-soft); color: var(--primary);"><x-import component-from-global-scope="StrollTO.Icon" name="{{h.icon}}" size="{{n16}}"></x-import></span><span style="min-width: 0; display: flex; flex-direction: column; gap: 1px;"><span style="font-size: 15px; line-height: 1.3; font-weight: 600;">{{h.title}}</span><span style="font-size: 13px; line-height: 1.3; color: var(--muted);">{{h.sub}}</span></span></button></sc-for><sc-if value="{{g.more}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 2px 16px 6px 60px; font-size: 13px; line-height: 1.38; color: var(--muted);">{{g.moreText}}</p></sc-if></div></sc-for><sc-if value="{{srch.none}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 12px 16px; font-size: 15px; line-height: 1.47; color: var(--body);">{{srch.noneText}}</p></sc-if></div></sc-if></div>
 </div>
+<sc-if value="{{appCode.isOpen}}" hint-placeholder-val="{{false}}">
+<div aria-hidden="true" onClick="{{appCode.close}}" style="position: absolute; inset: 0; z-index: 44; background: var(--scrim);"></div>
+<section role="dialog" aria-modal="true" aria-labelledby="code-title" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 45; display: flex; flex-direction: column; gap: 12px; padding: 20px 16px 24px; border-radius: 20px 20px 0 0; background: var(--surface-card); box-shadow: var(--shadow-sheet);">
+<div style="display: flex; align-items: flex-start; gap: 12px;"><h2 id="code-title" style="flex: 1; margin: 0; font-size: 20px; line-height: 1.3; font-weight: 700;">Open a stroll from the website</h2><x-import component-from-global-scope="StrollTO.IconButton" icon="close" label="Close" variant="soft" on-click="{{appCode.close}}"></x-import></div>
+<p style="margin: 0; font-size: 15px; line-height: 1.47; color: var(--body);">On the website, open your stroll and press <strong>Send to my phone</strong>. Enter the 4-character code shown under the QR code.</p>
+<label for="code-in" style="font-size: 14px; font-weight: 500;">Code</label>
+<div style="display: flex; gap: 8px; margin-top: -6px;"><input id="code-in" type="text" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. K37F" value="{{appCode.val}}" onInput="{{appCode.onInput}}" aria-invalid="{{appCode.invalid}}" aria-describedby="code-msg" style="flex: 1; min-width: 0; min-height: 52px; padding: 0 14px; border: 1.5px solid {{appCode.bd}}; border-radius: 10px; background: var(--canvas); color: var(--ink); font: inherit; font-size: 24px; font-weight: 700; letter-spacing: 6px; text-transform: uppercase;"><button type="button" class="st-focus st-btn st-btn-primary" onClick="{{appCode.go}}" style="min-height: 52px; padding: 0 20px;">Open</button></div>
+<p id="code-msg" role="status" style="margin: 0; min-height: 20px; font-size: 14px; line-height: 1.43; color: var(--error);">{{appCode.msg}}</p>
+<p style="margin: 0; font-size: 13px; line-height: 1.38; color: var(--muted);">Temporary, for testing only. An iPhone can’t open a home-screen app from a scanned QR code, so this code stands in for it. The finished StrollTO will be a real app that the QR code opens directly.</p>
+</section>
+</sc-if>
 <sc-if value="{{lm.isExplore}}" hint-placeholder-val="{{false}}">
 <main ref="{{setScroll}}" onScroll="{{top.onExScroll}}" style="position: relative; flex: 1; min-height: 0; overflow-y: auto; padding: 16px 16px 96px; display: flex; flex-direction: column; gap: 22px;">
+<sc-if value="{{appCode.show}}" hint-placeholder-val="{{false}}"><button type="button" class="st-focus" aria-haspopup="dialog" onClick="{{appCode.open}}" style="display: flex; align-items: center; gap: 10px; width: 100%; min-height: 52px; margin: 0; padding: 8px 14px; border: 1px dashed var(--border-strong); border-radius: 14px; background: var(--surface-soft); color: var(--ink); font: inherit; text-align: left; cursor: pointer;"><x-import component-from-global-scope="StrollTO.Icon" name="qr"></x-import><span style="flex: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 15px; line-height: 1.3; font-weight: 600;">Have a code from the website?</span><span style="font-size: 13px; line-height: 1.3; color: var(--muted);">Open a stroll you planned on a computer</span></span><x-import component-from-global-scope="StrollTO.Icon" name="chevron" size="{{n18}}"></x-import></button></sc-if>
 <div style="display: flex; flex-direction: column; gap: 4px;">
 <h2 style="margin: 0; font-size: 28px; line-height: 1.29; font-weight: 700;">Find a stroll</h2>
 <p style="margin: 0; font-size: 16px; line-height: 1.5; color: var(--body);">Answer what you like. Suggestions update as you go. Every question is optional.</p>
@@ -2055,13 +2067,21 @@
 </sc-if>
 
 <sc-if value="{{web.qrOpen}}" hint-placeholder-val="{{false}}">
-<div aria-hidden="true" style="position: absolute; inset: 0; z-index: 8; background: var(--scrim);"></div>
-<section role="dialog" aria-modal="true" aria-labelledby="qr-title" style="position: absolute; left: 50%; top: 50%; z-index: 9; width: 520px; transform: translate(-50%, -50%); display: flex; flex-direction: column; gap: 16px; padding: 28px; border-radius: 20px; background: var(--surface-card); box-shadow: var(--shadow-sheet);">
+<div aria-hidden="true" style="position: absolute; inset: 0; z-index: 34; background: var(--scrim);"></div>
+<section role="dialog" aria-modal="true" aria-labelledby="qr-title" style="position: absolute; left: 50%; top: 50%; z-index: 35; width: 560px; max-height: calc(100% - 48px); overflow-y: auto; transform: translate(-50%, -50%); display: flex; flex-direction: column; gap: 16px; padding: 28px; border-radius: 20px; background: var(--surface-card); box-shadow: var(--shadow-sheet);">
 <div style="display: flex; align-items: flex-start; gap: 12px;"><div style="flex: 1;"><h2 id="qr-title" style="margin: 0; font-size: 24px; font-weight: 700;">Send to my phone</h2><p style="margin: 4px 0 0; font-size: 15px; color: var(--muted);">{{web.qrWhat}}</p></div><x-import component-from-global-scope="StrollTO.IconButton" icon="close" variant="soft" label="Close" on-click="{{web.closeQr}}"></x-import></div>
 <div style="display: flex; gap: 20px; align-items: center;">
 <div style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px;"><button type="button" class="st-focus h-qr" onClick="{{web.simOpen}}" aria-label="{{web.qrAria}}" title="{{web.qrAria}}" style="position: relative; display: block; margin: 0; padding: 10px; border-radius: 14px; background: var(--surface-card); border: 1px solid var(--hairline); cursor: pointer;"><svg aria-hidden="true" width="180" height="180" viewBox="{{web.qrBox}}" style="display: block; border-radius: 8px;"><rect x="{{web.qrPad}}" y="{{web.qrPad}}" width="{{web.qrFull}}" height="{{web.qrFull}}" style="fill: var(--surface-card);"></rect><path fill-rule="evenodd" d="{{web.qrPath}}" style="fill: var(--ink);"></path></svg><span aria-hidden="true" style="position: absolute; right: -8px; bottom: -8px; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 9999px; background: var(--ink); color: var(--surface-card); font-size: 11px; font-weight: 700; line-height: 1.3; white-space: nowrap;">Tap to try</span></button><span style="font-size: 12px; line-height: 1.33; color: var(--muted); text-align: center; max-width: 180px;">{{web.qrCaption}}</span></div>
-<ol style="margin: 0; padding: 0 0 0 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.47;"><li>Open your phone’s camera.</li><li>Point it at the code.</li><li>Tap the link. StrollTO opens right here, on your phone.</li></ol>
+<ol style="margin: 0; padding: 0 0 0 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.47;"><li>Open your phone’s camera.</li><li>Point it at the code.</li><li>Tap the link. StrollTO opens on your phone (in the StrollTO app, if it’s installed on an Android phone).</li></ol>
 </div>
+<sc-if value="{{web.hasCode}}" hint-placeholder-val="{{true}}"><div style="display: flex; gap: 16px; align-items: center; padding: 14px 16px; border-radius: 14px; background: var(--surface-soft); border: 1px dashed var(--border-strong);">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+<p style="margin: 0; font-size: 15px; line-height: 1.4; font-weight: 600;">StrollTO on an iPhone home screen?</p>
+<p style="margin: 0; font-size: 14px; line-height: 1.43; color: var(--body);">Open it, tap <strong>Have a code from the website?</strong> and enter this code.{{web.codeOrder}}</p>
+<p style="margin: 0; font-size: 13px; line-height: 1.38; color: var(--muted);">Temporary, for testing only: an iPhone can’t open a home-screen app from a scanned code. The finished StrollTO will be a real app that the QR code above opens directly.</p>
+</div>
+<p aria-label="{{web.codeAria}}" style="flex: none; margin: 0; padding: 8px 14px; border-radius: 10px; background: var(--surface-card); border: 1.5px solid var(--ink); font-size: 30px; line-height: 1.2; font-weight: 700; letter-spacing: 6px; font-variant-numeric: tabular-nums;">{{web.appCode}}</p>
+</div></sc-if>
 <p style="margin: 0; font-size: 15px; line-height: 1.47; color: var(--body);">{{web.savedLine}} No account, and nothing is sent: the link itself carries what you were looking at.</p>
 <label for="qr-link" style="font-size: 14px; font-weight: 500;">Or copy the link</label>
 <div style="display: flex; gap: 8px; margin-top: -8px;"><input id="qr-link" readonly value="{{web.link}}" style="flex: 1; min-width: 0; min-height: 48px; padding: 0 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--canvas); color: var(--ink); font: inherit; font-size: 15px;"><x-import component-from-global-scope="StrollTO.Button" variant="secondary" on-click="{{web.copy}}">Copy</x-import></div>
@@ -2089,6 +2109,28 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"locationOn":{"editor":"boolean","default":true,"section":"Walking conditions"},"offline":{"editor":"boolean","default":false,"section":"Walking conditions"},"screen":{"editor":null},"strollId":{"editor":null},"stopIndex":{"editor":null},"banner":{"editor":null},"frameHeight":{"editor":null},"scrollToMap":{"editor":null},"scrollTarget":{"editor":null},"expanded":{"editor":null},"playing":{"editor":null},"persist":{"editor":null},"nextHref":{"editor":null},"locationHref":{"editor":null},"homeHref":{"editor":null},"links":{"editor":null},"cameraAsk":{"editor":null},"buddyUsed":{"editor":null},"landingMode":{"editor":null},"mapSel":{"editor":null},"mapStation":{"editor":null},"mapPick":{"editor":null},"mapReach":{"editor":null},"mapTransit":{"editor":null},"mapNear":{"editor":null},"mapMe":{"editor":null},"scanState":{"editor":null},"stampsDone":{"editor":null},"exInterests":{"editor":null},"exTime":{"editor":null},"exNeeds":{"editor":null},"exStation":{"editor":null},"exMe":{"editor":null},"boardSheet":{"editor":null},"missionOn":{"editor":null},"clueState":{"editor":null},"boardOpen":{"editor":null},"gettingThere":{"editor":null},"device":{"editor":null},"desktopScreen":{"editor":null},"compare":{"editor":null},"qrOpen":{"editor":null},"fromDesktop":{"editor":null},"lang":{"editor":null},"skip":{"editor":null},"order":{"editor":null},"q":{"editor":null},"planOpen":{"editor":null},"skipAsk":{"editor":null},"phoneSim":{"editor":null},"cmpAdd":{"editor":null},"mapLayers":{"editor":null},"mapPanel":{"editor":null},"mapHideFar":{"editor":null},"mapInts":{"editor":null},"mapListOpen":{"editor":null},"offTrack":{"editor":null},"demo":{"editor":null},"$preview":{"width":399,"height":836}}'>
 var STROLL_KEY = 'strollto.prototype.v3';
+// Plan code: 4 characters that carry a guided stroll and the stops left out of it, so an iPhone's home-screen app
+// (which a scanned QR can't open) can still pick up a plan from the website. Temporary, for testing only.
+var CODE_ABC = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';   // no 0/O, 1/I/L
+var CODE_IDS = ['guildwood', 'bloorwest', 'danforth', 'westqueenwest', 'littleportugal', 'beaches', 'cabbagetown', 'islington', 'wexford', 'weston'];
+var CODE_N = 524288, CODE_MUL = 362437, CODE_INV = (function () { var x = CODE_MUL; for (var i = 0; i < 6; i++) x = ((x * ((2 - CODE_MUL * x % CODE_N) % CODE_N + CODE_N)) % CODE_N); return x; })();
+function planCode(id, skipped) {
+  var i = CODE_IDS.indexOf(id); if (i < 0) return '';
+  var m = 0; (skipped || []).forEach(function (k) { if (k >= 0 && k < 15) m |= (1 << k); });
+  var w = ((i * 32768 + m) * CODE_MUL) % CODE_N, s = '';
+  for (var d = 0; d < 4; d++) { s = CODE_ABC.charAt(w % 31) + s; w = Math.floor(w / 31); }
+  return s;
+}
+function readPlanCode(raw) {
+  var s = String(raw || '').toUpperCase().replace(/[^0-9A-Z]/g, ''); if (s.length !== 4) return null;
+  var w = 0; for (var d = 0; d < 4; d++) { var c = CODE_ABC.indexOf(s.charAt(d)); if (c < 0) return null; w = w * 31 + c; }
+  if (w >= CODE_N) return null;
+  var v = (w * CODE_INV) % CODE_N, id = CODE_IDS[Math.floor(v / 32768)], m = v % 32768, st = id && STROLL_BY[id];
+  if (!st || m >= (1 << st.stops.length)) return null;
+  var skip = []; for (var k = 0; k < st.stops.length; k++) if (m & (1 << k)) skip.push(k);
+  if (skip.length >= st.stops.length) return null;
+  return { id: id, skip: skip };
+}
 var CATS = {
   history: { label: 'History', icon: 'landmark' },
   food: { label: 'Food and drink', icon: 'food' },
@@ -4366,6 +4408,10 @@ class Component extends DCLogic {
     web.isYou = dScreen === 'you'; web.youCur = dScreen === 'you' ? 'page' : 'false';
     web.goYou = function () { dGo('you'); };
     web.cmpAddOpen = isDesktop && cmp.adder.isOpen;
+    web.hasCode = (dScreen === 'stroll' || dScreen === 'seo') && CODE_IDS.indexOf(s.id) >= 0;
+    web.appCode = web.hasCode ? planCode(s.id, toOrig(skipList)) : '';
+    web.codeAria = 'Code ' + web.appCode.split('').join(' ');
+    web.codeOrder = reordered ? ' It keeps the stops you picked, not their new order.' : '';
     // the Find a stroll column stays pinned and runs down the window, leaving room for the buddy under it
     web.findMaxH = Math.max(320, dMapH - 16 - 108) + 'px';
     // Walking buddy (placeholder for the future AI buddy): on the website's Explore page it walks people through how to try the prototype,
@@ -4661,7 +4707,20 @@ class Component extends DCLogic {
     return {
       yes: true, nil: null, n16: 16, n18: 18, n29: 29, n36: 36,
       demo: !!P.demo, notDemo: !P.demo,
-      cmp: cmp, featured: featured, web: web, tour: tour, isCompare: screen === 'compare', plan: plan, skp: skp, srch: srch, gal: gal,
+      cmp: cmp, featured: featured, web: web, tour: tour,
+      appCode: (function () {
+        var bad = !!S.codeBad;
+        return { show: !!P.installed, isOpen: !!S.codeOpen, val: S.codeVal || '', msg: bad ? 'That code doesn’t match a stroll. Check the 4 characters on the website and try again.' : '',
+          invalid: bad ? 'true' : 'false', bd: bad ? 'var(--error)' : 'var(--border-strong)',
+          open: function () { self.setState({ codeOpen: true, codeVal: '', codeBad: false }, function () { setTimeout(function () { var el = document.getElementById('code-in'); if (el) el.focus(); }, 50); }); },
+          close: function () { self.setState({ codeOpen: false, codeVal: '', codeBad: false }); },
+          onInput: function (e) { self.setState({ codeVal: (e && e.target ? e.target.value : '').toUpperCase(), codeBad: false }); },
+          go: function () {
+            var r = readPlanCode(self.state && self.state.codeVal); if (!r) { self.setState({ codeBad: true }); return; }
+            var so = Object.assign({}, (self.state && self.state.skip) || {}); so[r.id] = r.skip;
+            self.setState({ codeOpen: false, codeVal: '', codeBad: false, screen: 'overview', strollId: r.id, sharedIn: true, fromDesktop: true, banner: null, skip: so, expanded: false });
+          } };
+      })(), isCompare: screen === 'compare', plan: plan, skp: skp, srch: srch, gal: gal,
       no: false, setBest: function (el) { if (el) self.bestEl = el; }, bs: bs, msn: msn, setMission: function (el) { if (el) self.missionEl = el; }, ex: ex, board: board, sh: sh, setBoard: function (el) { if (el) self.boardEl = el; },
       stamp: stamp, scan: scan, pass: pass,
       isScan: screen === 'scan', isPassport: screen === 'passport',

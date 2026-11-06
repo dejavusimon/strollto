@@ -26,6 +26,8 @@ if (!params.has('s') && params.get('stroll') && matchMedia('(max-width: 760px)')
 const small = matchMedia('(max-width: 760px)').matches;
 const phoneView = forced === 'phone' || (forced !== 'computer' && (small || deepLink()));
 const fullScreenPhone = phoneView && small;
+// Running as the installed app (Android: installed from Chrome; iPhone: added to the home screen). ?app=1 fakes it for testing.
+const installed = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true || params.get('app') === '1';
 
 // The site's own address: QR codes and copied links point here.
 const siteUrl = location.origin + location.pathname.replace(/index\.html$/, '');
@@ -50,7 +52,7 @@ function phoneSize() {
 }
 
 const props = phoneView
-  ? Object.assign({ demo: true, persist: true }, fullScreenPhone ? Object.assign({ bare: true }, phoneSize()) : { frameHeight: 812 })
+  ? Object.assign({ demo: true, persist: true, installed }, fullScreenPhone ? Object.assign({ bare: true }, phoneSize()) : { frameHeight: 812 })
   : Object.assign({ device: 'desktop', demo: true, siteUrl: hosted ? siteUrl : '', realBrowser: true }, siteSize());
 
 const app = mountPrototype(frame, { props });
