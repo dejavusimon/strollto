@@ -30,12 +30,16 @@ html[data-view="computer"] .pg-stage { padding: 0; justify-content: flex-start; 
 /* Phone on a phone: no frame, no scaling, the app fills the screen under a slim bar. */
 html[data-view="phone"], html[data-view="phone"] body { height: 100%; overflow: hidden; overscroll-behavior: none; }
 html[data-view="phone"] body { background: var(--canvas); }
-html[data-view="phone"] .pg-bar { gap: 6px 8px; padding-top: calc(6px + env(safe-area-inset-top, 0px)); padding-bottom: 6px; }
 html[data-view="phone"] .pg-title, html[data-view="phone"] .pg-note { display: none; }
-html[data-view="phone"] .pg-btn { min-height: 36px; padding: 0 12px; font-size: 13px; }
+/* phone: one slim row, as little height as possible */
+html[data-view="phone"] .pg-bar { flex-wrap: nowrap; gap: 6px; padding: calc(4px + env(safe-area-inset-top, 0px)) max(8px, env(safe-area-inset-right, 0px)) 4px max(8px, env(safe-area-inset-left, 0px)); }
+html[data-view="phone"] .pg-tag { min-width: 0; overflow: hidden; text-overflow: ellipsis; padding: 2px 8px; font-size: 11px; border-width: 1px; }
+html[data-view="phone"] .pg-sp { flex: 1 0 0; min-width: 0; }
+html[data-view="phone"] .pg-btn { flex: none; min-height: 28px; padding: 0 10px; border-width: 1px; font-size: 12px; white-space: nowrap; }
 html[data-view="phone"] .pg-stage { padding: 0; display: block; }
 html[data-view="phone"] .pg-fit { width: auto !important; height: auto !important; }
 html[data-view="phone"] .pg-frame { position: static; transform: none !important; width: 100% !important; height: auto !important; display: flex; justify-content: center; }
+#vh-probe { position: fixed; left: 0; top: 0; bottom: 0; width: 0; pointer-events: none; visibility: hidden; }
 #inset-probe { position: fixed; left: 0; bottom: 0; width: 0; height: 0; padding-bottom: env(safe-area-inset-bottom, 0px); pointer-events: none; visibility: hidden; }
 
 .pg-help { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 16px; background: rgba(31, 36, 48, 0.55); }

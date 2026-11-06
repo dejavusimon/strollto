@@ -45,13 +45,31 @@
 <span>You’re offline. Strolls you’ve opened are saved on this phone.</span>
 </div>
 </sc-if>
-<div role="group" aria-label="How to browse strolls" style="flex: none; display: flex; margin: 8px 16px; padding: 4px; border-radius: 12px; background: var(--surface-strong);">
+<div role="group" aria-label="How to browse strolls" class="ptour-modes" style="flex: none; display: flex; margin: 8px 16px; padding: 4px; border-radius: 12px; background: var(--surface-strong);">
 <button type="button" class="st-focus" aria-pressed="{{lm.exStr}}" onClick="{{lm.toExplore}}" style="flex: 1; min-height: 44px; margin: 0; border: 0; border-radius: 9px; font: inherit; font-size: 15px; font-weight: 600; color: var(--ink); background: {{lm.exBg}}; box-shadow: {{lm.exSh}}; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><x-import component-from-global-scope="StrollTO.Icon" name="globe" size="{{n18}}"></x-import><span>Explore</span></button>
 <button type="button" class="st-focus" aria-pressed="{{lm.listStr}}" onClick="{{lm.toList}}" style="flex: 1; min-height: 44px; margin: 0; border: 0; border-radius: 9px; font: inherit; font-size: 15px; font-weight: 600; color: var(--ink); background: {{lm.listBg}}; box-shadow: {{lm.listSh}}; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><x-import component-from-global-scope="StrollTO.Icon" name="layers" size="{{n18}}"></x-import><span>List</span></button>
 <button type="button" class="st-focus" aria-pressed="{{lm.mapStr}}" onClick="{{lm.toMap}}" style="flex: 1; min-height: 44px; margin: 0; border: 0; border-radius: 9px; font: inherit; font-size: 15px; font-weight: 600; color: var(--ink); background: {{lm.mapBg}}; box-shadow: {{lm.mapSh}}; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;"><x-import component-from-global-scope="StrollTO.Icon" name="pin" size="{{n18}}"></x-import><span>Map</span></button>
 </div>
 <div style="flex: none; position: relative; z-index: 30; margin: 0 16px 8px;"><div role="search" style="position: relative;"><label for="q-ph" class="st-sr">{{srch.label}}</label><span aria-hidden="true" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); display: flex; color: var(--muted); pointer-events: none;"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M20 20l-4.6-4.6"></path></svg></span><input id="q-ph" ref="{{srch.setEl}}" type="search" autocomplete="off" spellcheck="false" placeholder="{{srch.placeholder}}" aria-controls="q-ph-list" onInput="{{srch.onInput}}" onKeyDown="{{srch.onKey}}" class="wq-in" style="box-sizing: border-box; width: 100%; min-height: 48px; padding: 0 48px 0 44px; border: 1.5px solid var(--border-strong); border-radius: 9999px; background: var(--canvas); color: var(--ink); font: inherit; font-size: 16px;"><sc-if value="{{srch.q}}" hint-placeholder-val="{{false}}"><button type="button" class="st-focus" aria-label="Clear search" onClick="{{srch.clear}}" style="position: absolute; right: 2px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 44px; height: 44px; margin: 0; padding: 0; border: 0; border-radius: 9999px; background: transparent; color: var(--muted); cursor: pointer;"><x-import component-from-global-scope="StrollTO.Icon" name="close" size="{{n18}}"></x-import></button></sc-if></div><p role="status" class="st-sr">{{srch.status}}</p><sc-if value="{{srch.has}}" hint-placeholder-val="{{false}}"><div id="q-ph-list" aria-label="Search suggestions" style="position: absolute; left: 0; right: 0; top: calc(100% + 6px); max-height: 420px; overflow-y: auto; padding: 6px 0; border-radius: 14px; border: 1px solid var(--hairline); background: var(--surface-card); box-shadow: var(--shadow-sheet);"><sc-for list="{{srch.groups}}" as="g" hint-placeholder-count="3"><div role="group" aria-label="{{g.head}}" style="padding: 2px 0 4px;"><p aria-hidden="true" style="margin: 0; padding: 8px 16px 4px; font-size: 12px; line-height: 1.3; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: var(--muted);">{{g.head}}</p><sc-for list="{{g.items}}" as="h" hint-placeholder-count="2"><button type="button" data-hit="1" class="st-focus wq" aria-label="{{h.aria}}" onClick="{{h.pick}}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; margin: 0; padding: 6px 16px; border: 0; background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer;"><span aria-hidden="true" style="flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9999px; background: var(--primary-soft); color: var(--primary);"><x-import component-from-global-scope="StrollTO.Icon" name="{{h.icon}}" size="{{n16}}"></x-import></span><span style="min-width: 0; display: flex; flex-direction: column; gap: 1px;"><span style="font-size: 15px; line-height: 1.3; font-weight: 600;">{{h.title}}</span><span style="font-size: 13px; line-height: 1.3; color: var(--muted);">{{h.sub}}</span></span></button></sc-for><sc-if value="{{g.more}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 2px 16px 6px 60px; font-size: 13px; line-height: 1.38; color: var(--muted);">{{g.moreText}}</p></sc-if></div></sc-for><sc-if value="{{srch.none}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 12px 16px; font-size: 15px; line-height: 1.47; color: var(--body);">{{srch.noneText}}</p></sc-if></div></sc-if></div>
 </div>
+<sc-if value="{{tour.pOpen}}" hint-placeholder-val="{{false}}">
+<div class="tour-spot" aria-hidden="true" style="position: absolute; z-index: 46; left: 50%; top: 50%; width: 0; height: 0; border-radius: 12px; pointer-events: none; box-shadow: 0 0 0 9999px rgba(31,36,48,0.5);"></div>
+<div class="ptour-walk" style="position: absolute; left: 12px; right: 12px; bottom: calc(14px + {{tour.insetB}}); z-index: 47; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; pointer-events: none;">
+<section role="dialog" aria-modal="false" aria-labelledby="tour-title" class="tour-bubble offin" style="pointer-events: auto; align-self: stretch; display: flex; flex-direction: column; gap: 8px; padding: 16px 16px 14px; border-radius: 18px 18px 18px 6px; background: var(--surface-card); border: 1px solid var(--hairline); box-shadow: var(--shadow-sheet);">
+<p style="margin: 0; font-size: 13px; line-height: 1.38; font-weight: 600; color: var(--muted);">{{tour.count}}</p>
+<h2 id="tour-title" tabindex="-1" style="margin: 0; font-size: 19px; line-height: 1.3; font-weight: 700; outline: none;">{{tour.title}}</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.47; color: var(--body);">{{tour.body}}</p>
+<sc-if value="{{tour.hasNote}}" hint-placeholder-val="{{false}}"><p style="margin: 0; font-size: 12px; line-height: 1.45; color: var(--muted);">{{tour.note}}</p></sc-if>
+<div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
+<sc-if value="{{tour.hasBack}}" hint-placeholder-val="{{false}}"><button type="button" class="st-focus" onClick="{{tour.back}}" style="min-height: 44px; padding: 0 16px; border: 1.5px solid var(--border-strong); border-radius: 9999px; background: var(--surface-card); color: var(--ink); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;">Back</button></sc-if>
+<span style="flex: 1;"></span>
+<sc-if value="{{tour.first}}" hint-placeholder-val="{{true}}"><button type="button" class="st-focus" onClick="{{tour.close}}" style="min-height: 44px; padding: 0 12px; border: 0; border-radius: 9999px; background: transparent; color: var(--primary); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;">Not now</button></sc-if>
+<button type="button" class="st-focus" onClick="{{tour.next}}" style="min-height: 44px; padding: 0 20px; border: 0; border-radius: 9999px; background: var(--primary); color: var(--on-primary); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;">{{tour.nextLabel}}</button>
+</div>
+</section>
+<span aria-hidden="true" style="flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 9999px; background: var(--surface-card); box-shadow: 0 4px 14px rgba(31,36,48,0.24);"><svg width="30" height="40" viewBox="0 0 18 24"><rect x="2" y="2" width="14" height="20" rx="7" style="fill: var(--accent); stroke: var(--on-accent); stroke-width: 1.2;"></rect><circle cx="7" cy="9" r="1.3" style="fill: var(--on-accent);"></circle><circle cx="11" cy="9" r="1.3" style="fill: var(--on-accent);"></circle><path d="M6.6 13.2 Q9 15.4 11.4 13.2" style="fill: none; stroke: var(--on-accent); stroke-width: 1.1; stroke-linecap: round;"></path></svg></span>
+</div>
+</sc-if>
 <sc-if value="{{appCode.isOpen}}" hint-placeholder-val="{{false}}">
 <div aria-hidden="true" onClick="{{appCode.close}}" style="position: absolute; inset: 0; z-index: 44; background: var(--scrim);"></div>
 <section role="dialog" aria-modal="true" aria-labelledby="code-title" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 45; display: flex; flex-direction: column; gap: 12px; padding: 20px 16px 24px; border-radius: 20px 20px 0 0; background: var(--surface-card); box-shadow: var(--shadow-sheet);">
@@ -96,7 +114,7 @@
 </sc-for>
 </div>
 </section>
-<section aria-labelledby="ex-q1" style="display: flex; flex-direction: column; gap: 10px;">
+<section aria-labelledby="ex-q1" class="ptour-q" style="display: flex; flex-direction: column; gap: 10px; border-radius: 12px;">
 <h3 id="ex-q1" style="margin: 0; font-size: 18px; line-height: 1.33; font-weight: 600;">What do you enjoy? <span style="font-size: 14px; font-weight: 400; color: var(--muted);">Pick any</span></h3>
 <div role="group" aria-labelledby="ex-q1" style="display: flex; flex-wrap: wrap; gap: 8px;">
 <sc-for list="{{ex.interests}}" as="i" hint-placeholder-count="5">
@@ -153,7 +171,7 @@
 <div style="display: flex;"><button type="button" class="st-focus" aria-pressed="{{ex.best.cmp.cmpStr}}" aria-label="{{ex.best.cmp.cmpAria}}" onClick="{{ex.best.cmp.cmpToggle}}" style="position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: 9999px; border: 1.5px solid {{ex.best.cmp.cmpBd}}; background: {{ex.best.cmp.cmpBg}}; color: {{ex.best.cmp.cmpFg}}; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;"><x-import component-from-global-scope="StrollTO.Icon" name="{{ex.best.cmp.cmpIcon}}" size="{{n18}}"></x-import><span>{{ex.best.cmp.cmpLabel}}</span></button></div>
 <div style="margin-top: 4px; display: flex; flex-wrap: wrap; gap: 8px;">
 <button type="button" class="st-btn st-btn-secondary" aria-haspopup="dialog" aria-label="{{ex.best.gtLabel}}" onClick="{{ex.best.gettingThere}}" style="flex: 1 1 130px; gap: 6px; padding-left: 10px; padding-right: 10px; font-size: 15px; white-space: nowrap;"><x-import component-from-global-scope="StrollTO.Icon" name="transit"></x-import><span>Getting there</span></button>
-<button type="button" class="st-btn st-btn-primary" onClick="{{ex.best.open}}" style="flex: 1 1 130px; padding-left: 10px; padding-right: 10px; font-size: 15px; white-space: nowrap;"><span>See this stroll</span></button>
+<button type="button" class="st-btn st-btn-primary ptour-best" onClick="{{ex.best.open}}" style="flex: 1 1 130px; padding-left: 10px; padding-right: 10px; font-size: 15px; white-space: nowrap;"><span>See this stroll</span></button>
 </div>
 </div>
 </article>
@@ -4408,6 +4426,26 @@ class Component extends DCLogic {
     web.isYou = dScreen === 'you'; web.youCur = dScreen === 'you' ? 'page' : 'false';
     web.goYou = function () { dGo('you'); };
     web.cmpAddOpen = isDesktop && cmp.adder.isOpen;
+    if (P.device !== 'desktop' && P.sysBack && typeof window !== 'undefined' && window.history && window.history.pushState) {
+      var sbCan = S.tour != null && screen === 'landing' || !!S.codeOpen || ['overview', 'saved', 'stop', 'compare', 'passport', 'ar'].indexOf(screen) >= 0 || (screen === 'landing' && !!mSel && landingMode === 'map');
+      if (!self._sbInit) {
+        self._sbInit = true;
+        window.addEventListener('popstate', function () {
+          self._sbArmed = false;
+          var st = self.state || {}, v = self.renderVals(), sc = st.screen || P.screen || 'landing', go = null;
+          if (st.tour != null && sc === 'landing') go = function () { self.setState({ tour: null }); };
+          else if (st.codeOpen) go = function () { self.setState({ codeOpen: false }); };
+          else if (sc === 'overview' || sc === 'saved') go = v.goLanding;
+          else if (sc === 'stop') go = v.goOverview;
+          else if (sc === 'compare') go = v.cmp && v.cmp.back;
+          else if (sc === 'passport') go = v.passBack;
+          else if (sc === 'ar') go = v.mapView;
+          else if (sc === 'landing' && v.mp && v.mp.isDetail) go = v.mp.closeDetail;
+          if (go) go(); else if (window.history.length > 1) window.history.back();
+        });
+      }
+      if (sbCan && !self._sbArmed) { self._sbArmed = true; setTimeout(function () { window.history.pushState({ strollto: 1 }, ''); }, 0); }
+    }
     web.hasCode = (dScreen === 'stroll' || dScreen === 'seo') && CODE_IDS.indexOf(s.id) >= 0;
     web.appCode = web.hasCode ? planCode(s.id, toOrig(skipList)) : '';
     web.codeAria = 'Code ' + web.appCode.split('').join(' ');
@@ -4425,16 +4463,27 @@ class Component extends DCLogic {
       { t: 'Look around', b: 'Map and Compare are in the top menu. Press me any time to see these steps again.', el: '.tour-nav',
         n: 'Stroll stops and stories are from the City of Toronto’s StrollTO open data. Titles, “Look for” lines, featured picks, community posts and the walk buddy are team drafts or samples. Photo credits are still being confirmed. Built by Toronto Metropolitan University Master of Digital Media students.' }
     ];
+    var TOUR_P = [
+      { t: 'Hi, I’m your walking buddy', b: 'StrollTO is the City of Toronto’s set of free, self-guided walks. Each stroll is a short route of stops, like a historic building, a mural or a park. This is the app you carry on the walk. It takes about 5 minutes. Let me show you around.' },
+      { t: 'Find a stroll', b: 'Answer “What do you enjoy?” and the other questions here. Suggestions update as you go.', el: '.ptour-q' },
+      { t: 'Plan it', b: 'Open a stroll with See this stroll, then use Plan your walk to pick a shorter plan or untick stops.', el: '.ptour-best' },
+      { t: 'Walk it', b: 'Press Start stroll, then Next stop. To skip a stop, press and hold Next stop. On the last stop, press Finish stroll. You don’t need to be at the stops: it works from anywhere.' },
+      { t: 'Look around', b: 'Switch between Explore, List and Map here. Tap How to try it at the top any time to see these steps again.', el: '.ptour-modes',
+        n: 'Stroll stops and stories are from the City of Toronto’s StrollTO open data. Titles, “Look for” lines, featured picks, community posts and the walk buddy are team drafts or samples. Photo credits are still being confirmed. Built by Toronto Metropolitan University Master of Digital Media students.' }
+    ];
+    var phoneApp = P.device !== 'desktop';
     if (P.tourReq && P.tourReq !== self._tourReq) {
       self._tourReq = P.tourReq;
-      setTimeout(function () { self.setState({ tour: 0, dScreen: 'home', qrOpen: false, cmpAdd: false, phoneSim: false }); }, 0);
+      setTimeout(function () { self.setState(phoneApp ? { tour: 0, screen: 'landing', landingMode: 'explore', codeOpen: false } : { tour: 0, dScreen: 'home', qrOpen: false, cmpAdd: false, phoneSim: false }); }, 0);
     }
+    if (phoneApp) TOUR = TOUR_P;
     var tAuto = S.tour === undefined && isDesktop; // first render of the website: greet
     if (tAuto && !self._tourAuto) { self._tourAuto = true; setTimeout(function () { if (self.state && self.state.tour === undefined) self.setState({ tour: 0 }); }, 0); }
-    var tStep = tAuto ? 0 : S.tour != null ? Math.max(0, Math.min(TOUR.length - 1, S.tour)) : null, tOn = isDesktop && dScreen === 'home' && tStep != null, tCur = tOn ? TOUR[tStep] : null;
+    self._tourList = TOUR;
+    var tStep = tAuto ? 0 : S.tour != null ? Math.max(0, Math.min(TOUR.length - 1, S.tour)) : null, tOn = (isDesktop && dScreen === 'home' || phoneApp && screen === 'landing' && landingMode === 'explore') && tStep != null, tCur = tOn ? TOUR[tStep] : null;
     var tSet = function (k) { self.setState({ tour: k }); };
     var tour = {
-      buddy: isDesktop && dScreen === 'home', open: tOn, left: tCur && tCur.side ? '480px' : '40px', rest: isDesktop && dScreen === 'home' && !tOn, openStr: tOn ? 'true' : 'false',
+      buddy: isDesktop && dScreen === 'home', open: tOn && isDesktop, pOpen: tOn && phoneApp, insetB: (P.insetBottom || 0) + 'px', left: tCur && tCur.side ? '480px' : '40px', rest: isDesktop && dScreen === 'home' && !tOn, openStr: tOn ? 'true' : 'false',
       buddyLabel: tOn ? 'Walking buddy: close the how-to' : 'Walking buddy: how to try the prototype',
       count: tCur ? (tStep === 0 ? 'Walking buddy (sample)' : 'Step ' + tStep + ' of ' + (TOUR.length - 1)) : '',
       title: tCur ? tCur.t : '', body: tCur ? tCur.b : '', note: tCur && tCur.n ? tCur.n : '', hasNote: !!(tCur && tCur.n),
@@ -4449,17 +4498,27 @@ class Component extends DCLogic {
     if (typeof document !== 'undefined') {
       var tKey = tOn ? tStep + ':' + (tCur.el || '') : '';
       setTimeout(function () {
-        var root = document.querySelector('.wv'); if (!root) return;
+        var root = document.querySelector('.wv') || document.body; if (!root) return;
         Array.prototype.forEach.call(root.querySelectorAll('.tour-on'), function (el) { if (!tCur || !tCur.el || !el.matches(tCur.el)) el.classList.remove('tour-on'); });
-        if (tCur && tCur.el) { var el = root.querySelector(tCur.el); if (el) { el.classList.add('tour-on'); if (self._tourKey !== tKey && el.scrollIntoView) el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } }
+        if (tCur && tCur.el) { var el = (root || document).querySelector(tCur.el); if (el) { el.classList.add('tour-on'); if (self._tourKey !== tKey) {
+            // scroll only the page's own scrolling area (never the whole frame): phone puts it near the top, website in the middle
+            var sc = el.parentElement; while (sc && sc !== document.body) { var oy = getComputedStyle(sc).overflowY; if ((oy === 'auto' || oy === 'scroll') && sc.scrollHeight > sc.clientHeight + 4) break; sc = sc.parentElement; }
+            if (sc && sc !== document.body) {
+              var er = el.getBoundingClientRect(), sr = sc.getBoundingClientRect(), phoneT = !!document.querySelector('.ptour-walk');
+              var dy = phoneT ? er.top - sr.top - 12 : (er.top + er.height / 2) - (sr.top + sr.height / 2);
+              if (!phoneT && er.top >= sr.top && er.bottom <= sr.bottom - 120) dy = 0;
+              if (Math.abs(dy) > 4) sc.scrollTo({ top: sc.scrollTop + dy, behavior: 'smooth' });
+            }
+            else if (document.querySelector('.ptour-walk') && self.scrollEl && self.scrollEl.scrollTop > 0) self.scrollEl.scrollTo({ top: 0, behavior: 'smooth' }); // part of the top bars: bring them back
+          } } }
         if (tOn && self._tourKey !== tKey) { var hd = document.getElementById('tour-title'); if (hd) hd.focus({ preventScroll: true }); }
         self._tourKey = tKey;
         if (tOn && !self._spotRaf) {
           var tick = function () {
-            var st = self.state || {}, cur = st.tour != null ? TOUR[Math.max(0, Math.min(TOUR.length - 1, st.tour))] : null;
+            var st = self.state || {}, TL = self._tourList || TOUR, cur = st.tour != null ? TL[Math.max(0, Math.min(TL.length - 1, st.tour))] : null;
             var spot = document.querySelector('.tour-spot');
             if (!spot || !cur) { self._spotRaf = null; return; }
-            var box = spot.offsetParent, el = cur.el ? document.querySelector('.wv ' + cur.el) : null;
+            var box = spot.offsetParent, el = cur.el ? document.querySelector(cur.el) : null, walk = document.querySelector('.ptour-walk');
             if (box) {
               var br = box.getBoundingClientRect(), k = box.offsetWidth ? br.width / box.offsetWidth : 1;
               if (el) {
@@ -4468,7 +4527,12 @@ class Component extends DCLogic {
                 spot.style.width = (r.width / k + pad * 2) + 'px'; spot.style.height = (r.height / k + pad * 2) + 'px';
                 spot.style.borderRadius = (rad + pad) + 'px';
                 spot.style.boxShadow = '0 0 0 4px var(--accent), 0 0 0 5.5px var(--on-accent), 0 0 0 9999px rgba(31,36,48,0.5)';
-              } else { spot.style.left = '50%'; spot.style.top = '50%'; spot.style.width = '0px'; spot.style.height = '0px'; spot.style.boxShadow = '0 0 0 9999px rgba(31,36,48,0.5)'; }
+                if (walk) {
+                  var low = (r.top - br.top) > (br.bottom - r.bottom);   // the part sits low: speak from the top, else from the bottom
+                  walk.style.flexDirection = low ? 'column-reverse' : 'column';
+                  walk.style.top = low ? '12px' : 'auto'; walk.style.bottom = low ? 'auto' : 'calc(14px + ' + (P.insetBottom || 0) + 'px)';
+                }
+              } else { if (walk) { walk.style.flexDirection = 'column'; walk.style.top = 'auto'; walk.style.bottom = 'calc(14px + ' + (P.insetBottom || 0) + 'px)'; } spot.style.left = '50%'; spot.style.top = '50%'; spot.style.width = '0px'; spot.style.height = '0px'; spot.style.boxShadow = '0 0 0 9999px rgba(31,36,48,0.5)'; }
             }
             self._spotRaf = requestAnimationFrame(tick);
           };

@@ -63,13 +63,41 @@ test('phone: a QR link opens the plan and the walk can be finished', async ({ pa
   expect(errors).toEqual([]);
 });
 
-test('phone: plain link shows the help, then Explore full screen', async ({ page }) => {
+test('phone: plain link: the buddy greets once, points without covering, and the bar is slim', async ({ page }) => {
   await noFonts(page);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('./');
-  await expect(page.locator('#help-phone')).toBeVisible();
-  await btn(page, 'Start').click();
-  await expect(page.getByRole('heading', { name: /What do you enjoy/ })).toBeVisible();
+  await expect(page.locator('#help')).toBeHidden();
+  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
+  expect((await page.locator('.pg-bar').boundingBox()).height).toBeLessThanOrEqual(44);
+  await btn(page, 'Show me').click(); await page.waitForTimeout(700);
+  for (const sel of ['.ptour-q', '.ptour-best', null, '.ptour-modes']) {
+    if (sel) {
+      await expect(page.locator(sel + '.tour-on')).toHaveCount(1);
+      const t = await page.locator(sel).boundingBox(), b = await page.locator('.tour-bubble').boundingBox();
+      const overlap = Math.min(t.y + t.height, b.y + b.height) - Math.max(t.y, b.y);
+      expect(overlap).toBeLessThan(12);
+    }
+    await page.getByRole('button', { name: /^(Next|Done)$/ }).click(); await page.waitForTimeout(700);
+  }
+  await expect(page.locator('.tour-bubble')).toHaveCount(0);
   const box = await page.locator('#frame').boundingBox();
   expect(box.width).toBeGreaterThan(380);
+  // second opening: no greeting
+  await page.reload(); await page.waitForTimeout(600);
+  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);
+  // How to try it brings it back
+  await btn(page, 'How to try it').click();
+  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
+});
+test('phone: the system Back steps back inside the app', async ({ page }) => {
+  await noFonts(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./'); await page.waitForTimeout(500);
+  const nn = page.getByRole('button', { name: 'Not now' }); if (await nn.isVisible().catch(() => false)) await nn.click();
+  await page.getByRole('button', { name: /See this stroll|Open/ }).first().click(); await page.waitForTimeout(500);
+  await expect(page.getByRole('button', { name: /Start stroll/ }).first()).toBeVisible();
+  await page.goBack(); await page.waitForTimeout(500);
+  await expect(page.getByRole('heading', { name: /What do you enjoy/ })).toBeVisible();
+  expect(page.url()).toContain('localhost:4173');
 });

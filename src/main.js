@@ -48,11 +48,13 @@ function siteSize() {
 function phoneSize() {
   const probe = document.getElementById('inset-probe');
   const insetBottom = probe ? parseFloat(getComputedStyle(probe).paddingBottom) || 0 : 0;
-  return { frameWidth: Math.min(window.innerWidth, 560), frameHeight: Math.max(520, window.innerHeight - bar.offsetHeight), insetTop: 0, insetBottom };
+  const full = document.getElementById('vh-probe');
+  const h = Math.max(window.innerHeight, full ? full.offsetHeight : 0);
+  return { frameWidth: Math.min(window.innerWidth, 560), frameHeight: Math.max(520, h - bar.offsetHeight), insetTop: 0, insetBottom };
 }
 
 const props = phoneView
-  ? Object.assign({ demo: true, persist: true, installed }, fullScreenPhone ? Object.assign({ bare: true }, phoneSize()) : { frameHeight: 812 })
+  ? Object.assign({ demo: true, persist: true, installed, sysBack: true }, fullScreenPhone ? Object.assign({ bare: true }, phoneSize()) : { frameHeight: 812 })
   : Object.assign({ device: 'desktop', demo: true, siteUrl: hosted ? siteUrl : '', realBrowser: true }, siteSize());
 
 const app = mountPrototype(frame, { props });
@@ -74,6 +76,8 @@ function layout() {
   fit.style.width = Math.round(w * k) + 'px'; fit.style.height = Math.round(h * k) + 'px';
 }
 window.addEventListener('resize', layout);
+if (window.visualViewport) window.visualViewport.addEventListener('resize', layout);
+window.addEventListener('orientationchange', () => setTimeout(layout, 300));
 layout();
 
 // Help dialog
@@ -85,7 +89,7 @@ function showHelp(on) {
 // On the website the walking buddy shows how to try it (on Explore); the phone keeps the help pop-up.
 let tourReq = 0;
 const startTour = () => { tourReq += 1; app.setProps({ tourReq }); };
-document.querySelectorAll('[data-help]').forEach((b) => b.addEventListener('click', () => (phoneView ? showHelp(true) : startTour())));
+document.querySelectorAll('[data-help]').forEach((b) => b.addEventListener('click', () => startTour()));
 document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => showHelp(false)));
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') showHelp(false); });
 help.addEventListener('click', (e) => { if (e.target === help) showHelp(false); });
@@ -103,4 +107,5 @@ document.querySelectorAll('[data-restart]').forEach((b) => b.addEventListener('c
 let seen = false;
 try { seen = localStorage.getItem('strollto.help.seen') === '1'; localStorage.setItem('strollto.help.seen', '1'); } catch (e) { /* storage blocked */ }
 // (the website's buddy greets on every opening by itself)
-if (!seen && !params.has('from') && phoneView) showHelp(true);
+// the phone's buddy greets on the first opening only (people arriving from a QR code skip it)
+if (!seen && !params.has('from') && !deepLink() && phoneView) startTour();

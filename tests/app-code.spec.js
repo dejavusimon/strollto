@@ -13,7 +13,7 @@ test('website code opens the planned stroll in the installed phone app', async (
   await desk.screenshot({ path: 'test-results/code-desk.png' });
   const ph = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await ph.goto('./?view=phone&app=1'); await ph.waitForTimeout(500);
-  const s = ph.getByRole('button', { name: 'Start', exact: true }); if (await s.isVisible().catch(() => false)) await s.click();
+  const s = ph.getByRole('button', { name: 'Not now' }); if (await s.isVisible().catch(() => false)) await s.click();
   await ph.getByRole('button', { name: /Have a code from the website/ }).click();
   const inp = ph.getByRole('textbox', { name: 'Code' });
   await inp.click(); await ph.keyboard.type('ZZZZ'); await ph.getByRole('button', { name: 'Open', exact: true }).click();
