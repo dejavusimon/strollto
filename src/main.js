@@ -46,11 +46,15 @@ function siteSize() {
   return { vw: Math.max(1200, window.innerWidth), vh: Math.max(680, window.innerHeight - bar.offsetHeight) };
 }
 
+const tallest = {};
 function phoneSize() {
   const probe = document.getElementById('inset-probe');
   const insetBottom = probe ? parseFloat(getComputedStyle(probe).paddingBottom) || 0 : 0;
   const full = document.getElementById('vh-probe');
-  const h = Math.max(window.innerHeight, full ? full.offsetHeight : 0);
+  // the tallest height seen at this width: the keyboard or a turn never shrinks the app (that left a white strip on iPhones)
+  const w = window.innerWidth, now = Math.max(window.innerHeight, full ? full.offsetHeight : 0, document.documentElement.clientHeight || 0);
+  // (only in the installed app: in a browser tab the toolbar really does take space)
+  const h = installed ? (tallest[w] = Math.max(tallest[w] || 0, now)) : now;
   return { frameWidth: Math.min(window.innerWidth, 560), frameHeight: Math.max(520, h - bar.offsetHeight), insetTop: 0, insetBottom };
 }
 
@@ -84,7 +88,11 @@ if (phoneView) {
   try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('portrait').catch(() => {}); } catch (e) { /* not allowed here */ }
 }
 const settle = () => { if (phoneView) window.scrollTo(0, 0); layout(); };
-window.addEventListener('orientationchange', () => { setTimeout(settle, 300); setTimeout(settle, 800); });
+// after typing (the keyboard closes) iOS can leave the page shifted: put it back and re-measure
+document.addEventListener('focusout', () => { if (phoneView) { setTimeout(settle, 60); setTimeout(settle, 400); } });
+window.addEventListener('pageshow', () => setTimeout(settle, 100));
+if (window.visualViewport) window.visualViewport.addEventListener('resize', () => { if (phoneView && !document.activeElement?.matches?.('input, textarea, select')) setTimeout(settle, 120); });
+window.addEventListener('orientationchange', () => { setTimeout(settle, 300); setTimeout(settle, 800); setTimeout(settle, 1500); });
 layout();
 
 // Help dialog

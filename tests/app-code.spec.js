@@ -6,7 +6,7 @@ test('website code opens the planned stroll in the installed phone app', async (
   if (n > 3) { await cbs.nth(2).click(); await desk.waitForTimeout(200); }
   await desk.getByRole('button', { name: 'Send to my phone' }).first().click(); await desk.waitForTimeout(300);
   const dlg = desk.getByRole('dialog', { name: 'Send to my phone' });
-  await expect(dlg.getByText('StrollTO on an iPhone home screen?')).toBeVisible();
+  await expect(dlg.getByRole('heading', { name: 'Android' })).toBeVisible(); await expect(dlg.getByRole('heading', { name: 'iPhone' })).toBeVisible();
   await expect(dlg.getByText(/Temporary, for testing only/)).toBeVisible();
   const code = (await dlg.getByLabel(/^Code /).textContent()).trim();
   expect(code).toMatch(/^[2-9A-HJKMNP-Z]{4}$/);
