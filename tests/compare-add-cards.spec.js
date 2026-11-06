@@ -1,0 +1,33 @@
+import { test, expect } from '@playwright/test';
+test('website: Add a stroll opens photo cards over the page you are on', async ({ page }) => {
+  await page.setViewportSize({ width: 1500, height: 1000 });
+  await page.goto('./?view=computer'); await page.getByRole('button', { name: 'Start', exact: true }).click(); await page.waitForTimeout(500);
+  await page.getByRole('button', { name: /^Add .* to compare$/ }).first().click().catch(async () => { await page.getByRole('button', { name: /Compare/ }).nth(1).click(); });
+  await page.waitForTimeout(300);
+  const add = page.getByRole('region', { name: 'Compare' }).getByRole('button', { name: 'Add a stroll' });
+  await expect(add).toBeVisible(); await add.click(); await page.waitForTimeout(400);
+  expect(page.url()).toContain('pop=add');
+  await page.goBack(); await page.waitForTimeout(300); await expect(page.getByRole('dialog')).toHaveCount(0); expect(page.url()).not.toContain('pop=add');
+  await add.click(); await page.waitForTimeout(400);
+  const dlg = page.getByRole('dialog');
+  await expect(dlg.getByRole('heading', { name: 'Guided strolls, ready to walk' })).toBeVisible();
+  expect(await dlg.locator('article').count()).toBeGreaterThan(5);
+  expect(await dlg.locator('article img').count()).toBeGreaterThan(5);
+  await expect(dlg.getByRole('heading', { name: 'Find another City stroll' })).toBeVisible();
+  await page.screenshot({ path: 'test-results/cmp-add-desktop.png' });
+  await dlg.getByRole('searchbox', { name: 'Search by area name' }).click(); await page.keyboard.type('annex'); await page.waitForTimeout(300);
+  expect(await dlg.locator('article').count()).toBeGreaterThan(5);
+  await dlg.getByRole('button', { name: /^Add .* to compare$/ }).first().click(); await page.waitForTimeout(300);
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'Compare' }).getByRole('button', { name: 'Compare', exact: true })).toBeVisible();
+});
+test('phone: Add a stroll shows photo cards in a tall sheet', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./'); const s = page.getByRole('button', { name: 'Start', exact: true }); if (await s.isVisible().catch(() => false)) await s.click();
+  await page.waitForTimeout(400);
+  await page.getByRole('button', { name: /^Add .* to compare$/ }).first().click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Add', exact: true }).first().click(); await page.waitForTimeout(500);
+  const dlg = page.getByRole('dialog');
+  expect(await dlg.locator('article').count()).toBeGreaterThan(5);
+  await page.screenshot({ path: 'test-results/cmp-add-phone.png' });
+});

@@ -1,7 +1,8 @@
 // Page shell: picks the view, mounts the prototype, and wires the help and start-over buttons.
 //
 // Views
-//   computer   the website in a 1440 x 900 browser frame, scaled to fit. Its QR code opens the phone view.
+//   computer   the website filling the browser window (at least 1200 x 680, scaled down below that). The real
+//              address bar, Back and Forward follow its pages (?page=…&stroll=…). Its QR code opens the phone view.
 //   phone      the phone app, full screen. Used on small screens, or on any screen when the link
 //              carries a stroll (?s=…), a compare (?cmp=…) or a screen (?screen=…).
 // Force one with ?view=phone or ?view=computer.
@@ -16,9 +17,14 @@ import { mountPrototype } from './runtime/player.js';
 const STORE_KEY = 'strollto.prototype.v3'; // must match STROLL_KEY in design/Main.dc.html
 const params = new URLSearchParams(location.search);
 const forced = params.get('view');
-const deepLink = ['s', 'cmp', 'screen'].some((k) => params.has(k));
+const deepLink = () => ['s', 'cmp', 'screen'].some((k) => params.has(k));
+// A website link (?page=stroll&stroll=…) opened on a phone opens that stroll in the phone app.
+if (!params.has('s') && params.get('stroll') && matchMedia('(max-width: 760px)').matches && params.get('view') !== 'computer') {
+  history.replaceState(null, '', location.pathname + '?s=' + encodeURIComponent(params.get('stroll')));
+  params.set('s', params.get('stroll'));
+}
 const small = matchMedia('(max-width: 760px)').matches;
-const phoneView = forced === 'phone' || (forced !== 'computer' && (small || deepLink));
+const phoneView = forced === 'phone' || (forced !== 'computer' && (small || deepLink()));
 const fullScreenPhone = phoneView && small;
 
 // The site's own address: QR codes and copied links point here.
@@ -33,6 +39,10 @@ const frame = document.getElementById('frame');
 const fit = document.getElementById('fit');
 const bar = document.querySelector('.pg-bar');
 
+function siteSize() {
+  return { vw: Math.max(1200, window.innerWidth), vh: Math.max(680, window.innerHeight - bar.offsetHeight) };
+}
+
 function phoneSize() {
   const probe = document.getElementById('inset-probe');
   const insetBottom = probe ? parseFloat(getComputedStyle(probe).paddingBottom) || 0 : 0;
@@ -41,12 +51,19 @@ function phoneSize() {
 
 const props = phoneView
   ? Object.assign({ demo: true, persist: true }, fullScreenPhone ? Object.assign({ bare: true }, phoneSize()) : { frameHeight: 812 })
-  : { device: 'desktop', demo: true, siteUrl: hosted ? siteUrl : '' };
+  : Object.assign({ device: 'desktop', demo: true, siteUrl: hosted ? siteUrl : '', realBrowser: true }, siteSize());
 
 const app = mountPrototype(frame, { props });
 
 function layout() {
   if (fullScreenPhone) { app.setProps(phoneSize()); return; }
+  if (!phoneView) {
+    // the website fills the window under the prototype bar; narrower or shorter windows scale it down
+    const z = siteSize(), k = Math.min(1, window.innerWidth / z.vw, (window.innerHeight - bar.offsetHeight) / z.vh);
+    frame.style.width = z.vw + 'px'; frame.style.height = z.vh + 'px'; frame.style.transform = 'scale(' + k + ')';
+    fit.style.width = Math.round(z.vw * k) + 'px'; fit.style.height = Math.round(z.vh * k) + 'px';
+    app.setProps(z); return;
+  }
   const w = phoneView ? 399 : 1440, h = phoneView ? 836 : 900;
   const availW = window.innerWidth - 32, availH = window.innerHeight - bar.offsetHeight - 32;
   const k = Math.min(1, availW / w, Math.max(availH, 480) / h);
@@ -72,6 +89,7 @@ help.addEventListener('click', (e) => { if (e.target === help) showHelp(false); 
 document.querySelectorAll('[data-restart]').forEach((b) => b.addEventListener('click', () => {
   try { localStorage.removeItem(STORE_KEY); } catch (e) { /* storage blocked */ }
   if (location.search && !forced) { location.href = siteUrl; return; }
+  if (forced && location.search !== '?view=' + forced) history.replaceState(null, '', location.pathname + '?view=' + forced);
   app.restart();
   showHelp(false);
 }));

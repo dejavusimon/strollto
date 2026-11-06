@@ -23,6 +23,10 @@ body { background: var(--surface-strong); color: var(--ink); font-family: 'Noto 
 .pg-fit { position: relative; }
 .pg-frame { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
 
+/* Website: fills the window under the bar, no frame or padding. */
+html[data-view="computer"], html[data-view="computer"] body { height: 100%; overflow: hidden; }
+html[data-view="computer"] .pg-stage { padding: 0; justify-content: flex-start; }
+
 /* Phone on a phone: no frame, no scaling, the app fills the screen under a slim bar. */
 html[data-view="phone"], html[data-view="phone"] body { height: 100%; overflow: hidden; overscroll-behavior: none; }
 html[data-view="phone"] body { background: var(--canvas); }

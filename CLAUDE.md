@@ -18,7 +18,7 @@ A prototype walk companion for the City of Toronto's StrollTO self-guided stroll
 - `scripts/import-design.mjs` turns it into `src/generated/prototype.js` (template as JSON plus the logic). It also removes team-only blocks (`<sc-if value="{{notDemo}}">`) and checks that every photo exists in `public/img/`. Never edit `src/generated/` by hand.
 - `src/runtime/player.js` renders that template with React 18.
 - `src/ds/` is the StrollTO design system (tokens, component CSS, components on `window.StrollTO`). `src/setup-globals.js` must load before it.
-- `src/main.js` is the page shell. It picks the view: the computer view shows the website in a scaled 1440 × 900 frame. The phone view is full screen on small screens, or opens from any link with `?s=`, `?cmp=` or `?screen=`. Force a view with `?view=phone` or `?view=computer`.
+- `src/main.js` is the page shell. It picks the view: the computer view shows the website filling the browser window (at least 1200 × 680, scaled down below that), with no drawn browser frame; the real address bar, Back and Forward follow its pages and pop-ups (`?page=compare&a=…&pop=add`, `?page=stroll&stroll=…`), so reloads and shared links reopen the same screen. The canvas keeps its drawn 1440 × 900 browser frame. The phone view is full screen on small screens, or opens from any link with `?s=`, `?cmp=` or `?screen=`. Force a view with `?view=phone` or `?view=computer`.
 - The handoff is just a link. The website builds `<site>/?s=<stroll>&skip=<stops>&from=desktop&saved=<ids>`, and `src/qr.js` draws it as a real QR code. Nothing is sent to a server.
 
 ## Rules for content and design (from the team and the PRD)

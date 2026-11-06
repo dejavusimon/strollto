@@ -797,17 +797,15 @@
 </main>
 <sc-if value="{{cmp.adder.isOpen}}" hint-placeholder-val="{{false}}">
 <div aria-hidden="true" style="position: absolute; inset: 0; z-index: 5; background: var(--scrim);"></div>
-<section role="dialog" aria-modal="true" aria-labelledby="padd-title" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 6; max-height: 88%; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding: 20px 16px 20px; background: var(--surface-card); border-radius: 20px 20px 0 0; box-shadow: var(--shadow-sheet);">
+<section role="dialog" aria-modal="true" aria-labelledby="padd-title" style="position: absolute; left: 0; right: 0; top: 24px; bottom: 0; z-index: 6; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding: 20px 16px 20px; background: var(--surface-card); border-radius: 20px 20px 0 0; box-shadow: var(--shadow-sheet);">
 <div style="display: flex; align-items: flex-start; gap: 12px;"><div style="flex: 1;"><h2 id="padd-title" style="margin: 0; font-size: 20px; line-height: 1.2; font-weight: 600; letter-spacing: -0.18px;">{{cmp.adder.title}}</h2><p style="margin: 4px 0 0; font-size: 14px; line-height: 1.43; color: var(--muted);">{{cmp.adder.note}}</p></div><x-import component-from-global-scope="StrollTO.IconButton" icon="close" label="Close" variant="soft" on-click="{{cmp.adder.close}}"></x-import></div>
-<label for="padd-q" style="font-size: 14px; line-height: 1.29; font-weight: 500;">Search strolls</label>
-<input id="padd-q" type="search" placeholder="e.g. “Annex” or “High Park”" autocomplete="off" value="{{cmp.adder.q}}" onInput="{{cmp.adder.onQ}}" style="margin-top: -8px; min-height: 48px; padding: 0 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--canvas); color: var(--ink); font: inherit; font-size: 16px;">
 <sc-if value="{{cmp.adder.hasReady}}" hint-placeholder-val="{{true}}">
-<h3 style="margin: 4px 0 0; font-size: 15px; line-height: 1.3; font-weight: 700;">Ready to walk</h3>
-<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px;"><sc-for list="{{cmp.adder.ready}}" as="a" hint-placeholder-count="2"><li><button type="button" class="st-focus" aria-label="{{a.label}}" onClick="{{a.add}}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px 12px; border: 1px solid var(--hairline); border-radius: 12px; background: var(--surface-card); color: var(--ink); font: inherit; text-align: left; cursor: pointer;"><span style="min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; line-height: 1.3; font-weight: 600;">{{a.title}}</span><span style="font-size: 13px; line-height: 1.3; color: var(--muted);">{{a.meta}}</span></span><span aria-hidden="true" style="flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9999px; background: var(--primary); color: var(--on-primary);"><x-import component-from-global-scope="StrollTO.Icon" name="plus" size="{{n18}}"></x-import></span></button></li></sc-for></ul>
+<h3 style="margin: 4px 0 0; font-size: 16px; line-height: 1.3; font-weight: 700;">Guided strolls, ready to walk</h3>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px;"><sc-for list="{{cmp.adder.ready}}" as="a" hint-placeholder-count="2"><li><article style="display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 14px; background: var(--surface-card); border: 1px solid var(--hairline);"><div style="display: flex; gap: 12px;"><div style="flex: none; width: 96px;"><x-import component-from-global-scope="StrollTO.PhotoPlate" scene="{{a.scene}}" src="{{a.cover}}" alt="" class-name="st-photo-3x2"></x-import></div><div style="min-width: 0; display: flex; flex-direction: column; gap: 4px;"><h4 style="margin: 0; font-size: 16px; line-height: 1.25; font-weight: 600;">{{a.title}}</h4><p style="margin: 0; font-size: 13px; line-height: 1.38; color: var(--muted);">{{a.meta}}</p></div></div><p style="margin: 0; font-size: 14px; line-height: 1.43; color: var(--body);">{{a.hook}}</p><ul aria-label="Themes" style="list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px;"><sc-for list="{{a.themes}}" as="m" hint-placeholder-count="2"><li style="padding: 2px 10px; border-radius: 9999px; background: var(--primary-soft); color: var(--primary); font-size: 12px; line-height: 1.5; font-weight: 600;">{{m.t}}</li></sc-for></ul><div style="display: flex; flex-wrap: wrap; gap: 8px;"><button type="button" class="st-focus" aria-label="{{a.label}}" onClick="{{a.add}}" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border: 0; border-radius: 9999px; background: var(--primary); color: var(--on-primary); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;"><x-import component-from-global-scope="StrollTO.Icon" name="plus" size="{{n18}}"></x-import><span>Add to compare</span></button><button type="button" class="st-focus h-out" aria-label="{{a.openLabel}}" onClick="{{a.open}}" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1.5px solid var(--border-strong); border-radius: 9999px; background: var(--surface-card); color: var(--ink); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">See this stroll</button></div></article></li></sc-for></ul>
 </sc-if>
-<h3 style="margin: 4px 0 0; font-size: 15px; line-height: 1.3; font-weight: 700;">Other available strolls</h3>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--hairline);"><h3 style="margin: 0; font-size: 16px; line-height: 1.3; font-weight: 700;">Find another City stroll</h3><p style="margin: 0; font-size: 14px; line-height: 1.43; color: var(--muted);">{{cmp.adder.cityHint}}{{cmp.adder.cityMore}}</p><label for="padd-q" style="font-size: 14px; line-height: 1.29; font-weight: 500;">Search by area name</label><input id="padd-q" type="search" placeholder="e.g. “Annex” or “High Park”" autocomplete="off" value="{{cmp.adder.q}}" onInput="{{cmp.adder.onQ}}" style="min-height: 48px; padding: 0 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--canvas); color: var(--ink); font: inherit; font-size: 16px;">
 <sc-if value="{{cmp.adder.hasCity}}" hint-placeholder-val="{{false}}"><ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px;"><sc-for list="{{cmp.adder.city}}" as="a" hint-placeholder-count="2"><li><button type="button" class="st-focus" aria-label="{{a.label}}" onClick="{{a.add}}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px 12px; border: 1px solid var(--hairline); border-radius: 12px; background: var(--surface-card); color: var(--ink); font: inherit; text-align: left; cursor: pointer;"><span style="min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; line-height: 1.3; font-weight: 600;">{{a.title}}</span><span style="font-size: 13px; line-height: 1.3; color: var(--muted);">{{a.meta}}</span></span><span aria-hidden="true" style="flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9999px; background: var(--primary); color: var(--on-primary);"><x-import component-from-global-scope="StrollTO.Icon" name="plus" size="{{n18}}"></x-import></span></button></li></sc-for></ul></sc-if>
-<p style="margin: 0; font-size: 14px; line-height: 1.43; color: var(--muted);">{{cmp.adder.cityHint}}{{cmp.adder.cityMore}}</p>
+</div>
 </section>
 </sc-if>
 </div>
@@ -1576,14 +1574,14 @@
 </sc-if>
 <!-- ============ WEBSITE (desktop, 1440 x 900): browser frame + Explore, Map, Stroll, Compare, Guide ============ -->
 <sc-if value="{{web.on}}" hint-placeholder-val="{{false}}">
-<div class="wv" style="width: 1440px; height: 900px; display: flex; flex-direction: column; overflow: hidden; border-radius: 12px; background: var(--canvas); box-shadow: 0 0 0 1px var(--border-strong), 0 16px 40px rgba(31, 36, 48, 0.18); font-family: var(--font-sans); color: var(--ink);">
-<div style="position: relative; flex: none; height: 48px; display: flex; align-items: center; gap: 16px; padding: 0 16px; background: var(--surface-strong); border-bottom: 1px solid var(--hairline);">
+<div class="wv" style="width: {{web.wvW}}; height: {{web.wvH}}; display: flex; flex-direction: column; overflow: hidden; border-radius: {{web.wvR}}; background: var(--canvas); box-shadow: {{web.wvShadow}}; font-family: var(--font-sans); color: var(--ink);">
+<sc-if value="{{web.fakeBar}}" hint-placeholder-val="{{true}}"><div style="position: relative; flex: none; height: 48px; display: flex; align-items: center; gap: 16px; padding: 0 16px; background: var(--surface-strong); border-bottom: 1px solid var(--hairline);">
 <span aria-hidden="true" style="display: inline-flex; gap: 8px;"><span style="width: 12px; height: 12px; border-radius: 9999px; background: var(--border-strong);"></span><span style="width: 12px; height: 12px; border-radius: 9999px; background: var(--border-strong);"></span><span style="width: 12px; height: 12px; border-radius: 9999px; background: var(--border-strong);"></span></span>
 <span role="group" aria-label="Browser buttons (prototype)" style="display: inline-flex; gap: 2px;"><button type="button" class="st-focus wbr" aria-label="Back" title="Back" disabled="{{web.br.noBack}}" onClick="{{web.br.back}}" style="display: grid; place-items: center; width: 36px; height: 36px; margin: 0; padding: 0; border: 0; border-radius: 9999px; background: transparent; color: var(--ink); cursor: pointer;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></button><button type="button" class="st-focus wbr" aria-label="Forward" title="Forward" disabled="{{web.br.noFwd}}" onClick="{{web.br.fwd}}" style="display: grid; place-items: center; width: 36px; height: 36px; margin: 0; padding: 0; border: 0; border-radius: 9999px; background: transparent; color: var(--ink); cursor: pointer;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></button><button type="button" class="st-focus wbr" aria-label="Reload" title="Reload" disabled="{{no}}" onClick="{{web.br.reload}}" style="display: grid; place-items: center; width: 36px; height: 36px; margin: 0; padding: 0; border: 0; border-radius: 9999px; background: transparent; color: var(--ink); cursor: pointer;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"></path><path d="M20 4v5h-5"></path></svg></button></span>
 <span style="flex: 1; max-width: 720px; margin: 0 auto; height: 30px; display: flex; align-items: center; gap: 8px; padding: 0 14px; border-radius: 9999px; background: var(--surface-card); font-size: 14px; color: var(--body);"><x-import component-from-global-scope="StrollTO.Icon" name="globe" size="{{n16}}"></x-import>{{web.url}}</span>
 <span style="width: 60px;"></span>
 <sc-if value="{{web.br.loading}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" class="wload" style="position: absolute; z-index: 3; left: 0; right: 0; bottom: 3px; height: 3px; background: var(--primary);"></span></sc-if>
-</div>
+</div></sc-if>
 <div style="position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column;">
 <header style="flex: none; height: 64px; display: flex; align-items: center; gap: 32px; padding: 0 40px; background: var(--primary); color: var(--on-primary);">
 <button type="button" class="st-focus h-onp" onClick="{{web.goHome}}" style="margin: 0; padding: 0; border: 0; background: transparent; color: var(--on-primary); font: inherit; font-size: 22px; font-weight: 700; cursor: pointer;">StrollTO</button>
@@ -2053,18 +2051,16 @@
 </section>
 </sc-if>
 <sc-if value="{{web.cmpAddOpen}}" hint-placeholder-val="{{false}}">
-<div aria-hidden="true" style="position: absolute; inset: 0; z-index: 8; background: var(--scrim);"></div>
-<section role="dialog" aria-modal="true" aria-labelledby="dadd-title" style="position: absolute; left: 50%; top: 50%; z-index: 9; width: 560px; max-height: 760px; overflow-y: auto; transform: translate(-50%, -50%); display: flex; flex-direction: column; gap: 14px; padding: 28px; border-radius: 20px; background: var(--surface-card); box-shadow: var(--shadow-sheet);">
+<div aria-hidden="true" style="position: absolute; inset: 0; z-index: 34; background: var(--scrim);"></div>
+<section role="dialog" aria-modal="true" aria-labelledby="dadd-title" style="position: absolute; left: 50%; top: 50%; z-index: 35; width: 880px; max-width: calc(100% - 48px); max-height: calc(100% - 64px); overflow-y: auto; transform: translate(-50%, -50%); display: flex; flex-direction: column; gap: 16px; padding: 28px; border-radius: 20px; background: var(--surface-card); box-shadow: var(--shadow-sheet);">
 <div style="display: flex; align-items: flex-start; gap: 12px;"><div style="flex: 1;"><h2 id="dadd-title" style="margin: 0; font-size: 24px; font-weight: 700;">{{cmp.adder.title}}</h2><p style="margin: 4px 0 0; font-size: 15px; color: var(--muted);">{{cmp.adder.note}}</p></div><x-import component-from-global-scope="StrollTO.IconButton" icon="close" label="Close" variant="soft" on-click="{{cmp.adder.close}}"></x-import></div>
-<label for="dadd-q" style="font-size: 14px; line-height: 1.29; font-weight: 500;">Search strolls</label>
-<input id="dadd-q" type="search" placeholder="e.g. “Annex” or “High Park”" autocomplete="off" value="{{cmp.adder.q}}" onInput="{{cmp.adder.onQ}}" style="margin-top: -8px; min-height: 48px; padding: 0 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--canvas); color: var(--ink); font: inherit; font-size: 16px;">
 <sc-if value="{{cmp.adder.hasReady}}" hint-placeholder-val="{{true}}">
-<h3 style="margin: 4px 0 0; font-size: 15px; line-height: 1.3; font-weight: 700;">Ready to walk</h3>
-<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px;"><sc-for list="{{cmp.adder.ready}}" as="a" hint-placeholder-count="2"><li><button type="button" class="st-focus h-out" aria-label="{{a.label}}" onClick="{{a.add}}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px 12px; border: 1px solid var(--hairline); border-radius: 12px; background: var(--surface-card); color: var(--ink); font: inherit; text-align: left; cursor: pointer;"><span style="min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; line-height: 1.3; font-weight: 600;">{{a.title}}</span><span style="font-size: 13px; line-height: 1.3; color: var(--muted);">{{a.meta}}</span></span><span aria-hidden="true" style="flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9999px; background: var(--primary); color: var(--on-primary);"><x-import component-from-global-scope="StrollTO.Icon" name="plus" size="{{n18}}"></x-import></span></button></li></sc-for></ul>
+<h3 style="margin: 4px 0 0; font-size: 16px; line-height: 1.3; font-weight: 700;">Guided strolls, ready to walk</h3>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px;"><sc-for list="{{cmp.adder.ready}}" as="a" hint-placeholder-count="2"><li><article style="display: flex; gap: 16px; align-items: center; padding: 14px; border-radius: 14px; background: var(--surface-card); border: 1px solid var(--hairline);"><div style="flex: none; width: 176px;"><x-import component-from-global-scope="StrollTO.PhotoPlate" scene="{{a.scene}}" src="{{a.cover}}" alt="" class-name="st-photo-3x2"></x-import></div><div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;"><h4 style="margin: 0; font-size: 18px; line-height: 1.3; font-weight: 600;">{{a.title}}</h4><p style="margin: 0; font-size: 14px; line-height: 1.43; color: var(--muted);">{{a.meta}}</p><p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--body);">{{a.hook}}</p><ul aria-label="Themes" style="list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px;"><sc-for list="{{a.themes}}" as="m" hint-placeholder-count="2"><li style="padding: 2px 10px; border-radius: 9999px; background: var(--primary-soft); color: var(--primary); font-size: 12px; line-height: 1.5; font-weight: 600;">{{m.t}}</li></sc-for></ul><div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;"><button type="button" class="st-focus" aria-label="{{a.label}}" onClick="{{a.add}}" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border: 0; border-radius: 9999px; background: var(--primary); color: var(--on-primary); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;"><x-import component-from-global-scope="StrollTO.Icon" name="plus" size="{{n18}}"></x-import><span>Add to compare</span></button><button type="button" class="st-focus h-out" aria-label="{{a.openLabel}}" onClick="{{a.open}}" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1.5px solid var(--border-strong); border-radius: 9999px; background: var(--surface-card); color: var(--ink); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">See this stroll</button></div></div></article></li></sc-for></ul>
 </sc-if>
-<h3 style="margin: 4px 0 0; font-size: 15px; line-height: 1.3; font-weight: 700;">Other available strolls</h3>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--hairline);"><h3 style="margin: 0; font-size: 16px; line-height: 1.3; font-weight: 700;">Find another City stroll</h3><p style="margin: 0; font-size: 14px; line-height: 1.43; color: var(--muted);">{{cmp.adder.cityHint}}{{cmp.adder.cityMore}}</p><label for="dadd-q" style="font-size: 14px; line-height: 1.29; font-weight: 500;">Search by area name</label><input id="dadd-q" type="search" placeholder="e.g. “Annex” or “High Park”" autocomplete="off" value="{{cmp.adder.q}}" onInput="{{cmp.adder.onQ}}" style="min-height: 48px; padding: 0 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--canvas); color: var(--ink); font: inherit; font-size: 16px;">
 <sc-if value="{{cmp.adder.hasCity}}" hint-placeholder-val="{{false}}"><ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px;"><sc-for list="{{cmp.adder.city}}" as="a" hint-placeholder-count="2"><li><button type="button" class="st-focus h-out" aria-label="{{a.label}}" onClick="{{a.add}}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px 12px; border: 1px solid var(--hairline); border-radius: 12px; background: var(--surface-card); color: var(--ink); font: inherit; text-align: left; cursor: pointer;"><span style="min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; line-height: 1.3; font-weight: 600;">{{a.title}}</span><span style="font-size: 13px; line-height: 1.3; color: var(--muted);">{{a.meta}}</span></span><span aria-hidden="true" style="flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9999px; background: var(--primary); color: var(--on-primary);"><x-import component-from-global-scope="StrollTO.Icon" name="plus" size="{{n18}}"></x-import></span></button></li></sc-for></ul></sc-if>
-<p style="margin: 0; font-size: 14px; line-height: 1.43; color: var(--muted);">{{cmp.adder.cityHint}}{{cmp.adder.cityMore}}</p>
+</div>
 </section>
 </sc-if>
 
@@ -4206,15 +4202,18 @@ class Component extends DCLogic {
     var cmpQ = (S.cmpQ || '').trim().toLowerCase();
     var addItem = function (r, ready) {
       var s2 = STROLL_BY[r.id];
-      return { title: s2 ? s2.title : r.name + ' stroll', meta: (s2 ? s2.place + ' · ' + s2.stops.length + ' stops · ' + walkText(s2) : r.count + ' stops · ' + r.timeText) + (ready ? '' : ' · Placeholder'),
+      return { title: s2 ? s2.title : r.name + ' stroll', meta: (s2 ? s2.place + ' · ' + s2.stops.length + ' stops · ' + r.kmText + ' · ' + walkText(s2) : r.count + ' stops · ' + r.timeText) + (ready ? '' : ' · Placeholder'),
+        place: s2 ? s2.place : r.name, hook: s2 ? s2.hook : r.hook, cover: s2 ? s2.cover || '' : '', scene: s2 ? s2.scene : r.scene,
+        themes: (r.theme || []).slice(0, 3).map(function (t) { return { t: t }; }),
+        openLabel: 'See ' + (s2 ? s2.title : r.name), open: function () { self.setState({ cmpAdd: false, cmpQ: '' }); openAny(r.id); },
         label: 'Add ' + (s2 ? s2.title : r.name) + ' to compare', ready: ready,
         add: function () { self.setState({ cmpAdd: false, cmpQ: '' }); cmpToggle(r.id); } };
     };
-    var addReady = MAP_STROLLS.filter(function (r) { return r.pilot && !r.sample && cmpIds.indexOf(r.id) < 0 && (!cmpQ || (r.name + ' ' + r.place).toLowerCase().indexOf(cmpQ) >= 0); }).map(function (r) { return addItem(r, true); });
+    var addReady = MAP_STROLLS.filter(function (r) { return r.pilot && !r.sample && cmpIds.indexOf(r.id) < 0; }).map(function (r) { return addItem(r, true); });
     var cityMatch = cmpQ ? MAP_STROLLS.filter(function (r) { return !r.pilot && cmpIds.indexOf(r.id) < 0 && r.name.toLowerCase().indexOf(cmpQ) >= 0; }) : [];
     cmp.canAdd = cmpIds.length < cmpMax;
     cmp.openAdd = function () {
-      if (isDesktop) self.setState({ dScreen: 'compare', qrOpen: false, cmpAdd: true, cmpQ: '', cmpMsg: '' });
+      if (isDesktop) self.setState({ qrOpen: false, cmpAdd: true, cmpQ: '', cmpMsg: '' }); // the picker opens over the page you're on
       else self.go({ screen: 'compare', cmpFrom: screen, cmpAdd: true, cmpQ: '', cmpMsg: '' });
     };
     cmp.adder = {
@@ -4228,7 +4227,7 @@ class Component extends DCLogic {
       ready: addReady, hasReady: addReady.length > 0,
       city: cityMatch.slice(0, 8).map(function (r) { return addItem(r, false); }), hasCity: cityMatch.length > 0,
       cityMore: cityMatch.length > 8 ? 'Showing 8 of ' + cityMatch.length + '. Type more to narrow it down.' : '',
-      cityHint: cmpQ ? (cityMatch.length ? '' : 'No other strolls match “' + (S.cmpQ || '').trim() + '”.') : 'Type an area name, e.g. “Annex” or “High Park”, to find one of the City’s other strolls.',
+      cityHint: cmpQ ? (cityMatch.length ? '' : 'No other strolls match “' + (S.cmpQ || '').trim() + '”.') : 'The City has about 150 more strolls without photos yet. Type an area name to find one.',
       emptyText: cmpIds.length === 0 ? 'Nothing to compare yet. Use + to add a stroll, or use Compare on any stroll in Explore or on the map.' : ''
     };
     // Featured this week: seasonal picks, community board events and SEO guides (marketing team owns the real picks).
@@ -4260,7 +4259,10 @@ class Component extends DCLogic {
     var handLink = liveLink ? liveLink.replace(/^https?:\/\//, '') : (dUrl[dScreen] || dUrl.home) + (dUrl[dScreen] && dUrl[dScreen].indexOf('?') > 0 ? '&' : '?') + 'from=desktop' + (savedIds.length ? '&saved=' + savedIds.join(',') : '') + ((dScreen === 'stroll' || dScreen === 'seo') ? planQ : '');
     var lang = S.lang || P.lang || 'en';
     var NAV = [['home', 'Explore'], ['map', 'Map'], ['compare', 'Compare']];
-    var dMapW = 1440, dMapH = 900 - 48 - 64 - 77; // browser bar, site header, search bar; the map is full width
+    // On the hosted site (P.realBrowser) the website fills the real browser window and the real address bar and Back/Forward work;
+    // in the canvas it sits in a drawn 1440 x 900 browser frame.
+    var realB = !!P.realBrowser, wvW = realB ? Math.max(1200, P.vw || 1440) : 1440, wvH = realB ? Math.max(680, P.vh || 900) : 900;
+    var dMapW = wvW, dMapH = wvH - (realB ? 0 : 48) - 64 - 77; // browser bar, site header, search bar; the map is full width
     var D_CARD = 432; // the floating card on the left covers this much of the map
     var dFitBox = function (pts, key) {
       var la0 = Infinity, la1 = -Infinity, lo0 = Infinity, lo1 = -Infinity;
@@ -4272,7 +4274,8 @@ class Component extends DCLogic {
     var dSelR = mSel ? MAP_BY[mSel] : null;
     var web = {
       on: isDesktop, off: !isDesktop, sim: simOn,
-      stage: simOn ? 'width: 1440px; height: 900px; display: flex; align-items: center; justify-content: center; gap: 56px; border-radius: 12px; background: var(--surface-strong); box-shadow: 0 0 0 1px var(--border-strong);' : 'display: contents;',
+      wvW: wvW + 'px', wvH: wvH + 'px', wvR: realB ? '0' : '12px', wvShadow: realB ? 'none' : '0 0 0 1px var(--border-strong), 0 16px 40px rgba(31, 36, 48, 0.18)', fakeBar: !realB,
+      stage: simOn ? 'width: ' + wvW + 'px; height: ' + wvH + 'px; display: flex; align-items: center; justify-content: center; gap: 56px; border-radius: 12px; background: var(--surface-strong); box-shadow: 0 0 0 1px var(--border-strong);' : 'display: contents;',
       simLink: S.simLink || (screen === 'overview' ? dUrl.stroll + '?from=desktop' + (savedIds.length ? '&saved=' + savedIds.join(',') : '') + planQ : handLink),
       simText: S.simText || (screen === 'overview' ? 'The stroll opens on its overview, ready to start at Stop ' + (inc[0] + 1) + '.' + (planned ? ' Your plan came with it: ' + inc.length + ' of ' + M + ' stops.' : '') + ' Tap Start stroll to walk it here.' : 'StrollTO opens on the phone.'),
       simBack: function () { self.setState({ phoneSim: false, qrOpen: false, simLink: null, simText: null }); },
@@ -4335,7 +4338,47 @@ class Component extends DCLogic {
     web.toTopShow = isDesktop && !!S.toTop && dScreen !== 'map';
     web.isYou = dScreen === 'you'; web.youCur = dScreen === 'you' ? 'page' : 'false';
     web.goYou = function () { dGo('you'); };
-    web.cmpAddOpen = isDesktop && dScreen === 'compare' && cmp.adder.isOpen;
+    web.cmpAddOpen = isDesktop && cmp.adder.isOpen;
+    // Real browser: each page and pop-up gets its own readable address (?page=compare&a=…&pop=add), so Back, Forward,
+    // reload and shared links work. Page names: home, map, stroll, compare, seo (the guide), you.
+    if (realB && (isDesktop || simOn) && typeof window !== 'undefined' && window.history && window.history.pushState) {
+      var D_PAGES = ['home', 'map', 'stroll', 'compare', 'seo', 'you'];
+      var urlRead = function (first) {
+        var q = new URLSearchParams(window.location.search), pg = q.get('page') || 'home', id = q.get('stroll'), pop = q.get('pop') || '', st = parseInt(q.get('stop'), 10);
+        if (D_PAGES.indexOf(pg) < 0) pg = 'home';
+        var o = { dScreen: pg, qrOpen: pop === 'send', cmpAdd: pop === 'add', cmpQ: '', gtFor: null, q: '', toTop: false };
+        if (pop !== 'phone' && self.state && self.state.phoneSim) { o.phoneSim = false; o.simLink = null; o.simText = null; }
+        if (pg === 'map') { o.mapSel = id && MAP_BY[id] ? id : null; o.mapStop = o.mapSel && st > 0 ? st - 1 : null; o.mapPick = false; o.mapStation = null; if (o.mapSel) o.focusStroll = o.mapSel; }
+        else if (id && STROLL_BY[id]) { o.strollId = id; if (pg === 'stroll') o.focusStroll = id; }
+        if (first) { var ids = ['a', 'b', 'c'].map(function (k) { return q.get(k); }).filter(function (x) { return x && MAP_BY[x]; }); if (ids.length) o.cmp = ids; }
+        return o;
+      };
+      if (!self._urlInit) {
+        self._urlInit = true; self._urlKey = null;
+        window.addEventListener('popstate', function () {
+          self._urlPop = true; var o = urlRead(false), was = self.state && self.state.dScreen;
+          self.setState(o, function () { if (o.dScreen !== was && self.dScroll) self.dScroll.scrollTop = 0; });
+        });
+        if (/[?&](page|stroll|pop|a)=/.test(window.location.search)) { self._urlWait = true; setTimeout(function () { self._urlWait = false; self._urlPop = true; self.setState(urlRead(true)); }, 0); }
+      }
+      if (!self._urlWait) {
+        var uPop = simOn ? 'phone' : web.cmpAddOpen ? 'add' : S.qrOpen ? 'send' : '';
+        var uId = dScreen === 'stroll' ? s.id : dScreen === 'map' ? mSel : null;
+        var uStop = dScreen === 'map' && mSel && S.mapStop != null ? S.mapStop + 1 : null;
+        var uq = [], uView = new URLSearchParams(window.location.search).get('view');
+        if (uView) uq.push('view=' + encodeURIComponent(uView));
+        if (dScreen !== 'home') uq.push('page=' + dScreen);
+        if (uId) uq.push('stroll=' + encodeURIComponent(uId));
+        if (uStop) uq.push('stop=' + uStop);
+        if (dScreen === 'compare') cmpIds.forEach(function (id, i) { uq.push('abc'.charAt(i) + '=' + encodeURIComponent(id)); });
+        if (uPop) uq.push('pop=' + uPop);
+        var uUrl = window.location.pathname + (uq.length ? '?' + uq.join('&') : ''), uKey = [dScreen, uId, uStop, uPop].join('|');
+        if (self._urlKey == null || self._urlPop) { self._urlPop = false; if (uUrl !== window.location.pathname + window.location.search) window.history.replaceState(null, '', uUrl); }
+        else if (uKey !== self._urlKey) window.history.pushState(null, '', uUrl);
+        else if (uUrl !== window.location.pathname + window.location.search) window.history.replaceState(null, '', uUrl);
+        self._urlKey = uKey;
+      }
+    }
     web.seoCover = STROLL_BY.bloorwest.cover || ''; web.seoCoverAlt = STROLL_BY.bloorwest.coverAlt;
     web.mapList = !mp.isDetail;
     web.cardDetail = mp.isDetail; web.cardStation = mp.isStation; web.cardPick = mp.isPick;
