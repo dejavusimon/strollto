@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 test('website: Add a stroll opens photo cards over the page you are on', async ({ page }) => {
   await page.setViewportSize({ width: 1500, height: 1000 });
-  await page.goto('./?view=computer'); await page.getByRole('button', { name: 'Start', exact: true }).click(); await page.waitForTimeout(500);
+  await page.goto('./?view=computer'); await page.waitForTimeout(400); { const k = page.getByRole('button', { name: 'Not now' }); if (await k.isVisible().catch(() => false)) await k.click(); } await page.waitForTimeout(500);
   await page.getByRole('button', { name: /^Add .* to compare$/ }).first().click().catch(async () => { await page.getByRole('button', { name: /Compare/ }).nth(1).click(); });
   await page.waitForTimeout(300);
   const add = page.getByRole('region', { name: 'Compare' }).getByRole('button', { name: 'Add a stroll' });

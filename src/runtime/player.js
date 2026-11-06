@@ -141,7 +141,7 @@ export function mountPrototype(el, opts = {}) {
     n++;
     const M = createPrototype(makeDCLogic());
     if (opts.hidePhotos) hideUnclearedPhotos(M);
-    root.render(h(Host, { key: 'run' + n, M, appProps: Object.assign({ persist: false }, opts.props || {}), onReady: (x) => { host = x; } }));
+    root.render(h(Host, { key: 'run' + n, M, appProps: Object.assign({ persist: false }, opts.props || {}), onReady: (x) => { host = x; Object.assign(x.logic.props, opts.props || {}); } })); // props set before React mounts still arrive
   }
   render();
   return { restart: render, setProps: (p) => { Object.assign(opts.props || (opts.props = {}), p); if (host) host.setProps(p); } };

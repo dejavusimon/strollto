@@ -80,7 +80,10 @@ function showHelp(on) {
   help.hidden = !on;
   if (on) help.querySelector('[data-close]').focus();
 }
-document.querySelectorAll('[data-help]').forEach((b) => b.addEventListener('click', () => showHelp(true)));
+// On the website the walking buddy shows how to try it (on Explore); the phone keeps the help pop-up.
+let tourReq = 0;
+const startTour = () => { tourReq += 1; app.setProps({ tourReq }); };
+document.querySelectorAll('[data-help]').forEach((b) => b.addEventListener('click', () => (phoneView ? showHelp(true) : startTour())));
 document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => showHelp(false)));
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') showHelp(false); });
 help.addEventListener('click', (e) => { if (e.target === help) showHelp(false); });
@@ -97,4 +100,5 @@ document.querySelectorAll('[data-restart]').forEach((b) => b.addEventListener('c
 // First visit on this device: show the steps once. Arriving from a QR code skips it.
 let seen = false;
 try { seen = localStorage.getItem('strollto.help.seen') === '1'; localStorage.setItem('strollto.help.seen', '1'); } catch (e) { /* storage blocked */ }
-if (!seen && !params.has('from')) showHelp(true);
+// (the website's buddy greets on every opening by itself)
+if (!seen && !params.has('from') && phoneView) showHelp(true);

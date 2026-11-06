@@ -9,7 +9,20 @@ test('computer: plan a stroll, get a real QR link, preview the phone', async ({ 
   await noFonts(page);
   await page.setViewportSize({ width: 1500, height: 1000 });
   await page.goto('./?view=computer');
-  await btn(page, 'Start').click();
+  // first visit: the walking buddy greets and points at the page; Skip ends the how-to
+  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
+  await expect(page.locator('#help')).toBeHidden();
+  await btn(page, 'Show me').click();
+  await expect(page.locator('.wfind.tour-on')).toHaveCount(1);
+  await btn(page, 'Next').click(); await btn(page, 'Next').click();
+  await expect(page.locator('.tour-send.tour-on')).toHaveCount(1);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.tour-on')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: /walking buddy|Send it to your phone/ })).toHaveCount(0);
+  // How to try it (top bar) brings the buddy back
+  await btn(page, 'How to try it').first().click();
+  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
+  await btn(page, 'Not now').click();
   await btn(page, 'History').click();
   await btn(page, 'See this stroll').first().click();
   await expect(page.getByRole('heading', { name: 'Plan your walk' })).toBeVisible();

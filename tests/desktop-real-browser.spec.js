@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-const go = async (page, url = './?view=computer') => { await page.goto(url); const b = page.getByRole('button', { name: 'Start', exact: true }); if (await b.isVisible().catch(() => false)) await b.click(); await page.waitForTimeout(400); };
+const go = async (page, url = './?view=computer') => { await page.goto(url); await page.waitForTimeout(400); const b = page.getByRole('button', { name: 'Not now' }); if (await b.isVisible().catch(() => false)) await b.click(); };
 test('website fills the window and has no drawn browser frame', async ({ page }) => {
   await page.setViewportSize({ width: 1600, height: 1000 }); await go(page);
   await expect(page.getByRole('group', { name: 'Browser buttons (prototype)' })).toHaveCount(0);
@@ -34,4 +34,14 @@ test('compare link with strolls opens them', async ({ page }) => {
   await page.waitForTimeout(400);
   expect(page.url()).toContain('a=cabbagetown&b=danforth');
   await expect(page.getByText('Two old cemeteries, a city farm and the Bucket of Blood').first()).toBeVisible();
+});
+test('the buddy greets on every opening; Not now closes it; no Skip', async ({ page }) => {
+  await page.setViewportSize({ width: 1500, height: 950 });
+  for (let i = 0; i < 2; i++) {
+    await page.goto('./?view=computer'); await page.waitForTimeout(500);
+    await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Skip/ })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Not now' }).click();
+    await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);
+  }
 });
