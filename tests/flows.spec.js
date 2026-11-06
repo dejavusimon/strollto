@@ -36,11 +36,14 @@ test('phone: a QR link opens the plan and the walk can be finished', async ({ pa
   await expect(page.getByText(/Picked up from your computer, with your plan: 7 of 15 stops/)).toBeVisible();
   await btn(page, 'Start stroll').click();
   await btn(page, 'Next stop').click();
-  await btn(page, 'Skip this stop').click();
+  // skipping is a press and hold on Next
+  const nb = await btn(page, 'Next stop').boundingBox();
+  await page.mouse.move(nb.x + nb.width / 2, nb.y + nb.height / 2); await page.mouse.down(); await page.waitForTimeout(800); await page.mouse.up();
   await btn(page, 'Closed').click();
   await page.getByRole('dialog').getByRole('button', { name: 'Skip this stop', exact: true }).click();
-  for (let i = 0; i < 10 && !(await btn(page, 'Finish stroll').count()); i++) await btn(page, 'Next stop').click();
+  for (let i = 0; i < 24 && !(await btn(page, 'Finish stroll').count()); i++) await btn(page, 'Next stop').click();
   await btn(page, 'Finish stroll').click();
+  if (await btn(page, 'Finish stroll').count()) await btn(page, 'Finish stroll').click();
   await expect(page.getByText('6 of 15')).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(0);

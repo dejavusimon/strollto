@@ -571,7 +571,7 @@
     var chosen = sel ? strolls.filter(function (r) { return r.id === sel; })[0] : null;
     if (chosen) {
       if (chosen.stops && chosen.stops.length > 1) {
-        kids.push(h('path', { key: 'route', className: 'st-cmap-route', d: mapPath(chosen.stops, P) }));
+        kids.push(h('path', { key: 'route', className: 'st-cmap-route', d: mapPath(chosen.route && chosen.route.length > 1 ? chosen.route : chosen.stops, P) }));
         chosen.stops.forEach(function (s, i) {
           var q = P(s[0], s[1]), on = props.activeStop === i;
           kids.push(h('g', { key: 'cs' + i, onClick: click(function () { props.onStop && props.onStop(i); }), style: { cursor: 'pointer' } },
@@ -600,13 +600,27 @@
         la: v.lat - (m[1] - H / 2) * v.mpp / MKY, lo: v.lon + (m[0] - W / 2) * v.mpp / MKX };
       drag.current = null; moved.current = true;
     };
+    /* Double tap: zoom in 2x at that spot. Double tap and hold, then slide: up zooms in, down zooms out (one-handed). */
+    var lastTap = React.useRef(null), dz = React.useRef(null);
     var onDown = function (e) {
       ptrs.current[e.pointerId] = { x: e.clientX, y: e.clientY };
-      if (Object.keys(ptrs.current).length >= 2) { startPinch(e.currentTarget); return; }
+      if (Object.keys(ptrs.current).length >= 2) { dz.current = null; startPinch(e.currentTarget); return; }
+      var lt = lastTap.current, now = e.timeStamp || Date.now();
+      if (lt && now - lt.t < 320 && Math.abs(e.clientX - lt.x) + Math.abs(e.clientY - lt.y) < 36) {
+        var v0 = viewNow.current, m0 = svgPt(e.currentTarget, e.clientX, e.clientY);
+        dz.current = { y: e.clientY, mpp: v0.mpp, m: m0, la: v0.lat - (m0[1] - H / 2) * v0.mpp / MKY, lo: v0.lon + (m0[0] - W / 2) * v0.mpp / MKX, slid: false };
+        lastTap.current = null; drag.current = null; moved.current = true; return;
+      }
       drag.current = { x: e.clientX, y: e.clientY, lat: view.lat, lon: view.lon }; moved.current = false;
+    };
+    var dzTo = function (z, mpp) {
+      mpp = Math.max(1.2, Math.min(props.maxMpp || 160, mpp));
+      setView({ lat: z.la + (z.m[1] - H / 2) * mpp / MKY, lon: z.lo - (z.m[0] - W / 2) * mpp / MKX, mpp: mpp });
     };
     var onMove = function (e) {
       if (ptrs.current[e.pointerId]) ptrs.current[e.pointerId] = { x: e.clientX, y: e.clientY };
+      var z = dz.current;
+      if (z) { var dy = z.y - e.clientY; if (Math.abs(dy) > 4) z.slid = true; if (z.slid) { busy(); dzTo(z, z.mpp * Math.exp(-dy * 0.012)); } return; }
       var pz = pinch.current, t = pz && two();
       if (pz && t) {
         busy();
@@ -624,6 +638,9 @@
     };
     var onUp = function (e) {
       if (e && e.pointerId != null) delete ptrs.current[e.pointerId]; else ptrs.current = {};
+      var z = dz.current;
+      if (z) { dz.current = null; if (!z.slid) { busy(); dzTo(z, z.mpp / 2); } settle(0); setTimeout(function () { moved.current = false; }, 0); return; }
+      if (e && e.type === 'pointerup' && !moved.current && !pinch.current && !Object.keys(ptrs.current).length) lastTap.current = { t: e.timeStamp || Date.now(), x: e.clientX, y: e.clientY };
       var left = Object.keys(ptrs.current);
       if (pinch.current && left.length < 2) {
         if (!left.length) settle(0);

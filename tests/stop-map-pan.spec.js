@@ -1,0 +1,21 @@
+import { test, expect } from '@playwright/test';
+const start = async (page) => { const s = page.getByRole('button', { name: 'Start', exact: true }); if (await s.isVisible().catch(() => false)) await s.click(); };
+test('phone: featured cards and overview lead with the place; the stop map pans and recentres', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('./'); await start(page); await page.waitForTimeout(500);
+  await page.evaluate(() => { const h = [...document.querySelectorAll('h2')].find(x => /Featured/.test(x.textContent)); h && h.scrollIntoView(); });
+  await page.goto('./?s=cabbagetown'); await start(page); await page.waitForTimeout(500);
+  await page.evaluate(() => { const m = [...document.querySelectorAll('main')].find(x => x.scrollHeight > x.clientHeight + 50); m.scrollTop = 420; m.dispatchEvent(new Event('scroll')); });
+  await page.getByRole('button', { name: /Start stroll/ }).first().click(); await page.waitForTimeout(600);
+  const box = await page.locator('.rmap-box').boundingBox();
+  await page.mouse.move(box.x + 300, box.y + 120); await page.mouse.down(); await page.mouse.move(box.x + 220, box.y + 10, { steps: 8 }); await page.mouse.up();
+  await page.waitForTimeout(300);
+  await expect(page.getByRole('button', { name: 'Back to the route' })).toBeVisible();
+  const tx = await page.evaluate(() => { const m = /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/.exec(document.querySelector('.rmap-pan').style.transform); return m ? [+m[1], +m[2]] : null; });
+  expect(tx[0]).toBeLessThan(-40); expect(tx[1]).toBeLessThan(-40);
+  await page.mouse.move(box.x + 60, box.y + 90); await page.mouse.down(); await page.mouse.move(box.x + 300, box.y + 90, { steps: 8 }); await page.mouse.up();
+  const tx2 = await page.evaluate(() => +/translate\(([-\d.]+)px/.exec(document.querySelector('.rmap-pan').style.transform)[1]);
+  expect(tx2).toBeGreaterThan(100);
+  await page.getByRole('button', { name: 'Back to the route' }).click(); await page.waitForTimeout(400);
+  await expect(page.getByRole('button', { name: 'Back to the route' })).toHaveCount(0);
+});
