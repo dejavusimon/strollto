@@ -27,6 +27,7 @@ const small = matchMedia('(max-width: 760px)').matches;
 const phoneView = forced === 'phone' || (forced !== 'computer' && (small || deepLink()));
 const fullScreenPhone = phoneView && small;
 // Running as the installed app (Android: installed from Chrome; iPhone: added to the home screen). ?app=1 fakes it for testing.
+const iosNative = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const installed = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true || params.get('app') === '1';
 
 // The site's own address: QR codes and copied links point here.
@@ -54,7 +55,7 @@ function phoneSize() {
 }
 
 const props = phoneView
-  ? Object.assign({ demo: true, persist: true, installed, sysBack: true }, fullScreenPhone ? Object.assign({ bare: true }, phoneSize()) : { frameHeight: 812 })
+  ? Object.assign({ demo: true, persist: true, installed, sysBack: true, iosNative }, fullScreenPhone ? Object.assign({ bare: true }, phoneSize()) : { frameHeight: 812 })
   : Object.assign({ device: 'desktop', demo: true, siteUrl: hosted ? siteUrl : '', realBrowser: true }, siteSize());
 
 const app = mountPrototype(frame, { props });
@@ -77,7 +78,13 @@ function layout() {
 }
 window.addEventListener('resize', layout);
 if (window.visualViewport) window.visualViewport.addEventListener('resize', layout);
-window.addEventListener('orientationchange', () => setTimeout(layout, 300));
+// Phones stay upright: the installed Android app is locked by its manifest (and here, where the browser allows it);
+// an iPhone can't be locked by a web page, so a "Turn your phone upright" screen covers the app while it's sideways.
+if (phoneView) {
+  try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('portrait').catch(() => {}); } catch (e) { /* not allowed here */ }
+}
+const settle = () => { if (phoneView) window.scrollTo(0, 0); layout(); };
+window.addEventListener('orientationchange', () => { setTimeout(settle, 300); setTimeout(settle, 800); });
 layout();
 
 // Help dialog
@@ -96,7 +103,7 @@ help.addEventListener('click', (e) => { if (e.target === help) showHelp(false); 
 
 // Start over: forget this browser's progress and drop any link the page was opened with.
 document.querySelectorAll('[data-restart]').forEach((b) => b.addEventListener('click', () => {
-  try { localStorage.removeItem(STORE_KEY); } catch (e) { /* storage blocked */ }
+  try { localStorage.removeItem(STORE_KEY); localStorage.removeItem('strollto.help.seen'); } catch (e) { /* storage blocked */ }
   if (location.search && !forced) { location.href = siteUrl; return; }
   if (forced && location.search !== '?view=' + forced) history.replaceState(null, '', location.pathname + '?view=' + forced);
   app.restart();

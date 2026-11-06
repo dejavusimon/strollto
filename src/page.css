@@ -40,6 +40,13 @@ html[data-view="phone"] .pg-stage { padding: 0; display: block; }
 html[data-view="phone"] .pg-fit { width: auto !important; height: auto !important; }
 html[data-view="phone"] .pg-frame { position: static; transform: none !important; width: 100% !important; height: auto !important; display: flex; justify-content: center; }
 #vh-probe { position: fixed; left: 0; top: 0; bottom: 0; width: 0; pointer-events: none; visibility: hidden; }
+/* phone turned sideways: StrollTO stays upright (an iPhone can't be locked by a web page, so cover the app) */
+.pg-upright { display: none; }
+@media (orientation: landscape) and (max-height: 520px) and (pointer: coarse) {
+  html[data-view^="phone"] .pg-upright { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; background: var(--canvas); color: var(--ink); text-align: center; }
+  html[data-view^="phone"] .pg-upright p { margin: 6px 0 0; font-size: 16px; line-height: 1.5; color: var(--body); }
+  html[data-view^="phone"] .pg-upright strong { font-size: 20px; color: var(--ink); }
+}
 #inset-probe { position: fixed; left: 0; bottom: 0; width: 0; height: 0; padding-bottom: env(safe-area-inset-bottom, 0px); pointer-events: none; visibility: hidden; }
 
 .pg-help { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 16px; background: rgba(31, 36, 48, 0.55); }
