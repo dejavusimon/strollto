@@ -31,6 +31,10 @@ html[data-view="computer"] .pg-stage { padding: 0; justify-content: flex-start; 
 html[data-view="phone"], html[data-view="phone"] body { height: 100%; overflow: hidden; overscroll-behavior: none; }
 /* the page is pinned to the screen edges; the bar takes what it needs and the app fills the rest, to the very bottom */
 html[data-view="phone"] body { position: fixed; inset: 0; display: flex; flex-direction: column; }
+/* No page pinch-zoom or double-tap zoom on phones. touch-action on html/body alone stops at every scrolling area
+   (and the pinned page made the stage one), so it goes on every element, at zero specificity: the maps' own
+   touch-action: none (class or inline) still wins, so they keep their pinch and double-tap zoom. */
+:where(html[data-view^="phone"]), :where(html[data-view^="phone"]) * { touch-action: pan-x pan-y; }
 html[data-view="phone"] .pg-bar { position: relative; flex: none; }
 html[data-view="phone"] body { background: var(--canvas); }
 html[data-view="phone"] .pg-title, html[data-view="phone"] .pg-note { display: none; }

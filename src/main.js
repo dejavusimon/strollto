@@ -35,6 +35,17 @@ const siteUrl = location.origin + location.pathname.replace(/index\.html$/, '');
 const hosted = /^https?:/.test(location.protocol);
 
 document.documentElement.dataset.view = fullScreenPhone ? 'phone' : phoneView ? 'phone-framed' : 'computer';
+
+// Phone: no page pinch-zoom or double-tap zoom (the maps keep their own pinch and double-tap zoom).
+// Android honours the viewport setting and touch-action; iPhones ignore both, so their pinch gesture is cancelled here.
+if (phoneView) {
+  const vp = document.querySelector('meta[name="viewport"]');
+  if (vp) vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover');
+  const stop = (e) => { if (e.cancelable) e.preventDefault(); };
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach((t) => document.addEventListener(t, stop, { passive: false }));
+  document.addEventListener('touchmove', (e) => { if (e.touches && e.touches.length > 1) stop(e); }, { passive: false });
+  // (double-tap zoom is already off through touch-action, so taps are never held back)
+}
 document.getElementById('help-computer').hidden = phoneView;
 document.getElementById('help-phone').hidden = !phoneView;
 
