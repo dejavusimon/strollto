@@ -46,26 +46,24 @@ function siteSize() {
   return { vw: Math.max(1200, window.innerWidth), vh: Math.max(680, window.innerHeight - bar.offsetHeight) };
 }
 
-const tallest = {};
+// Full-screen phone: the page's layout (fixed to the screen edges) sets the app's size, and the app reads it back.
+// No height is ever guessed from the window, so the keyboard, a turn or the toolbar can't leave a strip or push buttons off screen.
 function phoneSize() {
   const probe = document.getElementById('inset-probe');
   const insetBottom = probe ? parseFloat(getComputedStyle(probe).paddingBottom) || 0 : 0;
-  const full = document.getElementById('vh-probe');
-  // the tallest height seen at this width: the keyboard or a turn never shrinks the app (that left a white strip on iPhones)
-  const w = window.innerWidth, now = Math.max(window.innerHeight, full ? full.offsetHeight : 0, document.documentElement.clientHeight || 0);
-  // (only in the installed app: in a browser tab the toolbar really does take space)
-  const h = installed ? (tallest[w] = Math.max(tallest[w] || 0, now)) : now;
-  return { frameWidth: Math.min(window.innerWidth, 560), frameHeight: Math.max(520, h - bar.offsetHeight), insetTop: 0, insetBottom };
+  const r = frame.getBoundingClientRect();
+  return { frameWidth: Math.round(r.width) || Math.min(window.innerWidth, 560), frameHeight: Math.round(r.height) || Math.max(520, window.innerHeight - bar.offsetHeight), insetTop: 0, insetBottom };
 }
 
 const props = phoneView
-  ? Object.assign({ demo: true, persist: true, installed, sysBack: true, iosNative }, fullScreenPhone ? Object.assign({ bare: true }, phoneSize()) : { frameHeight: 812 })
+  ? Object.assign({ demo: true, persist: true, installed, sysBack: true, iosNative }, fullScreenPhone ? Object.assign({ bare: true, frameCss: '100%' }, phoneSize()) : { frameHeight: 812 })
   : Object.assign({ device: 'desktop', demo: true, siteUrl: hosted ? siteUrl : '', realBrowser: true }, siteSize());
 
 const app = mountPrototype(frame, { props });
 
+let lastH = 0, lastW = 0;
 function layout() {
-  if (fullScreenPhone) { app.setProps(phoneSize()); return; }
+  if (fullScreenPhone) { const z = phoneSize(); if (z.frameHeight !== lastH || z.frameWidth !== lastW) { lastH = z.frameHeight; lastW = z.frameWidth; app.setProps(z); } return; }
   if (!phoneView) {
     // the website fills the window under the prototype bar; narrower or shorter windows scale it down
     const z = siteSize(), k = Math.min(1, window.innerWidth / z.vw, (window.innerHeight - bar.offsetHeight) / z.vh);
@@ -81,6 +79,7 @@ function layout() {
   fit.style.width = Math.round(w * k) + 'px'; fit.style.height = Math.round(h * k) + 'px';
 }
 window.addEventListener('resize', layout);
+if (fullScreenPhone && window.ResizeObserver) new ResizeObserver(() => layout()).observe(frame);
 if (window.visualViewport) window.visualViewport.addEventListener('resize', layout);
 // Phones stay upright: the installed Android app is locked by its manifest (and here, where the browser allows it);
 // an iPhone can't be locked by a web page, so a "Turn your phone upright" screen covers the app while it's sideways.

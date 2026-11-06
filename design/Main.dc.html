@@ -18,7 +18,7 @@
 <sc-if value="{{web.off}}" hint-placeholder-val="{{true}}">
 <div style="{{web.stage}}">
 <div style="{{frame.bezel}}">
-<div style="position: relative; width: {{frame.w}}px; height: {{frameH}}px; border-radius: {{frame.radius}}; overflow: hidden; display: flex; flex-direction: column; background: {{chrome.top}}; font-family: var(--font-sans);">
+<div style="position: relative; width: {{frame.w}}px; height: {{frameHCss}}; border-radius: {{frame.radius}}; overflow: hidden; display: flex; flex-direction: column; background: {{chrome.top}}; font-family: var(--font-sans);">
 <sc-if value="{{frame.chrome}}" hint-placeholder-val="{{true}}"><div aria-hidden="true" style="position: relative; flex: none; height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px 0 30px; background: {{chrome.top}}; color: {{chrome.ink}};">
 <span style="font-size: 15px; line-height: 1; font-weight: 600; letter-spacing: -0.2px;">9:41</span>
 <span style="position: absolute; left: 50%; top: 9px; width: 118px; height: 30px; margin-left: -59px; border-radius: 9999px; background: var(--ink); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);"></span>
@@ -5093,6 +5093,7 @@ class Component extends DCLogic {
           active: { strollId: s.id, idx: to, startedAt: active ? active.startedAt : Date.now() } }));
       },
       frameH: Number(P.frameHeight || 812),
+      frameHCss: P.bare && P.frameCss ? P.frameCss : Number(P.frameHeight || 812) + 'px',   // full-screen phone: the page's own layout sets the height
       frame: P.bare
         ? { w: Number(P.frameWidth || 375), bare: true, chrome: false, radius: '0', topH: Number(P.insetTop || 0), botH: Number(P.insetBottom || 0), bezel: 'display: block;' }
         : { w: 375, bare: false, chrome: true, radius: '44px', topH: 44, botH: 34, bezel: 'display: inline-block; vertical-align: top; padding: 12px; border-radius: 56px; background: var(--ink); box-shadow: inset 0 0 0 2px var(--body), 0 12px 32px rgba(31, 36, 48, 0.22);' },
