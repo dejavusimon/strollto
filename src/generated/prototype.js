@@ -2823,8 +2823,16 @@ class Component extends DCLogic {
           var el = box && box.querySelector ? box.querySelector('.rmap-pan') : self.rmEl; if (!el) return; self.rmEl = el;
           var w = box ? box.clientWidth : el.clientWidth, hh = box ? box.clientHeight : el.clientHeight, T = self.rmT, ch = w * 640 / 360;
           T.k = Math.max(0.5, Math.min(4, T.k));
-          var px = w * T.k;   // one map-width of surroundings is drawn on every side
-          T.x = Math.max(w - w * T.k - px, Math.min(px, T.x)); T.y = Math.max(hh - ch * T.k - px, Math.min(px, T.y));
+          var px = w * T.k;   // at least one map-width of surroundings on every side
+          var x0 = w - w * T.k - px, x1 = px, y0 = hh - ch * T.k - px, y1 = px;
+          // ...and always far enough to reach everything drawn, so every stop on the stroll can be dragged into view
+          var svg = el.querySelector('svg');
+          if (svg && svg.getBBox) {
+            if (!self.rmBB || self.rmBBk !== self.rmIdx) { try { var bx = svg.getBBox(); if (bx && bx.width) { self.rmBB = bx; self.rmBBk = self.rmIdx; } } catch (e3) {} }
+            var bb = self.rmBBk === self.rmIdx ? self.rmBB : null, u = w / 360;
+            if (bb) { x0 = Math.min(x0, w - (bb.x + bb.width) * u * T.k - 40); x1 = Math.max(x1, -bb.x * u * T.k + 40); y0 = Math.min(y0, hh - (bb.y + bb.height) * u * T.k - 40); y1 = Math.max(y1, -bb.y * u * T.k + 40); }
+          }
+          T.x = Math.max(x0, Math.min(x1, T.x)); T.y = Math.max(y0, Math.min(y1, T.y));
           el.style.transform = 'translate(' + T.x + 'px,' + T.y + 'px) scale(' + T.k + ')';
           var mv = Math.abs(T.x) > 2 || Math.abs(T.y) > 2 || Math.abs(T.k - 1) > 0.02;
           if (mv !== !!(self.state && self.state.rmMoved)) self.setState({ rmMoved: mv });

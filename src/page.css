@@ -22,11 +22,6 @@ body { background: var(--surface-strong); color: var(--ink); font-family: 'Noto 
 .pg-sw[aria-checked="true"] .pg-sw-track { background: var(--primary); }
 .pg-sw[aria-checked="true"] .pg-sw-track::after { transform: translateX(14px); }
 .pg-sw:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; border-radius: 9999px; }
-/* touch spots for screen-recorded tests (phone only) */
-.pg-touches { position: fixed; inset: 0; z-index: 90; pointer-events: none; overflow: hidden; }
-.pg-dot { position: absolute; left: 0; top: 0; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 9999px; background: rgba(31,36,48,0.28); border: 2px solid rgba(255,255,255,0.95); box-shadow: 0 0 0 1px rgba(31,36,48,0.55), 0 2px 8px rgba(31,36,48,0.25); will-change: transform; }
-.pg-dot.is-up { transition: opacity 320ms ease, scale 320ms ease; opacity: 0; scale: 1.6; }
-.pg-trail { position: absolute; left: 0; top: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 9999px; background: rgba(31,36,48,0.35); transition: opacity 420ms ease; }
 .pg-btn.primary { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
 .pg-btn:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
 

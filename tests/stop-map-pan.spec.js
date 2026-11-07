@@ -19,3 +19,12 @@ test('phone: featured cards and overview lead with the place; the stop map pans 
   await page.getByRole('button', { name: 'Back to the route' }).click(); await page.waitForTimeout(400);
   await expect(page.getByRole('button', { name: 'Back to the route' })).toHaveCount(0);
 });
+test('stop map: can be dragged far enough to bring every stop into view', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 }); await page.goto('./?s=cabbagetown'); await page.waitForTimeout(500);
+  await page.getByRole('button', { name: /Start stroll/ }).first().click(); await page.waitForTimeout(600);
+  const box = await page.locator('.rmap-box').boundingBox();
+  for (let i = 0; i < 4; i++) { await page.mouse.move(box.x + 330, box.y + 70); await page.mouse.down(); await page.mouse.move(box.x + 30, box.y + 70, { steps: 8 }); await page.mouse.up(); await page.waitForTimeout(450); }
+  // Stop 3 sits well to the right of the starting view; it must be reachable
+  const s3 = await page.evaluate(() => { const b = document.querySelector('.rmap-box').getBoundingClientRect(); const t = [...document.querySelectorAll('.rmap-box svg text')].find(x => x.textContent.trim() === '3'); const r = t.getBoundingClientRect(); return { x: r.x + r.width / 2 - b.left, w: b.width }; });
+  expect(s3.x).toBeGreaterThan(0); expect(s3.x).toBeLessThan(s3.w);
+});
