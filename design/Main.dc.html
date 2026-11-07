@@ -4956,13 +4956,17 @@ class Component extends DCLogic {
           T.k = Math.max(0.5, Math.min(4, T.k));
           var px = w * T.k;   // at least one map-width of surroundings on every side
           var x0 = w - w * T.k - px, x1 = px, y0 = hh - ch * T.k - px, y1 = px;
-          // ...and always far enough to reach everything drawn, so every stop on the stroll can be dragged into view
-          var svg = el.querySelector('svg');
-          if (svg && svg.getBBox) {
-            if (!self.rmBB || self.rmBBk !== self.rmIdx) { try { var bx = svg.getBBox(); if (bx && bx.width) { self.rmBB = bx; self.rmBBk = self.rmIdx; } } catch (e3) {} }
-            var bb = self.rmBBk === self.rmIdx ? self.rmBB : null, u = w / 360;
-            if (bb) { x0 = Math.min(x0, w - (bb.x + bb.width) * u * T.k - 40); x1 = Math.max(x1, -bb.x * u * T.k + 40); y0 = Math.min(y0, hh - (bb.y + bb.height) * u * T.k - 40); y1 = Math.max(y1, -bb.y * u * T.k + 40); }
+          // ...and always far enough that every stop on the stroll can be dragged into view (spread-out strolls reach further)
+          if (self.rmBBk !== self.rmIdx) {
+            var tb = null;
+            Array.prototype.forEach.call(el.querySelectorAll('svg text'), function (tx) {
+              if (!/^\d+$/.test((tx.textContent || '').trim())) return;
+              try { var q = tx.getBBox(); tb = tb ? { x0: Math.min(tb.x0, q.x), x1: Math.max(tb.x1, q.x + q.width), y0: Math.min(tb.y0, q.y), y1: Math.max(tb.y1, q.y + q.height) } : { x0: q.x, x1: q.x + q.width, y0: q.y, y1: q.y + q.height }; } catch (e3) {}
+            });
+            if (tb) { self.rmBB = tb; self.rmBBk = self.rmIdx; }
           }
+          var bb = self.rmBBk === self.rmIdx ? self.rmBB : null, u = w / 360, mg = 56;
+          if (bb) { x0 = Math.min(x0, w - mg - bb.x1 * u * T.k); x1 = Math.max(x1, mg - bb.x0 * u * T.k); y0 = Math.min(y0, hh - mg - bb.y1 * u * T.k); y1 = Math.max(y1, mg - bb.y0 * u * T.k); }
           T.x = Math.max(x0, Math.min(x1, T.x)); T.y = Math.max(y0, Math.min(y1, T.y));
           el.style.transform = 'translate(' + T.x + 'px,' + T.y + 'px) scale(' + T.k + ')';
           var mv = Math.abs(T.x) > 2 || Math.abs(T.y) > 2 || Math.abs(T.k - 1) > 0.02;

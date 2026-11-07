@@ -115,13 +115,15 @@ function showHelp(on) {
 let tourReq = 0;
 const startTour = () => { tourReq += 1; app.setProps({ tourReq }); };
 
-// Prototype bar switch (remembered on this device): Buddy (off by default) shows the walking buddy's how-to.
+// Prototype bar switches (remembered on this device): Buddy (off by default) shows the walking buddy's how-to;
+// Touches (phones only, on by default) draws a spot under each finger so screen recordings show where people touch.
 const PREF_KEY = 'strollto.prototype.switches';
-let prefs = { buddy: false };
+let prefs = { buddy: false, touches: true };
 try { prefs = Object.assign(prefs, JSON.parse(localStorage.getItem(PREF_KEY) || '{}')); } catch (e) { /* storage blocked */ }
 const savePrefs = () => { try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch (e) { /* storage blocked */ } };
-const swBuddy = document.querySelector('[data-buddy]');
-const paint = () => { swBuddy.setAttribute('aria-checked', String(prefs.buddy)); };
+const swBuddy = document.querySelector('[data-buddy]'), swTouch = document.querySelector('[data-touches]');
+const paint = () => { swBuddy.setAttribute('aria-checked', String(prefs.buddy)); swTouch.setAttribute('aria-checked', String(prefs.touches)); };
+swTouch.hidden = !fullScreenPhone;
 paint();
 app.setProps({ buddyOn: prefs.buddy });
 swBuddy.addEventListener('click', () => {
@@ -129,7 +131,38 @@ swBuddy.addEventListener('click', () => {
   app.setProps({ buddyOn: prefs.buddy });
   if (prefs.buddy) startTour();
 });
+swTouch.addEventListener('click', () => { prefs.touches = !prefs.touches; savePrefs(); paint(); touches(prefs.touches); });
 
+function touches(on) {
+  let layer = document.getElementById('touches');
+  if (!on) { if (layer) layer.remove(); return; }
+  if (layer) return;
+  layer = document.createElement('div'); layer.id = 'touches'; layer.className = 'pg-touches'; layer.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(layer);
+  // Touch events, not pointer events: an iPhone cancels pointer events as soon as the page starts scrolling,
+  // but keeps sending touchmove, so the spot follows the finger through scrolls and map drags.
+  const dots = new Map();
+  const place = (el, x, y) => { el.style.transform = 'translate(' + x + 'px,' + y + 'px)'; };
+  const opt = { capture: true, passive: true };
+  const start = (e) => {
+    if (!document.getElementById('touches')) return;
+    for (const t of e.changedTouches) {
+      const d = document.createElement('div'); d.className = 'pg-dot'; place(d, t.clientX, t.clientY); layer.appendChild(d); dots.set(t.identifier, d);
+    }
+  };
+  const move = (e) => {
+    for (const t of e.changedTouches) { const d = dots.get(t.identifier); if (d) place(d, t.clientX, t.clientY); }   // the spot only, no trail
+  };
+  const end = (e) => {
+    for (const t of e.changedTouches) {
+      const d = dots.get(t.identifier); if (!d) continue; dots.delete(t.identifier);
+      d.classList.add('is-up'); setTimeout(() => d.remove(), 340);
+    }
+  };
+  window.addEventListener('touchstart', start, opt); window.addEventListener('touchmove', move, opt);
+  window.addEventListener('touchend', end, opt); window.addEventListener('touchcancel', end, opt);
+}
+if (fullScreenPhone) touches(prefs.touches);
 document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => showHelp(false)));
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') showHelp(false); });
 help.addEventListener('click', (e) => { if (e.target === help) showHelp(false); });
