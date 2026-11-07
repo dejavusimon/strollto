@@ -44,7 +44,7 @@ test('Buddy switch: off by default; on greets (every opening while on); off remo
   await expect(sw).toHaveAttribute('aria-checked', 'false');
   await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);
   await expect(page.locator('.tour-buddy')).toHaveCount(0);
-  await expect(page.getByRole('switch', { name: 'Touches' })).toBeHidden();   // phones only
+  await expect(page.getByRole('switch', { name: 'Touches' })).toHaveCount(0);
   await sw.click();
   await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
   await page.reload(); await page.waitForTimeout(500);

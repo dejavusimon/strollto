@@ -72,7 +72,7 @@ test('phone: buddy switch greets, points without covering; the bar is slim', asy
   await expect(page.locator('#help')).toBeHidden();
   await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);   // off by default
   expect((await page.locator('.pg-bar').boundingBox()).height).toBeLessThanOrEqual(44);
-  await expect(page.getByRole('switch', { name: 'Touches' })).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByRole('switch', { name: 'Touches' })).toHaveCount(0);
   await page.getByRole('switch', { name: 'Buddy' }).click();
   await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
   await btn(page, 'Show me').click(); await page.waitForTimeout(700);

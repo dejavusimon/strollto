@@ -36,22 +36,6 @@ test('stop page: back button in the small map once the blue bar scrolls away, ne
   await page.getByRole('button', { name: 'Open the big map' }).click(); await page.waitForTimeout(700);
   await expect(box.getByRole('button', { name: 'Stroll overview' })).toHaveCount(0);
 });
-test('phone: touch spots follow the finger (Touches on by default), and switch off', async ({ browser }) => {
-  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
-  const page = await ctx.newPage(); await page.goto('./?s=cabbagetown'); await page.waitForTimeout(600);
-  const cdp = await ctx.newCDPSession(page);
-  const touch = (type, pts) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts });
-  await touch('touchStart', [{ x: 200, y: 600 }]);
-  for (let i = 1; i <= 12; i++) await touch('touchMove', [{ x: 200, y: 600 - i * 25 }]);   // a real scroll of the page
-  const dot = await page.evaluate(() => { const d = document.querySelector('#touches .pg-dot'); return d ? d.style.transform : null; });
-  const y = +/,\s*([\d.]+)px\)/.exec(dot)[1]; expect(y).toBeLessThan(360);   // still under the finger after the page scrolled
-  expect(await page.locator('#touches .pg-trail').count()).toBe(0);   // no trail
-  await touch('touchEnd', []); await page.waitForTimeout(500);
-  expect(await page.locator('#touches .pg-dot').count()).toBe(0);
-  await page.getByRole('switch', { name: 'Touches' }).click();
-  await expect(page.locator('#touches')).toHaveCount(0);
-  await ctx.close();
-});
 test('stop map: tapping a later stop asks to go there next, and the in-between stops are skipped', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 }); await page.goto('./?s=cabbagetown'); await page.waitForTimeout(500);
   await page.getByRole('button', { name: /Start stroll/ }).first().click(); await page.waitForTimeout(600);
