@@ -9,7 +9,9 @@ test('computer: plan a stroll, get a real QR link, preview the phone', async ({ 
   await noFonts(page);
   await page.setViewportSize({ width: 1500, height: 1000 });
   await page.goto('./?view=computer');
-  // first visit: the walking buddy greets and points at the page; Skip ends the how-to
+  // the buddy is off until its switch is on; then it greets and points at the page
+  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);
+  await page.getByRole('switch', { name: 'Buddy' }).click();
   await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
   await expect(page.locator('#help')).toBeHidden();
   await btn(page, 'Show me').click();
@@ -19,8 +21,8 @@ test('computer: plan a stroll, get a real QR link, preview the phone', async ({ 
   await page.keyboard.press('Escape');
   await expect(page.locator('.tour-on')).toHaveCount(0);
   await expect(page.getByRole('heading', { name: /walking buddy|Send it to your phone/ })).toHaveCount(0);
-  // How to try it (top bar) brings the buddy back
-  await btn(page, 'How to try it').first().click();
+  // the buddy switch off and on again brings it back
+  await page.getByRole('switch', { name: 'Buddy' }).click(); await page.getByRole('switch', { name: 'Buddy' }).click();
   await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
   await btn(page, 'Not now').click();
   await btn(page, 'History').click();
@@ -63,13 +65,16 @@ test('phone: a QR link opens the plan and the walk can be finished', async ({ pa
   expect(errors).toEqual([]);
 });
 
-test('phone: plain link: the buddy greets once, points without covering, and the bar is slim', async ({ page }) => {
+test('phone: buddy switch greets, points without covering; the bar is slim', async ({ page }) => {
   await noFonts(page);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('./');
   await expect(page.locator('#help')).toBeHidden();
-  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);   // off by default
   expect((await page.locator('.pg-bar').boundingBox()).height).toBeLessThanOrEqual(44);
+  await expect(page.getByRole('switch', { name: 'Touches' })).toHaveAttribute('aria-checked', 'true');
+  await page.getByRole('switch', { name: 'Buddy' }).click();
+  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
   await btn(page, 'Show me').click(); await page.waitForTimeout(700);
   for (const sel of ['.ptour-q', '.ptour-best', null, '.ptour-modes']) {
     if (sel) {
@@ -83,12 +88,9 @@ test('phone: plain link: the buddy greets once, points without covering, and the
   await expect(page.locator('.tour-bubble')).toHaveCount(0);
   const box = await page.locator('#frame').boundingBox();
   expect(box.width).toBeGreaterThan(380);
-  // second opening: no greeting
+  // second opening: no greeting on the phone (first opening only)
   await page.reload(); await page.waitForTimeout(600);
   await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);
-  // How to try it brings it back
-  await btn(page, 'How to try it').click();
-  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
 });
 test('phone: the system Back steps back inside the app', async ({ page }) => {
   await noFonts(page);

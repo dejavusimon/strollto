@@ -114,7 +114,56 @@ function showHelp(on) {
 // On the website the walking buddy shows how to try it (on Explore); the phone keeps the help pop-up.
 let tourReq = 0;
 const startTour = () => { tourReq += 1; app.setProps({ tourReq }); };
-document.querySelectorAll('[data-help]').forEach((b) => b.addEventListener('click', () => startTour()));
+
+// Prototype bar switches (remembered on this device): Buddy (off by default) shows the walking buddy's how-to;
+// Touches (phones only, on by default) draws a spot under each finger so screen recordings show where people touch.
+const PREF_KEY = 'strollto.prototype.switches';
+let prefs = { buddy: false, touches: true };
+try { prefs = Object.assign(prefs, JSON.parse(localStorage.getItem(PREF_KEY) || '{}')); } catch (e) { /* storage blocked */ }
+const savePrefs = () => { try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch (e) { /* storage blocked */ } };
+const swBuddy = document.querySelector('[data-buddy]'), swTouch = document.querySelector('[data-touches]');
+const paint = () => { swBuddy.setAttribute('aria-checked', String(prefs.buddy)); swTouch.setAttribute('aria-checked', String(prefs.touches)); };
+swTouch.hidden = !fullScreenPhone;
+paint();
+app.setProps({ buddyOn: prefs.buddy });
+swBuddy.addEventListener('click', () => {
+  prefs.buddy = !prefs.buddy; savePrefs(); paint();
+  app.setProps({ buddyOn: prefs.buddy });
+  if (prefs.buddy) startTour();
+});
+swTouch.addEventListener('click', () => { prefs.touches = !prefs.touches; savePrefs(); paint(); touches(prefs.touches); });
+
+function touches(on) {
+  let layer = document.getElementById('touches');
+  if (!on) { if (layer) layer.remove(); return; }
+  if (layer) return;
+  layer = document.createElement('div'); layer.id = 'touches'; layer.className = 'pg-touches'; layer.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(layer);
+  const dots = new Map(); let lastTrail = 0;
+  const place = (el, x, y) => { el.style.transform = 'translate(' + x + 'px,' + y + 'px)'; };
+  const opt = { capture: true, passive: true };
+  const down = (e) => {
+    if (!document.getElementById('touches') || e.pointerType === 'mouse') return;
+    const d = document.createElement('div'); d.className = 'pg-dot'; place(d, e.clientX, e.clientY); layer.appendChild(d); dots.set(e.pointerId, d);
+  };
+  const move = (e) => {
+    const d = dots.get(e.pointerId); if (!d) return;
+    place(d, e.clientX, e.clientY);
+    const now = performance.now();
+    if (now - lastTrail > 35) {
+      lastTrail = now;
+      const t = document.createElement('div'); t.className = 'pg-trail'; place(t, e.clientX, e.clientY); layer.appendChild(t);
+      requestAnimationFrame(() => { t.style.opacity = '0'; }); setTimeout(() => t.remove(), 450);
+    }
+  };
+  const up = (e) => {
+    const d = dots.get(e.pointerId); if (!d) return; dots.delete(e.pointerId);
+    d.classList.add('is-up'); setTimeout(() => d.remove(), 340);
+  };
+  window.addEventListener('pointerdown', down, opt); window.addEventListener('pointermove', move, opt);
+  window.addEventListener('pointerup', up, opt); window.addEventListener('pointercancel', up, opt);
+}
+if (fullScreenPhone) touches(prefs.touches);
 document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => showHelp(false)));
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') showHelp(false); });
 help.addEventListener('click', (e) => { if (e.target === help) showHelp(false); });
@@ -133,4 +182,4 @@ let seen = false;
 try { seen = localStorage.getItem('strollto.help.seen') === '1'; localStorage.setItem('strollto.help.seen', '1'); } catch (e) { /* storage blocked */ }
 // (the website's buddy greets on every opening by itself)
 // the phone's buddy greets on the first opening only (people arriving from a QR code skip it)
-if (!seen && !params.has('from') && !deepLink() && phoneView) startTour();
+if (prefs.buddy && !seen && !params.has('from') && !deepLink() && phoneView) startTour();

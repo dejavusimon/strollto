@@ -3,7 +3,9 @@ const go = async (page, url = './?view=computer') => { await page.goto(url); awa
 test('website fills the window and has no drawn browser frame', async ({ page }) => {
   await page.setViewportSize({ width: 1600, height: 1000 }); await go(page);
   await expect(page.getByRole('group', { name: 'Browser buttons (prototype)' })).toHaveCount(0);
-  await expect(page.getByText('Prototype for review')).toBeVisible();
+  await expect(page.locator('.pg-tag')).toHaveText('Prototype');
+  await expect(page.locator('.pg-title')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'How to try it' })).toHaveCount(0);
   const wv = await page.locator('.wv').boundingBox(); expect(Math.round(wv.width)).toBe(1600); expect(wv.y + wv.height).toBeLessThanOrEqual(1001); expect(wv.y + wv.height).toBeGreaterThan(990);
 });
 test('real Back and Forward move between pages and close pop-ups; links reopen the page', async ({ page }) => {
@@ -35,13 +37,19 @@ test('compare link with strolls opens them', async ({ page }) => {
   expect(page.url()).toContain('a=cabbagetown&b=danforth');
   await expect(page.getByText('Two old cemeteries, a city farm and the Bucket of Blood').first()).toBeVisible();
 });
-test('the buddy greets on every opening; Not now closes it; no Skip', async ({ page }) => {
+test('Buddy switch: off by default; on greets (every opening while on); off removes the buddy', async ({ page }) => {
   await page.setViewportSize({ width: 1500, height: 950 });
-  for (let i = 0; i < 2; i++) {
-    await page.goto('./?view=computer'); await page.waitForTimeout(500);
-    await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Skip/ })).toHaveCount(0);
-    await page.getByRole('button', { name: 'Not now' }).click();
-    await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);
-  }
+  await page.goto('./?view=computer'); await page.waitForTimeout(500);
+  const sw = page.getByRole('switch', { name: 'Buddy' });
+  await expect(sw).toHaveAttribute('aria-checked', 'false');
+  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);
+  await expect(page.locator('.tour-buddy')).toHaveCount(0);
+  await expect(page.getByRole('switch', { name: 'Touches' })).toBeHidden();   // phones only
+  await sw.click();
+  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
+  await page.reload(); await page.waitForTimeout(500);
+  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
+  await page.getByRole('switch', { name: 'Buddy' }).click(); await page.waitForTimeout(200);
+  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);
+  await expect(page.locator('.tour-buddy')).toHaveCount(0);
 });

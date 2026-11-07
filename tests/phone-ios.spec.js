@@ -36,3 +36,40 @@ test('stop page: back button in the small map once the blue bar scrolls away, ne
   await page.getByRole('button', { name: 'Open the big map' }).click(); await page.waitForTimeout(700);
   await expect(box.getByRole('button', { name: 'Stroll overview' })).toHaveCount(0);
 });
+test('phone: touch spots follow the finger (Touches on by default), and switch off', async ({ browser }) => {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  const page = await ctx.newPage(); await page.goto('./?s=cabbagetown'); await page.waitForTimeout(600);
+  const cdp = await ctx.newCDPSession(page);
+  const touch = (type, pts) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts });
+  await touch('touchStart', [{ x: 200, y: 500 }]); await touch('touchMove', [{ x: 210, y: 470 }]);
+  const dot = await page.evaluate(() => { const d = document.querySelector('#touches .pg-dot'); return d ? d.style.transform : null; });
+  expect(dot).toContain('210px');
+  await touch('touchEnd', []); await page.waitForTimeout(500);
+  expect(await page.locator('#touches .pg-dot').count()).toBe(0);
+  await page.getByRole('switch', { name: 'Touches' }).click();
+  await expect(page.locator('#touches')).toHaveCount(0);
+  await ctx.close();
+});
+test('stop map: tapping a later stop asks to go there next, and the in-between stops are skipped', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 }); await page.goto('./?s=cabbagetown'); await page.waitForTimeout(500);
+  await page.getByRole('button', { name: /Start stroll/ }).first().click(); await page.waitForTimeout(600);
+  await page.getByRole('button', { name: 'Open the big map' }).click(); await page.waitForTimeout(700);
+  // find Stop 9 on the map and tap it
+  const pos = await page.evaluate(() => { const t = [...document.querySelectorAll('.rmap-box text')].find(x => x.textContent.trim() === '9'); if (!t) return null; const r = t.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; });
+  expect(pos).not.toBeNull();
+  await page.mouse.click(pos.x, pos.y); await page.waitForTimeout(600);
+  await expect(page.getByRole('heading', { name: 'Go to Stop 9 directly?' })).toBeVisible();
+  await expect(page.getByText(/Stops 2, 3, 4, 5, 6, 7 and 8 are marked skipped/)).toBeVisible();
+  await page.getByRole('button', { name: 'Go to Stop 9' }).click(); await page.waitForTimeout(500);
+  await expect(page.getByText(/to Stop 9/).first()).toBeVisible();
+  await expect(page.getByText(/Turn right onto Lancaster Ave/).first()).toBeVisible();   // a real street route, not a straight line
+});
+test('plan choices: the chosen plan does not repeat its time and distance inside its button', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('./?view=computer&page=stroll&stroll=cabbagetown'); await page.waitForTimeout(700);
+  const all = page.getByRole('button', { name: /^All 10 stops/ });
+  await expect(all).toHaveAttribute('aria-pressed', 'true');
+  expect((await all.textContent()).trim()).toBe('All 10 stops');
+  await expect(page.getByText('All 10 stops · ~46 min · ~3.6 km')).toBeVisible();
+  await expect(page.locator('section[aria-labelledby="dphone"]').getByText('iPhone', { exact: true })).toBeVisible();
+});
