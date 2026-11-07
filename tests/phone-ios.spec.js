@@ -41,9 +41,10 @@ test('phone: touch spots follow the finger (Touches on by default), and switch o
   const page = await ctx.newPage(); await page.goto('./?s=cabbagetown'); await page.waitForTimeout(600);
   const cdp = await ctx.newCDPSession(page);
   const touch = (type, pts) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts });
-  await touch('touchStart', [{ x: 200, y: 500 }]); await touch('touchMove', [{ x: 210, y: 470 }]);
+  await touch('touchStart', [{ x: 200, y: 600 }]);
+  for (let i = 1; i <= 12; i++) await touch('touchMove', [{ x: 200, y: 600 - i * 25 }]);   // a real scroll of the page
   const dot = await page.evaluate(() => { const d = document.querySelector('#touches .pg-dot'); return d ? d.style.transform : null; });
-  expect(dot).toContain('210px');
+  const y = +/,\s*([\d.]+)px\)/.exec(dot)[1]; expect(y).toBeLessThan(360);   // still under the finger after the page scrolled
   await touch('touchEnd', []); await page.waitForTimeout(500);
   expect(await page.locator('#touches .pg-dot').count()).toBe(0);
   await page.getByRole('switch', { name: 'Touches' }).click();

@@ -1690,7 +1690,7 @@
 </sc-for>
 </div>
 </section>
-<section aria-labelledby="dbest" aria-live="polite" style="display: flex; flex-direction: column; gap: 14px;">
+<section aria-labelledby="dbest" aria-live="polite" style="order: {{web.bestOrder}}; display: flex; flex-direction: column; gap: 14px;">
 <h2 id="dbest" style="margin: 0; font-size: 24px; line-height: 1.25; font-weight: 700;">Best match</h2>
 <sc-if value="{{ex.hasBest}}" hint-placeholder-val="{{true}}">
 <article style="display: grid; grid-template-columns: 420px minmax(0, 1fr); border-radius: 16px; overflow: hidden; background: var(--surface-card); border: 2px solid var(--primary);">
@@ -4455,6 +4455,8 @@ class Component extends DCLogic {
     web.isYou = dScreen === 'you'; web.youCur = dScreen === 'you' ? 'page' : 'false';
     web.goYou = function () { dGo('you'); };
     web.cmpAddOpen = isDesktop && cmp.adder.isOpen;
+    // once someone answers a Find a stroll question, their Best match moves above Featured this week
+    web.bestOrder = exInterests.length > 0 || exTime !== 'any' || exNeeds.length > 0 || !!exStart ? '-1' : '0';
     if (P.device !== 'desktop' && P.sysBack && typeof window !== 'undefined' && window.history && window.history.pushState) {
       var sbCan = S.tour != null && screen === 'landing' || !!S.codeOpen || ['overview', 'saved', 'stop', 'compare', 'passport', 'ar'].indexOf(screen) >= 0 || (screen === 'landing' && !!mSel && landingMode === 'map');
       if (!self._sbInit) {

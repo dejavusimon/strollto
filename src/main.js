@@ -139,29 +139,37 @@ function touches(on) {
   if (layer) return;
   layer = document.createElement('div'); layer.id = 'touches'; layer.className = 'pg-touches'; layer.setAttribute('aria-hidden', 'true');
   document.body.appendChild(layer);
+  // Touch events, not pointer events: an iPhone cancels pointer events as soon as the page starts scrolling,
+  // but keeps sending touchmove, so the spot follows the finger through scrolls and map drags.
   const dots = new Map(); let lastTrail = 0;
   const place = (el, x, y) => { el.style.transform = 'translate(' + x + 'px,' + y + 'px)'; };
   const opt = { capture: true, passive: true };
-  const down = (e) => {
-    if (!document.getElementById('touches') || e.pointerType === 'mouse') return;
-    const d = document.createElement('div'); d.className = 'pg-dot'; place(d, e.clientX, e.clientY); layer.appendChild(d); dots.set(e.pointerId, d);
-  };
-  const move = (e) => {
-    const d = dots.get(e.pointerId); if (!d) return;
-    place(d, e.clientX, e.clientY);
-    const now = performance.now();
-    if (now - lastTrail > 35) {
-      lastTrail = now;
-      const t = document.createElement('div'); t.className = 'pg-trail'; place(t, e.clientX, e.clientY); layer.appendChild(t);
-      requestAnimationFrame(() => { t.style.opacity = '0'; }); setTimeout(() => t.remove(), 450);
+  const start = (e) => {
+    if (!document.getElementById('touches')) return;
+    for (const t of e.changedTouches) {
+      const d = document.createElement('div'); d.className = 'pg-dot'; place(d, t.clientX, t.clientY); layer.appendChild(d); dots.set(t.identifier, d);
     }
   };
-  const up = (e) => {
-    const d = dots.get(e.pointerId); if (!d) return; dots.delete(e.pointerId);
-    d.classList.add('is-up'); setTimeout(() => d.remove(), 340);
+  const move = (e) => {
+    const now = performance.now(), trail = now - lastTrail > 35;
+    if (trail) lastTrail = now;
+    for (const t of e.changedTouches) {
+      const d = dots.get(t.identifier); if (!d) continue;
+      place(d, t.clientX, t.clientY);
+      if (trail) {
+        const tr = document.createElement('div'); tr.className = 'pg-trail'; place(tr, t.clientX, t.clientY); layer.appendChild(tr);
+        requestAnimationFrame(() => { tr.style.opacity = '0'; }); setTimeout(() => tr.remove(), 450);
+      }
+    }
   };
-  window.addEventListener('pointerdown', down, opt); window.addEventListener('pointermove', move, opt);
-  window.addEventListener('pointerup', up, opt); window.addEventListener('pointercancel', up, opt);
+  const end = (e) => {
+    for (const t of e.changedTouches) {
+      const d = dots.get(t.identifier); if (!d) continue; dots.delete(t.identifier);
+      d.classList.add('is-up'); setTimeout(() => d.remove(), 340);
+    }
+  };
+  window.addEventListener('touchstart', start, opt); window.addEventListener('touchmove', move, opt);
+  window.addEventListener('touchend', end, opt); window.addEventListener('touchcancel', end, opt);
 }
 if (fullScreenPhone) touches(prefs.touches);
 document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => showHelp(false)));

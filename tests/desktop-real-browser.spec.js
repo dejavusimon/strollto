@@ -53,3 +53,10 @@ test('Buddy switch: off by default; on greets (every opening while on); off remo
   await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);
   await expect(page.locator('.tour-buddy')).toHaveCount(0);
 });
+test('website: answering a question moves Best match above Featured this week', async ({ page }) => {
+  await page.setViewportSize({ width: 1500, height: 950 }); await page.goto('./?view=computer'); await page.waitForTimeout(500);
+  const y = async (id) => (await page.locator('#' + id).boundingBox()).y;
+  expect(await y('dfeat')).toBeLessThan(await y('dbest'));
+  await page.getByRole('button', { name: 'History', exact: true }).first().click(); await page.waitForTimeout(300);
+  expect(await y('dbest')).toBeLessThan(await y('dfeat'));
+});
