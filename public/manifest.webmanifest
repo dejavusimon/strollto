@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "StrollTO walk companion (prototype)",
-  "short_name": "StrollTO",
+  "name": "StrollTO V2 (prototype)",
+  "short_name": "StrollTO V2",
   "description": "Prototype for review: plan a City of Toronto StrollTO walk on a computer, then walk it with your phone.",
   "start_url": "./",
   "scope": "./",

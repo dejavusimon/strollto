@@ -1,4 +1,6 @@
-# StrollTO walk companion
+# StrollTO walk companion · V2 branch
+
+**This is the `v2` branch:** the V2 phone redesign (search on top, pill tabs at the bottom, new Explore, List grid and stroll page). It's published at `https://dejavusimon.github.io/strollto/v2/`. V1 stays on `main` at `https://dejavusimon.github.io/strollto/`. A push to either branch rebuilds both.
 
 A prototype walk companion for the City of Toronto's [StrollTO](https://www.toronto.ca/services-payments/streets-parking-transportation/sidewalk-tours-wayfinding/self-guided-tours/strollto/) self-guided strolls, made by Toronto Metropolitan University Master of Digital Media students as a major research project with the City.
 

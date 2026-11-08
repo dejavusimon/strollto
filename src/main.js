@@ -14,7 +14,7 @@ import './page.css';
 import './generated/prototype.css';
 import { mountPrototype } from './runtime/player.js';
 
-const STORE_KEY = 'strollto.prototype.v3'; // must match STROLL_KEY in design/Main.dc.html
+const STORE_KEY = 'strollto.prototype.v3.b2'; // V2 keeps its own progress, apart from V1 // must match STROLL_KEY in design/Main.dc.html
 const params = new URLSearchParams(location.search);
 const forced = params.get('view');
 const deepLink = () => ['s', 'cmp', 'screen'].some((k) => params.has(k));
@@ -67,7 +67,7 @@ function phoneSize() {
 }
 
 const props = phoneView
-  ? Object.assign({ demo: true, persist: true, installed, sysBack: true, iosNative }, fullScreenPhone ? Object.assign({ bare: true, frameCss: '100%' }, phoneSize()) : { frameHeight: 812 })
+  ? Object.assign({ v2: true, demo: true, persist: true, installed, sysBack: true, iosNative }, fullScreenPhone ? Object.assign({ bare: true, frameCss: '100%' }, phoneSize()) : { frameHeight: 812 })
   : Object.assign({ device: 'desktop', demo: true, siteUrl: hosted ? siteUrl : '', realBrowser: true }, siteSize());
 
 const app = mountPrototype(frame, { props });
