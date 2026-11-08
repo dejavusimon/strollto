@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, v2]
   workflow_dispatch:
 
 permissions:
@@ -18,7 +18,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # V1: always built from main, published at the site root
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -26,6 +29,18 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      # V2: built from the v2 branch, published at /v2/
+      - uses: actions/checkout@v4
+        with:
+          ref: v2
+          path: v2src
+      - run: npm ci
+        working-directory: v2src
+      - run: npm test
+        working-directory: v2src
+      - run: npm run build
+        working-directory: v2src
+      - run: cp -r v2src/dist dist/v2
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
