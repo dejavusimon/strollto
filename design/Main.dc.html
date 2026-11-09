@@ -86,7 +86,7 @@
 <div class="v2-top" style="position: absolute; left: 0; right: 0; top: 0; z-index: 30; padding: 10px 16px 10px; background: {{v2.searchBg}}; transform: {{v2.searchT}}; opacity: {{v2.searchO}}; visibility: {{v2.searchV}};"><div role="search" style="position: relative;"><label for="q-ph" class="st-sr">{{srch.label}}</label><span aria-hidden="true" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); display: flex; color: var(--muted); pointer-events: none;"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M20 20l-4.6-4.6"></path></svg></span><input id="q-ph" ref="{{srch.setEl}}" type="search" autocomplete="off" spellcheck="false" placeholder="{{srch.placeholder}}" aria-controls="q-ph-list" onInput="{{srch.onInput}}" onKeyDown="{{srch.onKey}}" class="wq-in" style="box-sizing: border-box; width: 100%; min-height: 48px; padding: 0 48px 0 44px; border: 1.5px solid var(--border-strong); border-radius: 9999px; background: var(--canvas); color: var(--ink); font: inherit; font-size: 16px; box-shadow: {{v2.searchSh}};"><sc-if value="{{srch.q}}" hint-placeholder-val="{{false}}"><button type="button" class="st-focus" aria-label="Clear search" onClick="{{srch.clear}}" style="position: absolute; right: 2px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 44px; height: 44px; margin: 0; padding: 0; border: 0; border-radius: 9999px; background: transparent; color: var(--muted); cursor: pointer;"><x-import component-from-global-scope="StrollTO.Icon" name="close" size="{{n18}}"></x-import></button></sc-if></div><p role="status" class="st-sr">{{srch.status}}</p><sc-if value="{{srch.has}}" hint-placeholder-val="{{false}}"><div id="q-ph-list" aria-label="Search suggestions" style="position: absolute; left: 16px; right: 16px; top: calc(100% - 2px); max-height: 420px; overflow-y: auto; padding: 6px 0; border-radius: 14px; border: 1px solid var(--hairline); background: var(--surface-card); box-shadow: var(--shadow-sheet);"><sc-for list="{{srch.groups}}" as="g" hint-placeholder-count="3"><div role="group" aria-label="{{g.head}}" style="padding: 2px 0 4px;"><p aria-hidden="true" style="margin: 0; padding: 8px 16px 4px; font-size: 12px; line-height: 1.3; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: var(--muted);">{{g.head}}</p><sc-for list="{{g.items}}" as="h" hint-placeholder-count="2"><button type="button" data-hit="1" class="st-focus wq" aria-label="{{h.aria}}" onClick="{{h.pick}}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; margin: 0; padding: 6px 16px; border: 0; background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer;"><span aria-hidden="true" style="flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9999px; background: var(--primary-soft); color: var(--primary);"><x-import component-from-global-scope="StrollTO.Icon" name="{{h.icon}}" size="{{n16}}"></x-import></span><span style="min-width: 0; display: flex; flex-direction: column; gap: 1px;"><span style="font-size: 15px; line-height: 1.3; font-weight: 600;">{{h.title}}</span><span style="font-size: 13px; line-height: 1.3; color: var(--muted);">{{h.sub}}</span></span></button></sc-for><sc-if value="{{g.more}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 2px 16px 6px 60px; font-size: 13px; line-height: 1.38; color: var(--muted);">{{g.moreText}}</p></sc-if></div></sc-for><sc-if value="{{srch.none}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 12px 16px; font-size: 15px; line-height: 1.47; color: var(--body);">{{srch.noneText}}</p></sc-if></div></sc-if></div>
 
 <sc-if value="{{v2.isExplore}}" hint-placeholder-val="{{true}}">
-<main ref="{{v2.setExScroll}}" style="position: absolute; inset: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 68px 16px 112px; display: flex; flex-direction: column; gap: 18px;">
+<main ref="{{v2.setExScroll}}" style="position: absolute; inset: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 68px 16px {{v2.padBottom}}; display: flex; flex-direction: column; gap: 18px;">
 <sc-if value="{{v2.feat.has}}" hint-placeholder-val="{{true}}">
 <section ref="{{v2.setFeat}}" aria-labelledby="v2f-h" style="flex: none; display: flex; flex-direction: column; gap: 8px; transform-origin: 50% 0;">
 <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;"><h2 id="v2f-h" style="margin: 0; font-size: 20px; line-height: 1.3; font-weight: 700;">Featured</h2><x-import component-from-global-scope="StrollTO.Badge" tone="neutral">Sample picks</x-import></div>
@@ -182,7 +182,7 @@
 </sc-if>
 
 <sc-if value="{{v2.isList}}" hint-placeholder-val="{{false}}">
-<main ref="{{v2.list.setScroll}}" onClick="{{v2.list.anyClick}}" onContextMenu="{{v2.noMenu}}" class="v2noselect" style="position: absolute; inset: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 68px 16px 112px;">
+<main ref="{{v2.list.setScroll}}" onClick="{{v2.list.anyClick}}" onContextMenu="{{v2.noMenu}}" class="v2noselect" style="position: absolute; inset: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: 68px 16px {{v2.padBottom}};">
 <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 0 6px;">
 <h2 aria-live="polite" style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 1.3; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted);"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 9999px; background: var(--primary);"></span>{{v2.list.head}}</h2>
 <div role="group" aria-label="Grid size" style="flex: none; display: flex; padding: 3px; border-radius: 9999px; background: var(--surface-strong);">
@@ -207,7 +207,7 @@
 
 <sc-if value="{{v2.hit.has}}" hint-placeholder-val="{{false}}">
 <div aria-hidden="true" onClick="{{v2.hit.close}}" class="v2fade" style="position: absolute; inset: 0; z-index: 23; background: rgba(14,18,28,0.32);"></div>
-<section aria-label="{{v2.hit.kind}}: {{v2.hit.title}}" class="v2pop" style="position: absolute; left: 12px; right: 12px; bottom: 82px; z-index: 25; max-height: calc(100% - 170px); overflow-y: auto; scrollbar-width: none; border-radius: 22px; background: var(--surface-card); box-shadow: 0 16px 40px rgba(31,36,48,0.3), 0 0 0 1px var(--hairline);">
+<section aria-label="{{v2.hit.kind}}: {{v2.hit.title}}" class="v2pop" style="position: absolute; left: 12px; right: 12px; bottom: {{v2.cardBottom}}; z-index: 25; max-height: calc(100% - 170px); overflow-y: auto; scrollbar-width: none; border-radius: 22px; background: var(--surface-card); box-shadow: 0 16px 40px rgba(31,36,48,0.3), 0 0 0 1px var(--hairline);">
 <sc-if value="{{v2.hit.hasSrc}}" hint-placeholder-val="{{true}}"><div style="height: 168px; background: var(--surface-strong);"><img src="{{v2.hit.src}}" alt="" draggable="false" onError="{{v2.imgErr}}" style="display: block; width: 100%; height: 100%; object-fit: cover;"></div></sc-if>
 <sc-if value="{{v2.hit.noSrc}}" hint-placeholder-val="{{false}}"><div style="position: relative; height: 150px; overflow: hidden; background: var(--surface-strong);"><x-import component-from-global-scope="StrollTO.PhotoPlate" scene="{{v2.hit.scene}}" src="" alt="" class-name="st-photo-fill st-photo-flush"></x-import><span style="position: absolute; left: 12px; bottom: 10px; padding: 3px 9px; border-radius: 9999px; background: rgba(255,255,255,0.94); color: var(--ink); font-size: 12px; line-height: 1.3; font-weight: 600;">Drawing · no photo yet</span></div></sc-if>
 <button type="button" class="st-focus" aria-label="Close" onClick="{{v2.hit.close}}" style="position: absolute; right: 8px; top: 8px; display: grid; place-items: center; width: 44px; height: 44px; margin: 0; padding: 0; border: 0; border-radius: 9999px; background: rgba(255,255,255,0.92); color: var(--ink); cursor: pointer; box-shadow: 0 1px 4px rgba(31,36,48,0.25);"><x-import component-from-global-scope="StrollTO.Icon" name="close" size="{{n18}}"></x-import></button>
@@ -225,7 +225,7 @@
 </div>
 </section>
 </sc-if>
-<nav ref="{{v2.setNav}}" aria-label="Browse strolls. Slide along it to switch." class="v2nav" style="touch-action: none; -webkit-user-select: none; user-select: none; position: absolute; left: 16px; right: 16px; bottom: 14px; z-index: 26; display: flex; align-items: center; gap: 4px; padding: 6px; border-radius: 9999px; background: var(--surface-card); box-shadow: 0 8px 24px rgba(31,36,48,0.18), 0 0 0 1px var(--hairline);">
+<nav ref="{{v2.setNav}}" aria-label="Browse strolls. Slide along it to switch." class="v2nav" style="touch-action: none; -webkit-user-select: none; user-select: none; position: absolute; left: 16px; right: 16px; bottom: {{v2.navBottom}}; z-index: 26; display: flex; align-items: center; gap: 4px; padding: 6px; border-radius: 9999px; background: var(--surface-card); box-shadow: 0 8px 24px rgba(31,36,48,0.18), 0 0 0 1px var(--hairline);">
 <span aria-hidden="true" class="v2nav-ghost" style="position: absolute; left: 0; top: 6px; width: 72px; height: 48px; border-radius: 9999px; background: var(--primary-soft); box-shadow: inset 0 0 0 1.5px var(--primary); opacity: 0; pointer-events: none; z-index: 0; transition: opacity 160ms ease;"></span><sc-for list="{{v2.tabs}}" as="t" hint-placeholder-count="3"><button type="button" class="st-focus v2nav-b" aria-label="{{t.label}}" aria-current="{{t.cur}}" onClick="{{t.go}}" style="flex: {{t.flex}}; display: inline-flex; align-items: center; justify-content: center; min-width: 48px; height: 48px; margin: 0; padding: {{t.pad}}; border: 0; border-radius: 9999px; background: {{t.bg}}; color: {{t.fg}}; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; overflow: hidden;"><x-import component-from-global-scope="StrollTO.Icon" name="{{t.icon}}"></x-import><span class="v2nav-l" aria-hidden="true" style="max-width: {{t.labW}}; margin-left: {{t.labM}}; opacity: {{t.labO}};">{{t.label}}</span></button></sc-for>
 </nav>
 </sc-if>
@@ -3318,6 +3318,9 @@ function v2Build(self, r) {
   ui.tabI = TABS.map(function (t) { return t.k; }).indexOf(mode);
   out.setNav = function (el) { if (el) v2NavBind(self, el); };
   out.navHide = busy && !!S.sheetFull;
+  var P2 = self.props || {}, inB = P2.bare ? Number(P2.insetBottom || 0) : 0;
+  var navB = P2.bare ? (inB >= 20 ? 18 : 34) : 14; ui.navB = navB;
+  out.navBottom = navB + 'px'; out.padBottom = (navB + 98) + 'px'; out.cardBottom = (navB + 68) + 'px';
 
   // ---- Featured: one picture-first card at a time, every 4 s, with arrows and dots
   var featSrc = r.featured || [];
@@ -3425,7 +3428,7 @@ function v2Build(self, r) {
           var pos = 'below', L = ui.listEl;
           if (tileEl && L && tileEl.getBoundingClientRect) {
             var tb = tileEl.getBoundingClientRect(), lb = L.getBoundingClientRect();
-            var top = lb.top + 68, bot = lb.bottom - 96, mid = (tb.top + tb.bottom) / 2;
+            var top = lb.top + 68, bot = lb.bottom - 82 - (ui.navB || 14), mid = (tb.top + tb.bottom) / 2;
             if (mid - top > (bot - top) * 0.55) pos = 'above';
           }
           self.setState({ v2Pick: id, v2PickPos: pos });
@@ -3479,7 +3482,7 @@ function v2Build(self, r) {
       setTimeout(function () {
         var L = ui.listEl, tile = L && L.querySelector('[data-picked="true"]'); if (!L || !tile) return;
         var lb = L.getBoundingClientRect(), cb = el.getBoundingClientRect(), tb = tile.getBoundingClientRect();
-        var top = Math.min(cb.top, tb.top), bot = Math.max(cb.bottom, tb.bottom), vt = lb.top + 72, vb = lb.bottom - 100, d = 0;
+        var top = Math.min(cb.top, tb.top), bot = Math.max(cb.bottom, tb.bottom), vt = lb.top + 72, vb = lb.bottom - 86 - (ui.navB || 14), d = 0;
         if (bot > vb) d = bot - vb; if (top - d < vt) d = top - vt;
         if (Math.abs(d) > 2) L.scrollBy({ top: d, behavior: v2Reduce() ? 'auto' : 'smooth' });
       }, 60);
