@@ -93,7 +93,7 @@
 <div role="region" aria-roledescription="carousel" aria-label="Featured strolls, changes every 4 seconds" onMouseEnter="{{v2.feat.hold}}" onMouseLeave="{{v2.feat.release}}" onTouchStart="{{v2.feat.tStart}}" onTouchMove="{{v2.feat.tMove}}" onTouchEnd="{{v2.feat.tEnd}}" onTouchCancel="{{v2.feat.tEnd}}" style="position: relative; border-radius: 16px; overflow: hidden; background: var(--surface-strong);">
 <div ref="{{v2.feat.setTrack}}" class="v2f-track">
 <sc-for list="{{v2.feat.items}}" as="f" hint-placeholder-count="3">
-<div role="group" aria-roledescription="slide" aria-label="{{f.pos}}" style="position: relative; flex: 0 0 100%; height: 172px;">
+<div role="group" aria-roledescription="slide" aria-label="{{f.pos}}" style="position: relative; flex: 0 0 100%; height: 229px;">
 <img src="{{f.src}}" alt="{{f.alt}}" draggable="false" onError="{{v2.imgErr}}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;">
 <div aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(14,18,28,0.85) 0%, rgba(14,18,28,0.4) 50%, rgba(14,18,28,0) 78%);"></div>
 <div style="position: absolute; left: 16px; right: 52px; bottom: 14px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; color: #fff;">
