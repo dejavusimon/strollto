@@ -204,7 +204,6 @@
 </div>
 <div class="v2pc-body" style="flex: 1 1 auto; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 8px;">
 <p data-hook style="margin: 0; font-size: 16px; line-height: 1.5; color: var(--body);">{{v2.list.pick.hook}}</p>
-<sc-if value="{{v2.list.pick.hasHl}}" hint-placeholder-val="{{true}}"><div data-hlwrap style="display: flex; flex-direction: column; gap: 6px;"><p style="margin: 2px 0 0; font-size: 12px; line-height: 1.3; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--muted);">Along the way</p><sc-for list="{{v2.list.pick.hl}}" as="h" hint-placeholder-count="3"><p data-hl style="margin: 0; font-size: 15px; line-height: 1.45; color: var(--body); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;"><strong style="font-weight: 700; color: var(--ink);">{{h.name}}.</strong> {{h.text}}</p></sc-for></div></sc-if>
 </div>
 <div style="flex: none; display: flex; gap: 8px; padding-top: 4px;">
 <sc-if value="{{v2.list.pick.canMap}}" hint-placeholder-val="{{true}}"><button type="button" class="st-focus" aria-label="{{v2.list.pick.mapLabel}}" onClick="{{v2.list.pick.map}}" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 12px; border: 1.5px solid var(--border-strong); border-radius: 9999px; background: var(--surface-card); color: var(--ink); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap;"><x-import component-from-global-scope="StrollTO.Icon" name="pin" size="{{n16}}"></x-import>Show on map</button></sc-if>
@@ -3158,7 +3157,8 @@ function v2SetFocus(self, cards, k, first) {
 }
 // ---- List: remember the scroller (no scroll effects); pinch changes the grid
 function v2ListBind(self, el) {
-  self.v2ui.listEl = el; if (el.__v2) return; el.__v2 = 1;
+  var ui = self.v2ui; ui.listEl = el; if (el.__v2) return; el.__v2 = 1;
+  if (ui.keepScroll != null) { var y = ui.keepScroll; ui.keepScroll = null; el.scrollTop = y; requestAnimationFrame(function () { el.scrollTop = y; }); ui.pcFor = self.state && self.state.v2Pick; }
   el.addEventListener('selectstart', function (e) { e.preventDefault(); });
 }
 // ---- Open the Map tab focused on a stroll (o == null) or one of its stops
@@ -3369,7 +3369,12 @@ function v2Build(self, r) {
     return { label: t.label, icon: t.icon, cur: on ? 'page' : 'false',
       flex: on ? '1 1 0%' : '0 0 48px', pad: on ? '0 16px' : '0', bg: on ? 'var(--primary)' : 'transparent', fg: on ? 'var(--on-primary)' : 'var(--ink)',
       labW: on ? '120px' : '0px', labM: on ? '8px' : '0px', labO: on ? '1' : '0',
-      go: function () { v2LpClear(ui); if (!on && t.go) t.go(); if (S.v2Pick || S.v2Hit) self.setState({ v2Pick: null, v2Hit: null }); } };
+      go: function () {
+        v2LpClear(ui); if (!on && t.go) t.go();
+        // Coming back to List from the map restores the stroll that was being previewed
+        if (t.k === 'list' && !on && S.v2PickKeep) { self.setState({ v2Pick: S.v2PickKeep, v2PickKeep: null, v2Hit: null }); return; }
+        if (S.v2Pick || S.v2Hit || (on === false && t.k === 'explore' && S.v2PickKeep)) self.setState({ v2Pick: null, v2Hit: null, v2PickKeep: t.k === 'explore' ? null : S.v2PickKeep || null });
+      } };
   });
   ui.tabGo = out.tabs.map(function (t) { return t.go; });
   ui.tabI = TABS.map(function (t) { return t.k; }).indexOf(mode);
@@ -3516,15 +3521,10 @@ function v2Build(self, r) {
     }),
     pick: pt ? (function () {
       var H = r.mp && r.mp.h ? r.mp.h : 734, sid = pt.st ? pt.st.id : null;
-      var intro = pt.st && pt.st.mission && pt.st.mission.intro ? pt.st.mission.intro : '';
-      // The City's own stop stories, first sentence each (word for word), as a taste of the walk
-      var hl = pt.st ? pt.st.stops.filter(function (t) { return t.story; }).slice(0, 4).map(function (t) {
-        var m = String(t.story).match(/^[\s\S]*?[.!?](?=\s|$)/); return { name: t.name, text: m ? m[0] : t.story };
-      }) : [];
       return { src: pt.src, place: pt.st ? pt.st.place : pt.place, title: pt.c.title, meta: pt.meta, hook: pt.st ? pt.st.hook : pt.c.hook,
-        sample: !!(pt.st && pt.st.sample), intro: intro, hasIntro: !!intro, hl: hl, hasHl: hl.length > 0,
+        sample: !!(pt.st && pt.st.sample),
         open: pt.c.open, label: 'See this stroll: ' + pt.c.title,
-        canMap: !!(sid && MAP_BY[sid]), map: function () { if (sid) v2ShowOnMap(self, H, sid, null); }, mapLabel: 'Show ' + pt.place + ' on the map' };
+        canMap: !!(sid && MAP_BY[sid]), map: function () { if (!sid) return; ui.keepScroll = ui.listEl ? ui.listEl.scrollTop : null; v2ShowOnMap(self, H, sid, null, { v2PickKeep: pick, v2PickPos: S.v2PickPos }); }, mapLabel: 'Show ' + pt.place + ' on the map' };
     })() : { src: '', stats: [], facts: [], stops: [] },
     clear: function () { self.setState({ v2Pick: null }); },
     pcOrd: pcOrd, pcAbove: pcAbove ? '1' : '0',
