@@ -3385,19 +3385,25 @@ function v2ExpClose(self) {
 function v2HeroBind(self, el) {
   var ui = self.v2ui; if (el.__v2) return; el.__v2 = 1;
   var g = null;
+  var fade = function (fn) {
+    var txt = ui.ovTxt;
+    if (txt && !v2Reduce()) { txt.style.transition = 'opacity 110ms ease'; txt.style.opacity = '0'; setTimeout(function () { fn(); txt.style.transition = 'opacity 220ms ease'; txt.style.opacity = '1'; }, 120); } else fn();
+  };
   el.addEventListener('pointerdown', function (e) {
     if (e.button > 0 || (e.target.closest && e.target.closest('button'))) return;
     g = { x: e.clientX, y: e.clientY, id: e.pointerId };
     g.t = setTimeout(function () {
       if (!g) return; g.fired = true; v2Haptic(15);
       try { var sel = window.getSelection(); if (sel) sel.removeAllRanges(); } catch (e2) {}
-      var txt = ui.ovTxt;
-      var flip = function () { var S2 = self.state, mine2 = S2.v2OvFor === ui.ovSid; self.setState(mine2 ? { v2OvStop: !S2.v2OvStop } : { v2OvStop: true, v2OvPhoto: 0, v2OvFor: ui.ovSid }); };
-      if (txt && !v2Reduce()) { txt.style.transition = 'opacity 120ms ease'; txt.style.opacity = '0'; setTimeout(function () { flip(); txt.style.transition = 'opacity 240ms ease'; txt.style.opacity = '1'; }, 130); } else flip();
+      fade(function () { var S2 = self.state; self.setState({ v2OvStop: true, v2OvPhoto: S2.v2OvFor === ui.ovVisit ? S2.v2OvPhoto || 0 : 0, v2OvFor: ui.ovVisit }); });
     }, 450);
   });
   el.addEventListener('pointermove', function (e) { if (g && !g.fired && (Math.abs(e.clientX - g.x) > 8 || Math.abs(e.clientY - g.y) > 8)) { clearTimeout(g.t); g = null; } });
-  var end = function () { if (g) clearTimeout(g.t); g = null; };
+  var end = function () {
+    if (!g) return; clearTimeout(g.t);
+    var was = g; g = null;
+    if (was.fired) fade(function () { self.setState({ v2OvStop: false }); }); // let go: back to the stroll summary
+  };
   el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end); el.addEventListener('pointerleave', end);
   el.addEventListener('selectstart', function (e) { e.preventDefault(); });
 }
@@ -3442,12 +3448,12 @@ function v2StripBind(self, row) {
     g = null; row.classList.remove('is-scrub');
     if (was.scrub && ui.ovTxt) { ui.ovTxt.style.transition = 'opacity 260ms ease'; ui.ovTxt.style.opacity = '1'; }
     if (was.scrub) ui.stripNoClick = performance.now();
-    if (k >= 0) self.setState({ v2OvPhoto: k, v2OvStop: !!was.scrub, v2OvFor: ui.ovSid });
+    if (k >= 0) self.setState({ v2OvPhoto: k, v2OvStop: !!was.scrub && k > 0, v2OvFor: ui.ovVisit });
   };
   row.addEventListener('pointerup', end); row.addEventListener('pointercancel', end);
   row.addEventListener('click', function (e) {
     var b = e.target && e.target.closest ? e.target.closest('.v2strip-b') : null;
-    if (b && e.detail === 0) self.setState({ v2OvPhoto: +b.getAttribute('data-i'), v2OvStop: false, v2OvFor: ui.ovSid }); // keyboard
+    if (b && e.detail === 0) self.setState({ v2OvPhoto: +b.getAttribute('data-i'), v2OvStop: false, v2OvFor: ui.ovVisit }); // keyboard
     e.preventDefault();
   }, true);
   row.addEventListener('selectstart', function (e) { e.preventDefault(); });
@@ -3948,6 +3954,9 @@ function v2Build(self, r) {
 
   // ---- Stroll page (big cover, key info first, then the stops)
   if (screen === 'overview') {
+    var sidNow = S.strollId || P.strollId;
+    if (!ui.ovIn || ui.ovLastSid !== sidNow) { ui.ovVisit = (ui.ovVisit || 0) + 1; ui.ovIn = true; ui.ovLastSid = sidNow; ui.expK = null; ui.expEl = null; }
+    var visit = ui.ovVisit;
     var sid = S.strollId || P.strollId, st = STROLL_BY[sid] || v2StrollOf(r.s) || STROLLS[0];
     var cv = v2Cover(st), G = getThere(st) || {}, A = st.accessInfo || {};
     var nInfo = [];
@@ -3960,10 +3969,10 @@ function v2Build(self, r) {
     st.stops.forEach(function (t, i) { (t.photos || []).forEach(function (q) { if (coverStop < 0 && q && q.src === cv.src) coverStop = i; }); });
     var phs = [{ src: cv.src, stop: coverStop, label: coverStop >= 0 ? 'Cover photo, Stop ' + (coverStop + 1) + ', ' + st.stops[coverStop].name : 'Cover photo' }];
     st.stops.forEach(function (t, i) { (t.photos || []).forEach(function (q, k) { if (q && q.src && q.src !== cv.src) phs.push({ src: q.src, stop: i, label: 'Stop ' + (i + 1) + ', ' + t.name + (t.photos.length > 1 ? ', photo ' + (k + 1) : '') }); }); });
-    var mine = S.v2OvFor === st.id; ui.ovSid = st.id; // photo choice belongs to this stroll only
+    var mine = S.v2OvFor === visit; ui.ovSid = st.id; // photo and title choices last for this visit to the page only
     var curPh = v2Clamp(mine ? S.v2OvPhoto || 0 : 0, 0, phs.length - 1), stopOn = mine && !!S.v2OvStop;
     var sv = r.s || {}, sumV = (sv.summary || []);
-    var expK = S.v2Exp || null;
+    var expK = S.v2ExpFor === visit ? S.v2Exp || null : null;
     var tileDefs = [
       { k: 'walk', icon: 'clock', value: (sumV[0] ? sumV[0].value : walkText(st)).replace(/^about /, '~'), label: sumV[0] ? sumV[0].label : 'Walking time', more: 'Show the walking time between stops' },
       { k: 'dist', icon: 'route', value: sumV[1] ? sumV[1].value : st.distance, label: sumV[1] ? sumV[1].label : 'Distance', more: 'Show distance details' },
@@ -3980,7 +3989,7 @@ function v2Build(self, r) {
       { icon: 'walk', text: sp.longest + (legsM.length ? ' Shortest: stop ' + (sIdx + 1) + ' to ' + (sIdx + 2) + ', ' + st.stops[sIdx].toNext.min + ' min.' : '') },
       { icon: 'pin', text: ends == null ? 'Start and end points are on the map.' : ends < 400 ? 'It ends close to where it starts, so no trip back is needed.' : 'One way: it ends ' + kmApprox(ends) + ' from where it starts, at ' + aN.name + '. Plan your trip home from there.' }
     ];
-    var gtOn = !!S.v2Gt, first = st.stops[0];
+    var gtOn = S.v2Gt === visit, first = st.stops[0], moreOn = S.v2OvMore === visit;
     out.ov = {
       starText: r.ovStar && r.ovStar.pressed === 'true' ? 'Starred' : 'Star',
       photos: phs.map(function (q, i) { return { i: String(i), src: q.src, label: 'Show ' + q.label + ' on the cover', on: i === curPh ? 'true' : 'false' }; }),
@@ -3988,7 +3997,7 @@ function v2Build(self, r) {
       setStrip: function (el) { if (el) v2StripBind(self, el); },
       setCover: function (el) { if (el) ui.ovCover = el; },
       tiles: tileDefs.map(function (t) { return { k: t.k, icon: t.icon, value: t.value, label: t.label, warn: t.warn ? '1' : '0', open: expK === t.k ? 'true' : 'false', aria: t.value + ', ' + t.label + '. ' + t.more + '.',
-        go: function () { if (S.v2Exp) return; ui.expK = null; self.setState({ v2Exp: t.k }); } }; }),
+        go: function () { if (expK) return; ui.expK = null; self.setState({ v2Exp: t.k, v2ExpFor: visit }); } }; }),
       exp: (function () {
         var d = tileDefs.filter(function (t) { return t.k === expK; })[0];
         if (!d) return { has: false };
@@ -3999,15 +4008,15 @@ function v2Build(self, r) {
       setPanel: function (el) { if (el) v2ExpOpen(self, el); },
       spine: { legs: sp.legs, label: sp.label, longest: sp.longest },
       dist: distItems,
-      more: !!S.v2OvMore, moreStr: S.v2OvMore ? 'true' : 'false', moreLabel: S.v2OvMore ? 'Show less' : 'Show more', moreIcon: S.v2OvMore ? 'chevron-up' : 'chevron-down',
-      toggleMore: function () { self.setState({ v2OvMore: !S.v2OvMore }); },
+      more: moreOn, moreStr: moreOn ? 'true' : 'false', moreLabel: moreOn ? 'Show less' : 'Show more', moreIcon: moreOn ? 'chevron-up' : 'chevron-down',
+      toggleMore: function () { self.setState({ v2OvMore: moreOn ? null : visit }); },
       hasAbout: !!sv.about, about: sv.about || '', hasProv: !!sv.hasProv, provenance: sv.provenance || '',
       // V1's "What to expect", with getting there and step-free added; safety lives under Cautions
       expect: [{ icon: 'transit', label: 'Getting there', text: [G.headline, G.text].filter(Boolean).join(' ') },
         { icon: 'stepfree', label: 'Step-free', text: A.stepFree === true ? 'Step-free route.' : A.stepFree === false ? 'Not step-free: ' + (A.stepFreeWhy || 'some stops have steps or rough ground').replace(/^not step-free:\s*/i, '') + '.' : 'Not checked yet.' }]
         .concat((sv.expect || st.expect || []).filter(function (e) { return e.icon !== 'alert'; })),
-      gtOpen: function () { self.setState({ v2Gt: true }); },
-      gt: { on: gtOn, close: function () { self.setState({ v2Gt: false }); }, first: first ? first.name : '',
+      gtOpen: function () { self.setState({ v2Gt: visit }); },
+      gt: { on: gtOn, close: function () { self.setState({ v2Gt: null }); }, first: first ? first.name : '',
         headline: G.headline || '', text: G.text || '', hasText: !!G.text,
         options: (G.options || []).map(function (o) { return Object.assign({}, o, { hasSub: !!o.sub }); }),
         mapNote: G.mapNote || '', hasMapNote: !!G.mapNote, mapNoteSp: G.mapNote ? ' ' + G.mapNote : '', hasMap: !!(r.ovMap && r.ovMap.stops), caveat: 'Station tags describe the station only, not the walk from it. Cautions for the route are on the stroll page.',
@@ -4034,7 +4043,7 @@ function v2Build(self, r) {
       setTxt: function (el) { if (el) ui.ovTxt = el; },
       setBody: function (el) { if (el) ui.ovBody = el; }
     };
-  } else { out.ov = { stats: [], info: [], stops: [], cautions: [], photos: [], tiles: [], dist: [], exp: { has: false }, gt: { on: false, options: [] }, spine: { legs: [] } }; ui.expK = null; ui.expEl = null; }
+  } else { out.ov = { stats: [], info: [], stops: [], cautions: [], photos: [], tiles: [], dist: [], exp: { has: false }, gt: { on: false, options: [] }, spine: { legs: [] } }; ui.expK = null; ui.expEl = null; ui.ovIn = false; }
   return out;
 }
 
