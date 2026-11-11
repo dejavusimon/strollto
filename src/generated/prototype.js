@@ -1067,12 +1067,12 @@ function v2StripBind(self, row) {
     g = null; row.classList.remove('is-scrub');
     if (was.scrub && ui.ovTxt) { ui.ovTxt.style.transition = 'opacity 260ms ease'; ui.ovTxt.style.opacity = '1'; }
     if (was.scrub) ui.stripNoClick = performance.now();
-    if (k >= 0) self.setState({ v2OvPhoto: k, v2OvStop: !!was.scrub && k > 0, v2OvFor: ui.ovVisit });
+    if (k >= 0) self.setState({ v2OvPhoto: k, v2OvFor: ui.ovVisit });
   };
   row.addEventListener('pointerup', end); row.addEventListener('pointercancel', end);
   row.addEventListener('click', function (e) {
     var b = e.target && e.target.closest ? e.target.closest('.v2strip-b') : null;
-    if (b && e.detail === 0) self.setState({ v2OvPhoto: +b.getAttribute('data-i'), v2OvStop: false, v2OvFor: ui.ovVisit }); // keyboard
+    if (b && e.detail === 0) self.setState({ v2OvPhoto: +b.getAttribute('data-i'), v2OvFor: ui.ovVisit }); // keyboard
     e.preventDefault();
   }, true);
   row.addEventListener('selectstart', function (e) { e.preventDefault(); });
@@ -1586,8 +1586,8 @@ function v2Build(self, r) {
     // Each photo remembers its stop, so the cover's title card can say where it was taken
     var coverStop = -1;
     st.stops.forEach(function (t, i) { (t.photos || []).forEach(function (q) { if (coverStop < 0 && q && q.src === cv.src) coverStop = i; }); });
-    var phs = [{ src: cv.src, stop: coverStop, label: coverStop >= 0 ? 'Cover photo, Stop ' + (coverStop + 1) + ', ' + st.stops[coverStop].name : 'Cover photo' }];
-    st.stops.forEach(function (t, i) { (t.photos || []).forEach(function (q, k) { if (q && q.src && q.src !== cv.src) phs.push({ src: q.src, stop: i, label: 'Stop ' + (i + 1) + ', ' + t.name + (t.photos.length > 1 ? ', photo ' + (k + 1) : '') }); }); });
+    var phs = [{ src: cv.src, stop: -1, label: 'Cover photo' }];
+    st.stops.forEach(function (t, i) { (t.photos || []).forEach(function (q, k) { if (q && q.src) phs.push({ src: q.src, stop: i, label: 'Stop ' + (i + 1) + ', ' + t.name + (t.photos.length > 1 ? ', photo ' + (k + 1) : '') }); }); });
     var mine = S.v2OvFor === visit; ui.ovSid = st.id; // photo and title choices last for this visit to the page only
     var curPh = v2Clamp(mine ? S.v2OvPhoto || 0 : 0, 0, phs.length - 1), stopOn = mine && !!S.v2OvStop;
     var sv = r.s || {}, sumV = (sv.summary || []);
@@ -1643,9 +1643,9 @@ function v2Build(self, r) {
       src: phs[curPh].src, alt: curPh ? phs[curPh].label : cv.alt,
       hasStop: phs[curPh].stop >= 0, stopNum: phs[curPh].stop >= 0 ? 'Stop ' + (phs[curPh].stop + 1) : '', stopName: phs[curPh].stop >= 0 ? st.stops[phs[curPh].stop].name : '',
       // Summary title and tags by default; once the user presses the cover or picks a photo, the stop it shows instead
-      showStop: stopOn && phs[curPh].stop >= 0, showSum: !(stopOn && phs[curPh].stop >= 0),
+      showStop: curPh > 0 && phs[curPh].stop >= 0, showSum: !(curPh > 0 && phs[curPh].stop >= 0),
       stopTag: phs[curPh].stop >= 0 ? (function (t) { var c = CATS[t.cat]; return (c ? c.label : 'Stop') + ' · Stop ' + (phs[curPh].stop + 1) + ' of ' + st.stops.length; })(st.stops[phs[curPh].stop]) : '',
-      setHero: function (el) { if (el) v2HeroBind(self, el); }, title: st.title, place: st.place, sample: !!st.sample,
+      setHero: function () {}, title: st.title, place: st.place, sample: !!st.sample,
       tagLine: (st.tags || []).map(function (t) { return t.label; }).join(' · '),
       hook: st.hook,
       stats: [{ l: 'Walk', v: walkText(st).replace(/^about /, '') }, { l: 'Distance', v: st.distance }, { l: 'Stops', v: String(st.stops.length) }],
