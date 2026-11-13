@@ -1115,7 +1115,7 @@ function v2PostcardBlob(pc) {
     var img = new Image(); img.onload = function () { finish(img); }; img.onerror = function () { finish(null); }; img.src = pc.cover;
   });
 }
-// List A–Z: letters for the City strolls only. Its top follows the first row of City cards, then stays under the search bar.
+// List A–Z: letters for the City strolls only. Shown once the guided walks have scrolled away; its top lines up with the first row of City cards, then stays under the search bar.
 function v2AzBind(self, nav) {
   if (nav.__v2) return; nav.__v2 = true;
   var host = nav.parentElement, main = host && host.querySelector('main');
@@ -1126,6 +1126,9 @@ function v2AzBind(self, nav) {
     var first = main.querySelector('.v2t[data-az]:not([data-az=""])');
     if (!first) { nav.style.visibility = 'hidden'; return; }
     var hb = host.getBoundingClientRect(), ft = first.getBoundingClientRect().top - hb.top;
+    // Hidden while any guided walk is still on screen
+    var gs = main.querySelectorAll('.v2t[data-az=""]'), lastG = gs.length ? gs[gs.length - 1] : null;
+    if (lastG && lastG.getBoundingClientRect().bottom - hb.top > minTop()) { nav.style.visibility = 'hidden'; nav.style.pointerEvents = 'none'; return; }
     var top = Math.max(minTop(), ft), bot = 96;
     if (hb.height - bot - top < 140) { nav.style.visibility = 'hidden'; nav.style.pointerEvents = 'none'; return; }
     nav.style.visibility = 'visible'; nav.style.pointerEvents = 'auto'; nav.style.top = Math.round(top) + 'px'; nav.style.bottom = 'auto'; nav.style.maxHeight = Math.round(hb.height - bot - top) + 'px';
