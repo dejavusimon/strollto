@@ -382,7 +382,10 @@
     var inView = function (q, m) { m = m || 30; return q[0] > -m && q[0] < W + m && q[1] > -m && q[1] < H + m; };
     /* onMove: tells the page the map is being operated (drag, wheel, pinch, zoom buttons), so it can move its own bars out of the way */
     var idleT = React.useRef(null);
-    var settle = function (ms) { if (idleT.current) clearTimeout(idleT.current); idleT.current = setTimeout(function () { idleT.current = null; if (props.onIdle) props.onIdle(); }, ms); };
+    // Groups (the numbered circles) are worked out at fixed zoom steps, and not at all while a pinch or slide-zoom is under way:
+    // they settle once, when the fingers lift, instead of regrouping and jumping on every frame.
+    var clZ = React.useRef(null), clTick = React.useState(0), setClTick = clTick[1];
+    var settle = function (ms) { if (idleT.current) clearTimeout(idleT.current); idleT.current = setTimeout(function () { idleT.current = null; setClTick(function (n) { return n + 1; }); if (props.onIdle) props.onIdle(); }, ms); };
     var busy = function () { if (idleT.current) { clearTimeout(idleT.current); idleT.current = null; } if (props.onMove) props.onMove(); };
     var zoom = function (k, at) {
       busy(); settle(350);
@@ -509,7 +512,11 @@
         kids.push(h('text', { key: 'sn' + i, className: cx('st-cmap-strlabel', st.major && 'is-major'), x: mx, y: my, transform: 'rotate(' + ang.toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1) + ')' }, st.name));
       });
     }
-    var level = view.mpp > 45 ? 'cluster' : view.mpp > 4 ? 'pin' : 'stop';
+    var gesturing = !!(pinch.current || (dz && dz.current && dz.current.slid)) || Object.keys(ptrs.current).length >= 2;
+    var zStep = Math.pow(2, Math.round(Math.log(view.mpp) / Math.LN2 * 2) / 2);
+    if (!gesturing || clZ.current == null) clZ.current = zStep;
+    var cMpp = clZ.current;
+    var level = cMpp > 45 ? 'cluster' : cMpp > 4 ? 'pin' : 'stop';
     var sel = props.selectedId, strolls = props.strolls || [];
     var click = function (fn) { return function (e) { if (moved.current) return; if (e) e.stopPropagation(); fn(); }; };
     var faded = function (r) { return (props.reachIds && props.reachIds.indexOf(r.id) < 0) || (sel && r.id !== sel); };
@@ -534,7 +541,7 @@
     var pilots = [], others = [];
     strolls.forEach(function (r) { if (r.id === sel) return; (r.pilot ? pilots : others).push(r); });
     if (level === 'cluster') {
-      var cell = 64 * view.mpp, buckets = {};
+      var cell = 64 * cMpp, buckets = {};
       others.forEach(function (r) {
         var k = Math.floor(r.lon * MKX / cell) + ':' + Math.floor(r.lat * MKY / cell);
         (buckets[k] = buckets[k] || []).push(r);
