@@ -80,3 +80,6 @@ html[data-view="phone"] .pg-frame { position: static; transform: none !important
 [hidden] { display: none !important; }
 
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+
+/* Phone app inside the website preview: no prototype bar */
+html[data-embed="1"] .pg-bar { display: none !important; }

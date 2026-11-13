@@ -35,6 +35,8 @@ const siteUrl = location.origin + location.pathname.replace(/index\.html$/, '');
 const hosted = /^https?:/.test(location.protocol);
 
 document.documentElement.dataset.view = fullScreenPhone ? 'phone' : phoneView ? 'phone-framed' : 'computer';
+// Inside the website's phone preview (Tap to try) the phone app runs in a frame: no prototype bar there.
+if (params.get('embed') === '1') document.documentElement.dataset.embed = '1';
 
 // Phone: no page pinch-zoom or double-tap zoom (the maps keep their own pinch and double-tap zoom).
 // Android honours the viewport setting and touch-action; iPhones ignore both, so their pinch gesture is cancelled here.
@@ -68,7 +70,7 @@ function phoneSize() {
 
 const props = phoneView
   ? Object.assign({ v2: true, demo: true, persist: true, installed, sysBack: true, iosNative }, fullScreenPhone ? Object.assign({ bare: true, frameCss: '100%' }, phoneSize()) : { frameHeight: 812 })
-  : Object.assign({ device: 'desktop', demo: true, siteUrl: hosted ? siteUrl : '', realBrowser: true }, siteSize());
+  : Object.assign({ device: 'desktop', demo: true, siteUrl: hosted ? siteUrl : '', phoneBase: siteUrl, realBrowser: true }, siteSize());
 
 const app = mountPrototype(frame, { props });
 
