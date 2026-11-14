@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main, v2]
+    branches: [main, v2, v2.5]
   workflow_dispatch:
 
 permissions:
@@ -41,6 +41,18 @@ jobs:
       - run: npm run build
         working-directory: v2src
       - run: cp -r v2src/dist dist/v2
+      # V2.5: built from the v2.5 branch, published at /v2.5/
+      - uses: actions/checkout@v4
+        with:
+          ref: v2.5
+          path: v25src
+      - run: npm ci
+        working-directory: v25src
+      - run: npm test
+        working-directory: v25src
+      - run: npm run build
+        working-directory: v25src
+      - run: cp -r v25src/dist dist/v2.5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
