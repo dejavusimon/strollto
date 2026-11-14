@@ -2064,6 +2064,7 @@
 </sc-for>
 </div>
 </section>
+<sc-if value="{{web.bestShow}}" hint-placeholder-val="{{true}}">
 <section aria-labelledby="dbest" aria-live="polite" style="order: {{web.bestOrder}}; display: flex; flex-direction: column; gap: 14px;">
 <h2 id="dbest" style="margin: 0; font-size: 24px; line-height: 1.25; font-weight: 700;">Best match</h2>
 <sc-if value="{{ex.hasBest}}" hint-placeholder-val="{{true}}">
@@ -2083,10 +2084,11 @@
 </sc-if>
 <sc-if value="{{ex.noneReady}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 16px; border-radius: 14px; background: var(--surface-soft); font-size: 16px;">{{ex.noneText}}</p></sc-if>
 </section>
-<sc-if value="{{ex.hasOthers}}" hint-placeholder-val="{{false}}">
+</sc-if>
+<sc-if value="{{web.alsoHas}}" hint-placeholder-val="{{false}}">
 <section aria-labelledby="dalso" style="display: flex; flex-direction: column; gap: 12px;">
-<h2 id="dalso" style="margin: 0; font-size: 20px; line-height: 1.3; font-weight: 600;">Also ready to walk</h2>
-<sc-for list="{{ex.others}}" as="o" hint-placeholder-count="1">
+<h2 id="dalso" style="margin: 0; font-size: 20px; line-height: 1.3; font-weight: 600;">{{web.alsoTitle}}</h2>
+<sc-for list="{{web.alsoList}}" as="o" hint-placeholder-count="1">
 <article style="display: flex; gap: 16px; align-items: center; padding: 14px; border-radius: 14px; background: var(--surface-card); border: 1px solid var(--hairline);">
 <div style="flex: none; width: 160px;"><x-import component-from-global-scope="StrollTO.PhotoPlate" scene="{{o.scene}}" src="{{o.cover}}" alt="" class-name="st-photo-3x2"></x-import></div>
 <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
@@ -6156,8 +6158,14 @@ class Component extends DCLogic {
     web.isYou = dScreen === 'you'; web.youCur = dScreen === 'you' ? 'page' : 'false';
     web.goYou = function () { dGo('you'); };
     web.cmpAddOpen = isDesktop && cmp.adder.isOpen;
-    // once someone answers a Find a stroll question, their Best match moves above Featured this week
-    web.bestOrder = exInterests.length > 0 || exTime !== 'any' || exNeeds.length > 0 || !!exStart ? '-1' : '0';
+    // Best match appears only once someone answers a Find a stroll question, and then sits above Featured this week.
+    // Until then there is nothing to match on, so the page opens on Featured and every ready stroll is listed below it.
+    var webAnswered = exInterests.length > 0 || exTime !== 'any' || exNeeds.length > 0 || !!exStart;
+    web.bestShow = webAnswered;
+    web.bestOrder = webAnswered ? '-1' : '0';
+    web.alsoList = webAnswered ? exReady.slice(1) : exReady;
+    web.alsoHas = web.alsoList.length > 0;
+    web.alsoTitle = webAnswered ? 'Also ready to walk' : 'Ready to walk';
     if (P.device !== 'desktop' && P.sysBack && typeof window !== 'undefined' && window.history && window.history.pushState) {
       var sbCan = S.tour != null && screen === 'landing' || !!S.codeOpen || ['overview', 'saved', 'stop', 'compare', 'passport', 'ar'].indexOf(screen) >= 0 || (screen === 'landing' && !!mSel && landingMode === 'map');
       if (!self._sbInit) {
