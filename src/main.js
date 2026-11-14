@@ -14,7 +14,7 @@ import './page.css';
 import './generated/prototype.css';
 import { mountPrototype } from './runtime/player.js';
 
-const STORE_KEY = 'strollto.prototype.v3.b2'; // V2 keeps its own progress, apart from V1 // must match STROLL_KEY in design/Main.dc.html
+const STORE_KEY = 'strollto.prototype.v3.b25'; // V2.5 keeps its own progress, apart from V1 and V2 // must match STROLL_KEY in design/Main.dc.html
 const params = new URLSearchParams(location.search);
 const forced = params.get('view');
 const deepLink = () => ['s', 'cmp', 'screen'].some((k) => params.has(k));
