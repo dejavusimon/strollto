@@ -37,7 +37,7 @@ test('compare link with strolls opens them', async ({ page }) => {
   expect(page.url()).toContain('a=cabbagetown&b=danforth');
   await expect(page.getByText('Two old cemeteries, a city farm and the Bucket of Blood').first()).toBeVisible();
 });
-test('Buddy switch: off by default; on greets (every opening while on); off removes the buddy', async ({ page }) => {
+test('Buddy switch: off at every opening; on greets; off removes the buddy', async ({ page }) => {
   await page.setViewportSize({ width: 1500, height: 950 });
   await page.goto('./?view=computer'); await page.waitForTimeout(500);
   const sw = page.getByRole('switch', { name: 'Buddy' });
@@ -47,11 +47,14 @@ test('Buddy switch: off by default; on greets (every opening while on); off remo
   await expect(page.getByRole('switch', { name: 'Touches' })).toHaveCount(0);
   await sw.click();
   await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
-  await page.reload(); await page.waitForTimeout(500);
-  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
   await page.getByRole('switch', { name: 'Buddy' }).click(); await page.waitForTimeout(200);
   await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);
   await expect(page.locator('.tour-buddy')).toHaveCount(0);
+  // the next opening starts with Buddy off again, even though it was switched on before
+  await page.getByRole('switch', { name: 'Buddy' }).click();
+  await page.reload(); await page.waitForTimeout(500);
+  await expect(page.getByRole('switch', { name: 'Buddy' })).toHaveAttribute('aria-checked', 'false');
+  await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);
 });
 test('website: answering a question moves Best match above Featured this week', async ({ page }) => {
   await page.setViewportSize({ width: 1500, height: 950 }); await page.goto('./?view=computer'); await page.waitForTimeout(500);

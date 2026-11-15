@@ -4411,7 +4411,7 @@ class Component extends DCLogic {
         // Three modes (comments 6–9): at the stop (one slim "Next" row), reading (the row turns into the stop name),
         // walking ("Walk to Stop N": the map, directions and a preview of the next stop, then "I’m here")
         var walking = !!S.walkTo && hasNext;
-        var walkStart = function () { self.sfOff = 0; self.stopPlace(0, false); var rt0 = document.querySelector('.stop-root'), shortScr = rt0 ? rt0.clientHeight < 640 : false; self.setState({ walkTo: true, bigMap: true, routeFold: shortScr, stopCollapsed: false }); }; // short screens: the directions start folded so the map keeps room
+        var walkStart = function () { self.sfOff = 0; self.stopPlace(0, false); var rt0 = document.querySelector('.stop-root'), shortScr = rt0 ? rt0.clientHeight < 720 : false; self.setState({ walkTo: true, bigMap: true, routeFold: shortScr, stopCollapsed: false }); }; // short screens: the directions start folded so the map keeps room
         var walkEnd = function () { self.setState({ walkTo: false, bigMap: false }); };
         self.walkStartFn = walkStart;
         var nNo = nx != null ? nx + 1 : null, nst = nx != null ? s.stops[nx] : null, nph = nst && nst.photos && nst.photos[0];

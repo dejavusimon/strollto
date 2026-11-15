@@ -24,3 +24,18 @@ for (const [w, hgt] of [[390, 844], [375, 667], [430, 932]]) {
     await expect(page.getByRole('heading', { name: 'You’re at Stop 2' })).toBeVisible();
   });
 }
+for (const [w, hgt] of [[375, 667], [360, 640], [320, 568]]) {
+  test(`small phone ${w}x${hgt}: walking map keeps room, no duplicate buttons, card fits`, async ({ page }) => {
+    await page.setViewportSize({ width: w, height: hgt });
+    await page.goto('./?s=cabbagetown'); await page.waitForTimeout(500);
+    await page.getByRole('button', { name: /Start stroll/ }).first().click(); await page.waitForTimeout(500);
+    await page.getByRole('button', { name: /^Walk to Stop 2: open/ }).click(); await page.waitForTimeout(800);
+    const map = await page.locator('.rmap-box').boundingBox(), card = await page.locator('.rp-walk').boundingBox();
+    expect(map.height).toBeGreaterThan(w > 330 ? 300 : 220);
+    expect(map.y + map.height).toBeLessThanOrEqual(card.y + 2);           // the card never covers the map
+    expect(card.y + card.height).toBeLessThanOrEqual(hgt + 1);
+    await expect(page.locator('.float-hide')).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Next stop', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'I’m here' })).toBeVisible();
+  });
+}
