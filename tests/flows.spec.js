@@ -72,21 +72,21 @@ test('phone: buddy switch greets, points without covering; the bar is slim', asy
   await page.goto('./');
   await expect(page.locator('#help')).toBeHidden();
   await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toHaveCount(0);   // off by default
-  expect((await page.locator('.pg-bar').boundingBox()).height).toBeLessThanOrEqual(44);
+  expect((await page.locator('.pg-bar').boundingBox()).height).toBeLessThanOrEqual(26);
   await expect(page.getByRole('switch', { name: 'Touches' })).toHaveCount(0);
   await page.getByRole('switch', { name: 'Buddy' }).click();
   await expect(page.getByRole('heading', { name: 'Hi, I’m your walking buddy' })).toBeVisible();
   await btn(page, 'Show me').click(); await page.waitForTimeout(700);
-  for (const sel of ['.ptour-q', '.ptour-best', null, '.ptour-modes']) {
+  for (const sel of ['.v2tour-srch', '.v2tour-q', '.v2code', null, '.v2nav']) {
     if (sel) {
       await expect(page.locator(sel + '.tour-on')).toHaveCount(1);
-      const t = await page.locator(sel).boundingBox(), b = await page.locator('.tour-bubble').boundingBox();
+      const t = await page.locator(sel).boundingBox(), b = await page.locator('.v2tour-card').boundingBox();
       const overlap = Math.min(t.y + t.height, b.y + b.height) - Math.max(t.y, b.y);
       expect(overlap).toBeLessThan(12);
     }
-    await page.getByRole('button', { name: /^(Next|Done)$/ }).click(); await page.waitForTimeout(700);
+    await page.locator('.v2tour-card').getByRole('button', { name: /^(Next|Done)$/ }).click(); await page.waitForTimeout(700);
   }
-  await expect(page.locator('.tour-bubble')).toHaveCount(0);
+  await expect(page.locator('.v2tour-card')).toHaveCount(0);
   const box = await page.locator('#frame').boundingBox();
   expect(box.width).toBeGreaterThan(380);
   // second opening: no greeting on the phone (first opening only)
