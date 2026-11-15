@@ -117,10 +117,12 @@ function showHelp(on) {
 let tourReq = 0;
 const startTour = () => { tourReq += 1; app.setProps({ tourReq }); };
 
-// Prototype bar switch (remembered on this device): Buddy (off by default) shows the walking buddy's how-to.
+// Prototype bar switch: Buddy shows the walking buddy's how-to. It is off every time the app opens (not remembered),
+// so the how-to never greets on its own; switching it on starts it.
 const PREF_KEY = 'strollto.prototype.switches';
 let prefs = { buddy: false };
 try { prefs = Object.assign(prefs, JSON.parse(localStorage.getItem(PREF_KEY) || '{}')); } catch (e) { /* storage blocked */ }
+prefs.buddy = false; // off on every opening
 const savePrefs = () => { try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch (e) { /* storage blocked */ } };
 const swBuddy = document.querySelector('[data-buddy]');
 const paint = () => { swBuddy.setAttribute('aria-checked', String(prefs.buddy)); };
@@ -152,4 +154,4 @@ let seen = false;
 try { seen = localStorage.getItem('strollto.help.seen') === '1'; localStorage.setItem('strollto.help.seen', '1'); } catch (e) { /* storage blocked */ }
 // (the website's buddy greets on every opening by itself)
 // the phone's buddy greets on the first opening only (people arriving from a QR code skip it)
-if (prefs.buddy && !seen && !params.has('from') && !deepLink() && phoneView) startTour();
+// (no automatic greeting: the Buddy switch starts the how-to)
