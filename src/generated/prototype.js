@@ -1871,7 +1871,8 @@ function v2Build(self, r) {
     ],
     hideStr: (fltD || fltA).hide ? 'true' : 'false', toggleHide: function () { fltSetD({ hide: !(fltD || fltA).hide }); },
     doneNote: doneIds.length ? 'You’ve finished ' + doneIds.filter(function (v, k, a) { return a.indexOf(v) === k; }).length + ' so far. They have a green check.' : 'Finished walks get a green check.',
-    clearDraft: function () { self.setState({ v2FltD: Object.assign({}, FLT0) }); },
+    // Clear all takes effect straight away: closing the sheet afterwards keeps the list unfiltered
+    clearDraft: function () { self.setState({ v2FltD: Object.assign({}, FLT0), v2Flt: null }); },
     clearApplied: function () { self.setState({ v2Flt: null }); },
     showText: nDraft === 1 ? 'Show 1 walk' : nDraft ? 'Show ' + nDraft + ' walks' : 'No walks match', applyOff: !nDraft,
     apply: function () { if (!nDraft) return; var F = fltD; self.setState({ v2Flt: fltCount(F) ? F : null, v2FltD: null }); if (ui.listEl) ui.listEl.scrollTop = 0; }
