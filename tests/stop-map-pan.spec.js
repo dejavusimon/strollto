@@ -7,6 +7,8 @@ test('phone: featured cards and overview lead with the place; the stop map pans 
   await page.goto('./?s=cabbagetown'); await start(page); await page.waitForTimeout(500);
   await page.evaluate(() => { const m = [...document.querySelectorAll('main')].find(x => x.scrollHeight > x.clientHeight + 50); m.scrollTop = 420; m.dispatchEvent(new Event('scroll')); });
   await page.getByRole('button', { name: /Start stroll/ }).first().click(); await page.waitForTimeout(600);
+  // the map opens from the slim "Next" row (walking mode)
+  await page.getByRole('button', { name: /^Walk to Stop 2: open the map/ }).click(); await page.waitForTimeout(700);
   const box = await page.locator('.rmap-box').boundingBox();
   await page.mouse.move(box.x + 300, box.y + 120); await page.mouse.down(); await page.mouse.move(box.x + 220, box.y + 10, { steps: 8 }); await page.mouse.up();
   await page.waitForTimeout(300);
@@ -22,6 +24,8 @@ test('phone: featured cards and overview lead with the place; the stop map pans 
 test('stop map: can be dragged far enough to bring every stop into view', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 }); await page.goto('./?s=cabbagetown'); await page.waitForTimeout(500);
   await page.getByRole('button', { name: /Start stroll/ }).first().click(); await page.waitForTimeout(600);
+  // the map opens from the slim "Next" row (walking mode)
+  await page.getByRole('button', { name: /^Walk to Stop 2: open the map/ }).click(); await page.waitForTimeout(700);
   const box = await page.locator('.rmap-box').boundingBox();
   for (let i = 0; i < 4; i++) { await page.mouse.move(box.x + 330, box.y + 70); await page.mouse.down(); await page.mouse.move(box.x + 30, box.y + 70, { steps: 8 }); await page.mouse.up(); await page.waitForTimeout(450); }
   // Stop 3 sits well to the right of the starting view; it must be reachable

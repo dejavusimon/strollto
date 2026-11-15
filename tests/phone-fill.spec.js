@@ -7,7 +7,7 @@ test('phone: the app fills to the bottom edge and survives a shrink and regrow (
   const check = async (H) => {
     const fr = await page.evaluate(() => { let el = document.querySelector('#frame').firstElementChild; while (el && el.getBoundingClientRect().height === 0) el = el.firstElementChild; const r = el.getBoundingClientRect(); return { y: r.y, height: r.height }; });
     expect(Math.abs(fr.y + fr.height - H)).toBeLessThan(2);           // no strip under the app
-    const nb = await bottomOf(page, 'Next stop'); expect(nb).toBeLessThanOrEqual(H); expect(nb).toBeGreaterThan(H - 90); // on screen, near the bottom
+    const nb = await bottomOf(page, /^Walk to Stop \d+$/); expect(nb).toBeLessThanOrEqual(H); expect(nb).toBeGreaterThan(H - 90); // on screen, near the bottom
   };
   await check(844);
   await page.setViewportSize({ width: 390, height: 520 }); await page.waitForTimeout(500); await check(520);   // keyboard-like shrink

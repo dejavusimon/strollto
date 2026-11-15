@@ -36,7 +36,7 @@ test('computer: plan a stroll, get a real QR link, preview the phone', async ({ 
   await qr.click();
   await expect(page.getByText('This is what the phone shows after scanning')).toBeVisible();
   await btn(page, 'Start stroll').click();
-  await expect(btn(page, 'Next stop')).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Walk to Stop \d+$/ })).toBeVisible();
   await btn(page, 'Back to the website').click();
   expect(errors).toEqual([]);
 });
@@ -50,13 +50,14 @@ test('phone: a QR link opens the plan and the walk can be finished', async ({ pa
   await expect(page.locator('#help')).toBeHidden();
   await expect(page.getByText(/Picked up from your computer, with your plan: 7 of 15 stops/)).toBeVisible();
   await btn(page, 'Start stroll').click();
-  await btn(page, 'Next stop').click();
-  // skipping is a press and hold on Next
-  const nb = await btn(page, 'Next stop').boundingBox();
+  const walkNext = async () => { await page.getByRole('button', { name: /^Walk to Stop \d+$/ }).click(); await btn(page, 'I’m here').click(); };
+  await walkNext();
+  // skipping is a press and hold on Next (now "Walk to Stop N")
+  const nb = await page.getByRole('button', { name: /^Walk to Stop \d+$/ }).boundingBox();
   await page.mouse.move(nb.x + nb.width / 2, nb.y + nb.height / 2); await page.mouse.down(); await page.waitForTimeout(800); await page.mouse.up();
   await btn(page, 'Closed').click();
   await page.getByRole('dialog').getByRole('button', { name: 'Skip this stop', exact: true }).click();
-  for (let i = 0; i < 24 && !(await btn(page, 'Finish stroll').count()); i++) await btn(page, 'Next stop').click();
+  for (let i = 0; i < 24 && !(await btn(page, 'Finish stroll').count()); i++) await walkNext();
   await btn(page, 'Finish stroll').click();
   if (await btn(page, 'Finish stroll').count()) await btn(page, 'Finish stroll').click();
   await expect(page.getByText('6 of 15')).toBeVisible();

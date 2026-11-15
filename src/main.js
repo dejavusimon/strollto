@@ -139,7 +139,8 @@ help.addEventListener('click', (e) => { if (e.target === help) showHelp(false); 
 
 // Start over: forget this browser's progress and drop any link the page was opened with.
 document.querySelectorAll('[data-restart]').forEach((b) => b.addEventListener('click', () => {
-  try { localStorage.removeItem(STORE_KEY); localStorage.removeItem('strollto.help.seen'); } catch (e) { /* storage blocked */ }
+  try { localStorage.removeItem(STORE_KEY); localStorage.removeItem(STORE_KEY + '.photos'); localStorage.removeItem('strollto.help.seen'); } catch (e) { /* storage blocked */ }
+  try { window.__v2ph = null; } catch (e) { /* ignore */ }
   if (location.search && !forced) { location.href = siteUrl; return; }
   if (forced && location.search !== '?view=' + forced) history.replaceState(null, '', location.pathname + '?view=' + forced);
   app.restart();

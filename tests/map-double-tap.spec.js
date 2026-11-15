@@ -17,6 +17,7 @@ test('stop map: double tap zooms in', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('./?s=cabbagetown'); await start(page);
   await page.getByRole('button', { name: /Start stroll/ }).first().click(); await page.waitForTimeout(500);
+  await page.getByRole('button', { name: /^Walk to Stop 2: open the map/ }).click(); await page.waitForTimeout(700);
   const b = await page.locator('.rmap-box').boundingBox(); const x = b.x + 150, y = b.y + 90;
   for (let i = 0; i < 2; i++) { await page.mouse.move(x, y); await page.mouse.down(); await page.mouse.up(); await page.waitForTimeout(80); }
   await page.waitForTimeout(300);

@@ -5,7 +5,7 @@ test('stop page: a first-time tip, and holding Next asks to skip the stop', asyn
   await page.goto('./?s=guildwood'); await start(page);
   await page.getByRole('button', { name: /Start stroll/ }).first().click();
   await expect(page.getByText('Tip: press and hold the arrow to skip this stop.')).toBeVisible();
-  const b = await page.getByRole('button', { name: 'Next stop' }).boundingBox();
+  const b = await page.getByRole('button', { name: 'Walk to Stop 2', exact: true }).boundingBox();
   await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2); await page.mouse.down(); await page.waitForTimeout(800); await page.mouse.up();
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.getByText('Tip: press and hold the arrow to skip this stop.')).toHaveCount(0);

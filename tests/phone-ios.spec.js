@@ -23,23 +23,21 @@ test('phone turned sideways shows "Turn your phone upright"', async ({ browser }
   await expect(page.getByText('Turn your phone upright')).toBeHidden();
   await ctx.close();
 });
-test('stop page: back button in the small map once the blue bar scrolls away, never in the big map', async ({ page }) => {
+test('stop page: walking mode has its own header; Back returns to the stop', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 }); await page.goto('./?s=cabbagetown'); await page.waitForTimeout(500);
   await page.getByRole('button', { name: /Start stroll/ }).first().click(); await page.waitForTimeout(500);
-  const box = page.locator('.rmap-box');
-  await expect(box.getByRole('button', { name: 'Stroll overview' })).toHaveCount(0);
-  await page.evaluate(() => { const m = document.querySelector('.route-pin + main'); m.dispatchEvent(new Event('scroll')); m.scrollTop = 400; m.dispatchEvent(new Event('scroll')); });
-  await page.waitForTimeout(600);
-  await expect(box.getByRole('button', { name: 'Stroll overview' })).toBeVisible();
-  const b = await box.boundingBox(), k = await box.getByRole('button', { name: 'Stroll overview' }).boundingBox();
-  expect(k.x - b.x).toBeLessThan(14); expect(k.y - b.y).toBeLessThan(14);
-  await page.getByRole('button', { name: 'Open the big map' }).click(); await page.waitForTimeout(700);
-  await expect(box.getByRole('button', { name: 'Stroll overview' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'You’re at Stop 1' })).toBeVisible();
+  await page.getByRole('button', { name: /^Walk to Stop 2: open the map/ }).click(); await page.waitForTimeout(700);
+  await expect(page.getByRole('heading', { name: 'Walking to Stop 2' })).toBeVisible();
+  await expect(page.locator('.rmap-box').getByRole('button', { name: 'Stroll overview' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Back to Stop 1' }).click(); await page.waitForTimeout(500);
+  await expect(page.getByRole('heading', { name: 'You’re at Stop 1' })).toBeVisible();
+  await expect(page.locator('.rp-slim')).toBeVisible();
 });
 test('stop map: tapping a later stop asks to go there next, and the in-between stops are skipped', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 }); await page.goto('./?s=cabbagetown'); await page.waitForTimeout(500);
   await page.getByRole('button', { name: /Start stroll/ }).first().click(); await page.waitForTimeout(600);
-  await page.getByRole('button', { name: 'Open the big map' }).click(); await page.waitForTimeout(700);
+  await page.getByRole('button', { name: /^Walk to Stop 2: open the map/ }).click(); await page.waitForTimeout(700);
   // find Stop 9 on the map and tap it
   const pos = await page.evaluate(() => { const t = [...document.querySelectorAll('.rmap-box text')].find(x => x.textContent.trim() === '9'); if (!t) return null; const r = t.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; });
   expect(pos).not.toBeNull();
