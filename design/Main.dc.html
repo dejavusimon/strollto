@@ -103,7 +103,7 @@
 <div ref="{{v2.setTop}}" class="v2-top" style="position: absolute; left: 0; right: 0; top: 0; z-index: 30; padding: 10px 16px 10px; background: {{v2.searchBg}}; transform: {{v2.searchT}}; opacity: {{v2.searchO}}; visibility: {{v2.searchV}};"><div role="search" style="position: relative;"><label for="q-ph" class="st-sr">{{srch.label}}</label><span aria-hidden="true" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); display: flex; color: var(--muted); pointer-events: none;"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M20 20l-4.6-4.6"></path></svg></span><input id="q-ph" ref="{{srch.setEl}}" type="search" autocomplete="off" spellcheck="false" placeholder="{{srch.placeholder}}" aria-controls="q-ph-list" onInput="{{srch.onInput}}" onKeyDown="{{srch.onKey}}" class="wq-in" style="box-sizing: border-box; width: 100%; min-height: 48px; padding: 0 48px 0 44px; border: 1.5px solid var(--border-strong); border-radius: 9999px; background: var(--canvas); color: var(--ink); font: inherit; font-size: 16px; box-shadow: {{v2.searchSh}};"><sc-if value="{{srch.q}}" hint-placeholder-val="{{false}}"><button type="button" class="st-focus" aria-label="Clear search" onClick="{{srch.clear}}" style="position: absolute; right: 2px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 44px; height: 44px; margin: 0; padding: 0; border: 0; border-radius: 9999px; background: transparent; color: var(--muted); cursor: pointer;"><x-import component-from-global-scope="StrollTO.Icon" name="close" size="{{n18}}"></x-import></button></sc-if></div><p role="status" class="st-sr">{{srch.status}}</p><sc-if value="{{srch.has}}" hint-placeholder-val="{{false}}"><div id="q-ph-list" aria-label="Search suggestions" class="v2q-list" data-flow="{{v2.srchFlow}}" style="position: absolute; left: 16px; right: 16px; top: calc(100% - 2px); max-height: 420px; overflow-y: auto; padding: 6px 0; border-radius: 14px; border: 1px solid var(--hairline); background: var(--surface-card); box-shadow: var(--shadow-sheet);"><sc-for list="{{srch.groups}}" as="g" hint-placeholder-count="3"><div role="group" aria-label="{{g.head}}" style="padding: 2px 0 4px;"><p aria-hidden="true" style="margin: 0; padding: 8px 16px 4px; font-size: 12px; line-height: 1.3; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: var(--muted);">{{g.head}}</p><sc-for list="{{g.items}}" as="h" hint-placeholder-count="2"><button type="button" data-hit="1" class="st-focus wq" aria-label="{{h.aria}}" onClick="{{h.pick}}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; margin: 0; padding: 6px 16px; border: 0; background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer;"><sc-if value="{{h.thumb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" class="v2q-th"><sc-if value="{{h.hasSrc}}" hint-placeholder-val="{{true}}"><img src="{{h.src}}" alt="" draggable="false" onError="{{v2.imgErr}}"></sc-if><sc-if value="{{h.ph}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="StrollTO.PhotoPlate" scene="{{h.scene}}" src="" alt="" class-name="st-photo-fill st-photo-flush"></x-import></sc-if></span></sc-if><sc-if value="{{h.noThumb}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9999px; background: var(--primary-soft); color: var(--primary);"><x-import component-from-global-scope="StrollTO.Icon" name="{{h.icon}}" size="{{n16}}"></x-import></span></sc-if><span style="min-width: 0; display: flex; flex-direction: column; gap: 1px;"><span style="font-size: 15px; line-height: 1.3; font-weight: 600;">{{h.title}}</span><span style="font-size: 13px; line-height: 1.3; color: var(--muted);">{{h.sub}}</span></span></button></sc-for><sc-if value="{{g.more}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 2px 16px 6px 60px; font-size: 13px; line-height: 1.38; color: var(--muted);">{{g.moreText}}</p></sc-if></div></sc-for><sc-if value="{{srch.none}}" hint-placeholder-val="{{false}}"><p style="margin: 0; padding: 12px 16px; font-size: 15px; line-height: 1.47; color: var(--body);">{{srch.noneText}}</p></sc-if></div></sc-if></div>
 
 <sc-if value="{{v2.isExplore}}" hint-placeholder-val="{{true}}">
-<main class="v2pb" ref="{{v2.setExScroll}}" style="position: absolute; inset: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: var(--v2topH, 68px) 16px 0; --pb: {{v2.padBottom}}; --pg: 18px; transition: padding-top 240ms cubic-bezier(.2,.9,.3,1); display: flex; flex-direction: column; gap: 18px;">
+<main class="v2pb" ref="{{v2.setExScroll}}" style="position: absolute; inset: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior-x: none; scrollbar-width: none; overscroll-behavior: contain; padding: var(--v2topH, 68px) 16px 0; --pb: {{v2.padBottom}}; --pg: 18px; transition: padding-top 240ms cubic-bezier(.2,.9,.3,1); display: flex; flex-direction: column; gap: 18px;">
 <sc-if value="{{v2.feat.has}}" hint-placeholder-val="{{true}}">
 <section ref="{{v2.setFeat}}" aria-labelledby="v2f-h" style="flex: none; display: flex; flex-direction: column; gap: 8px; transform-origin: 50% 0;">
 <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;"><h2 id="v2f-h" style="margin: 0; font-size: 20px; line-height: 1.3; font-weight: 700;">Featured</h2><x-import component-from-global-scope="StrollTO.Badge" tone="neutral">Sample picks</x-import></div>
@@ -3400,8 +3400,9 @@ function v2DeckBind(self, deck, n, sig) {
   (function () { var cs = cards(); D.order.forEach(function (ci, k) { if (cs[ci]) put(cs[ci], k); }); sync(); })();
   var SPRING = 'transform 520ms cubic-bezier(.2,1.15,.35,1), opacity 260ms ease';
   var OUT = function (from, sgn) { return 'translate3d(' + (sgn * 118) + '%,0,0) rotate(' + (sgn * 8) + 'deg)'; };
-  var step = function (dir) {
+  var step = function (dir, dragged) {
     if (D.busy || !canStep(dir)) { sync(); return false; }
+    var exS = exNow(); if (exS && exS.scrollLeft) exS.scrollLeft = 0;
     var cs = cards(); D.busy = true; v2Haptic(8);
     if (dir > 0) {
       var f = cs[D.order[0]]; D.order.push(D.order.shift());
@@ -3413,8 +3414,7 @@ function v2DeckBind(self, deck, n, sig) {
     } else {
       var b = cs[D.order[D.order.length - 1]]; D.order.unshift(D.order.pop());
       if (v2Reduce()) { D.order.forEach(function (ci, k) { put(cs[ci], k); }); D.busy = false; sync(); return true; }
-      b.style.transition = 'none'; b.style.zIndex = '20'; b.style.opacity = '1'; b.style.transform = OUT(0, -1);
-      b.getBoundingClientRect();
+      if (!dragged) { b.style.transition = 'none'; b.style.zIndex = '20'; b.style.opacity = '1'; b.style.transform = OUT(0, -1); b.getBoundingClientRect(); }
       D.order.forEach(function (ci, k) { if (cs[ci] !== b) put(cs[ci], k, SPRING); });
       requestAnimationFrame(function () { put(b, 0, SPRING); b.style.zIndex = '20'; });
       setTimeout(function () { b.style.zIndex = '10'; D.busy = false; }, 560);
@@ -3428,27 +3428,43 @@ function v2DeckBind(self, deck, n, sig) {
   var G = null;
   var top = function () { return cards()[D.order[0]]; };
   var begin = function (x, y) { if (D.busy) return; G = { x: x, y: y, dx: 0, mine: null, t: performance.now() }; };
+  var back = function () { return cards()[D.order[D.order.length - 1]]; };
   var move = function (x, y, e) {
     if (!G) return;
     var dx = x - G.x, dy = y - G.y;
     if (G.mine === null) { if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return; G.mine = Math.abs(dx) > Math.abs(dy); }
     if (!G.mine) return;
     if (e && e.cancelable) e.preventDefault();
-    var dir = dx < 0 ? 1 : -1, ok = canStep(dir), el = top(); if (!el) return;
-    G.dx = ok ? dx : dx * 0.25;
-    if (dir < 0 && ok) G.dx = dx * 0.35; // bringing a card back: the top card only nudges; the old card slides in on release
-    el.style.transition = 'none';
-    el.style.transform = 'translate3d(' + G.dx + 'px,0,0) rotate(' + (G.dx / 28) + 'deg)';
+    var dir = dx < 0 ? 1 : -1, ok = canStep(dir), el = top(), bk = back(); if (!el) return;
+    G.dx = dx;
+    if (dir > 0 || !ok) {
+      // next: the top card follows the finger 1:1 (with resistance when there is nowhere to go)
+      if (G.bk && bk) { put(bk, D.order.length - 1, 'none'); G.bk = false; }
+      var d = ok ? dx : dx * 0.25;
+      el.style.transition = 'none';
+      el.style.transform = 'translate3d(' + d + 'px,0,0) rotate(' + (d / 28) + 'deg)';
+    } else {
+      // back: the previous card slides in from the left edge, 1:1 with the finger; the top card stays put
+      if (el.style.transform.indexOf('rotate') > -1) put(el, 0, 'none');
+      if (!bk) return; G.bk = true;
+      var w = deck.clientWidth || 360, off = Math.min(0, -w * 1.18 + dx * 1.4);
+      bk.style.transition = 'none'; bk.style.zIndex = '20'; bk.style.opacity = '1';
+      bk.style.transform = 'translate3d(' + off + 'px,0,0) rotate(' + (off / (w * 1.18) * 8) + 'deg)';
+    }
   };
   var end = function () {
     if (!G) return; var g = G; G = null;
     if (!g.mine) return;
     ui.deckNoClick = performance.now();
     var v = Math.abs(g.dx) / Math.max(1, performance.now() - g.t), dir = g.dx < 0 ? 1 : -1;
-    if ((Math.abs(g.dx) > 70 || (v > 0.5 && Math.abs(g.dx) > 24)) && canStep(dir)) {
-      if (dir < 0) { var el0 = top(); if (el0) put(el0, 0, SPRING); }
-      step(dir);
-    } else { var el = top(); if (el) put(el, 0, SPRING); }
+    var go = (Math.abs(g.dx) > 60 || (v > 0.45 && Math.abs(g.dx) > 20)) && canStep(dir);
+    if (go) { step(dir, dir < 0 && g.bk); return; }
+    var el = top(); if (el) put(el, 0, SPRING);
+    if (g.bk) {
+      var bk = back(); if (!bk) return;
+      bk.style.transition = 'transform 260ms cubic-bezier(.3,0,.2,1)'; bk.style.transform = OUT(0, -1);
+      setTimeout(function () { put(bk, D.order.length - 1, 'none'); }, 270);
+    }
   };
   deck.addEventListener('touchstart', function (e) { var t = e.touches[0]; begin(t.clientX, t.clientY); }, { passive: true });
   deck.addEventListener('touchmove', function (e) { var t = e.touches[0]; move(t.clientX, t.clientY, e); }, { passive: false });
