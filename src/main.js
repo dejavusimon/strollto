@@ -135,6 +135,61 @@ swBuddy.addEventListener('click', () => {
 });
 
 
+// Website | Phone switch (computers only; never on a phone's own screen): opens the same prototype as the
+// phone app in a drawn phone, worked with the mouse. A stroll open on one side opens on the other.
+const views = document.querySelector('.pg-views');
+if (views && !small && params.get('embed') !== '1') {
+  views.hidden = false;
+  views.querySelectorAll('[data-view-btn]').forEach((b) => {
+    const to = b.dataset.viewBtn, on = to === (phoneView ? 'phone' : 'computer');
+    b.setAttribute('aria-pressed', String(on));
+    b.addEventListener('click', () => {
+      if (on) return;
+      const now = new URLSearchParams(location.search);
+      if (to === 'phone') {
+        const st = now.get('page') === 'stroll' && now.get('stroll');
+        location.href = location.pathname + '?view=phone' + (st ? '&s=' + encodeURIComponent(st) + '&from=switch' : '');
+      } else {
+        const st = now.get('s');
+        location.href = location.pathname + '?view=computer' + (st ? '&page=stroll&stroll=' + encodeURIComponent(st) : '');
+      }
+    });
+  });
+  if (phoneView) {
+    const note = document.querySelector('.pg-note');
+    if (note) note.textContent = 'Phone view with a mouse: click to tap, drag to swipe, the wheel scrolls, hold the button to press and hold, Ctrl + wheel to pinch.';
+  }
+}
+// The drawn phone on a computer: rows that only scroll sideways can be dragged with the mouse, like a finger would.
+if (phoneView && !fullScreenPhone) {
+  const skip = '.st-cmap, .v2dk-deck, .v2strip, .rmap-box, input, textarea, select, [role="slider"]';
+  const sideScroller = (el) => {
+    for (let n = el; n && n !== frame; n = n.parentElement) {
+      const cs = getComputedStyle(n);
+      if (/(auto|scroll)/.test(cs.overflowX) && n.scrollWidth > n.clientWidth + 2) return n;
+    }
+    return null;
+  };
+  let drag = null, eatClick = false;
+  frame.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'mouse' || e.button !== 0 || (e.target.closest && e.target.closest(skip))) return;
+    const sc = sideScroller(e.target); if (!sc) return;
+    drag = { sc, x: e.clientX, y: e.clientY, left: sc.scrollLeft, on: false };
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.on) { if (Math.abs(dx) < 6 || Math.abs(dx) < Math.abs(dy)) return; drag.on = true; drag.sc.style.scrollSnapType = 'none'; }
+    drag.sc.scrollLeft = drag.left - dx;
+  });
+  window.addEventListener('pointerup', () => {
+    if (!drag) return;
+    if (drag.on) { eatClick = true; const sc = drag.sc; setTimeout(() => { sc.style.scrollSnapType = ''; }, 50); }
+    drag = null;
+  });
+  frame.addEventListener('click', (e) => { if (eatClick) { eatClick = false; e.stopPropagation(); e.preventDefault(); } }, true);
+}
+
 document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => showHelp(false)));
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') showHelp(false); });
 help.addEventListener('click', (e) => { if (e.target === help) showHelp(false); });

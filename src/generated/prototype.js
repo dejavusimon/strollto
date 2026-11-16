@@ -2230,7 +2230,7 @@ class Component extends DCLogic {
         var m = /[#&?]s=([a-z]+)/.exec((window.location.hash || '') + (window.location.search || ''));
         var q = window.location.search + window.location.hash, fromD = /from=desktop/.test(q), pin = null;
         if (m && STROLL_BY[m[1]]) {
-          var sk = /[#&?]skip=([0-9,]+)/.exec(q); pin = { screen: 'overview', strollId: m[1], sharedIn: true, fromDesktop: fromD, viaCode: false, banner: null, active: null };
+          var sk = /[#&?]skip=([0-9,]+)/.exec(q); pin = { screen: 'overview', strollId: m[1], sharedIn: !/from=switch/.test(q), fromDesktop: fromD, viaCode: false, banner: null, active: null };
           if (sk) { var so = Object.assign({}, this.state.skip || {}); so[m[1]] = sk[1].split(',').map(function (k) { return Number(k) - 1; }).filter(function (k) { return k >= 0; }); pin.skip = so; }
           var od = /[#&?]order=([0-9,]+)/.exec(q), ov = od ? validOrder(od[1].split(',').map(function (k) { return Number(k) - 1; }), STROLL_BY[m[1]].stops.length) : null;
           if (ov) { var oo = Object.assign({}, this.state.order || {}); oo[m[1]] = ov; pin.order = oo; }
