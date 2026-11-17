@@ -203,7 +203,7 @@
 <sc-if value="{{v2.isList}}" hint-placeholder-val="{{false}}">
 <sc-if value="{{v2.list.hasAz}}" hint-placeholder-val="{{false}}"><nav ref="{{v2.list.setAz}}" aria-label="Jump to City strolls by first letter" class="az-ix v2az" style="visibility: hidden;"><sc-for list="{{v2.list.az}}" as="z" hint-placeholder-count="5"><button type="button" data-l="{{z.L}}" aria-label="{{z.label}}">{{z.L}}</button></sc-for></nav></sc-if>
 <main ref="{{v2.list.setScroll}}" onClick="{{v2.list.anyClick}}" onContextMenu="{{v2.noMenu}}" class="v2noselect" style="position: absolute; inset: 0; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; padding: var(--v2topH, 68px) 30px {{v2.padBottom}} 16px; transition: padding-top 240ms cubic-bezier(.2,.9,.3,1);">
-<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 0 6px;">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 0 6px;">
 <h2 aria-live="polite" style="margin: 0; display: flex; align-items: center; gap: 8px; white-space: nowrap; font-size: 13px; line-height: 1.3; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted);"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 9999px; background: var(--primary);"></span>{{v2.list.head}}</h2>
 <div style="flex: none; display: flex; align-items: center; gap: 8px;"><button type="button" class="st-focus v2flt-btn" aria-haspopup="dialog" aria-label="{{v2.list.flt.btnLabel}}" data-on="{{v2.list.flt.onStr}}" onClick="{{v2.list.flt.open}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2.2"></circle><circle cx="10" cy="17" r="2.2"></circle></svg><span>Filters</span><sc-if value="{{v2.list.flt.on}}" hint-placeholder-val="{{false}}"><span class="v2flt-n">{{v2.list.flt.nOn}}</span></sc-if></button>
 <div role="group" aria-label="Grid size" style="flex: none; display: flex; padding: 3px; border-radius: 9999px; background: var(--surface-strong);">
@@ -828,6 +828,7 @@
 <div style="display: flex; flex-direction: column; gap: 10px;">
 <sc-if value="{{v2.ov.notMore}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="StrollTO.Button" full-width="{{yes}}" icon="walk" on-click="{{startStroll}}">{{startLabel}}</x-import>
 <button type="button" class="st-focus v2gt-btn" onClick="{{v2.ov.gtOpen}}" aria-haspopup="dialog"><x-import component-from-global-scope="StrollTO.Icon" name="transit" size="{{n18}}"></x-import><span>Getting there</span></button></sc-if>
+<button type="button" class="st-focus v2gt-btn" onClick="{{v2.ov.cmpGo}}" aria-label="{{v2.ov.cmpLabel}}"><x-import component-from-global-scope="StrollTO.Icon" name="columns" size="{{n18}}"></x-import><span>Compare</span></button>
 <button type="button" class="st-focus v2gt-btn v2share-b" onClick="{{openShare}}" aria-haspopup="dialog"><x-import component-from-global-scope="StrollTO.Icon" name="share" size="{{n18}}"></x-import><span>Share stroll</span></button>
 </div>
 <sc-if value="{{v2.ov.hasProv}}" hint-placeholder-val="{{false}}"><p style="margin: 0; font-size: 13px; line-height: 1.38; color: var(--muted);">{{v2.ov.provenance}}</p></sc-if>
@@ -3364,7 +3365,7 @@ function v2FeatTimer(self) {
     if (!ui.featTrack || !ui.featTrack.isConnected) { clearInterval(ui.featT); ui.featT = null; return; }
     if (ui.featHold || (typeof document !== 'undefined' && document.hidden)) return;
     v2FeatGo(self, (ui.featI || 0) + 1, false);
-  }, 4000);
+  }, 8000); // 8 seconds per featured pick
 }
 // ---- Explore scroll: Featured eases away, "Or pick your own" grows, and the result card at the focus line opens up
 function v2ExFrame(self) {
@@ -4671,6 +4672,8 @@ function v2Build(self, r) {
       text: (pPlanned ? 'Your plan: ' + pKeep + ' of ' + st.stops.length + ' stops' + (pOrd.some(function (o, k) { return o !== k; }) ? ', in your order' : '') + '. ' : '') + (pFromPc && !S.viaCode ? 'Your starred strolls came too.' : 'Tap Start stroll when you’re at the first stop.'),
       close: function () { self.setState({ v2PlanHide: ui.ovVisit }); } };
     out.ov = {
+      // Compare: opens List, ready to pick a second stroll to compare with this one
+      cmpLabel: 'Compare this stroll with another', cmpGo: function () { var li = TABS.map(function (t) { return t.k; }).indexOf('list'); if (out.tabs[li] && out.tabs[li].go) out.tabs[li].go(); self.setState({ screen: 'landing', landingMode: 'list', v2Me: false, v2Coll: false, v2Pick: null, v2FltD: null, v2Cmp: { a: st.id, b: null } }); },
       starText: r.ovStar && r.ovStar.pressed === 'true' ? 'Starred' : 'Star',
       photos: phs.map(function (q, i) { return { i: String(i), src: q.src, hasSrc: !!q.src, ph: !q.src, scene: q.scene || 'park', label: 'Show ' + q.label + ' on the cover', on: i === curPh ? 'true' : 'false' }; }),
       stripLabel: phs.length + ' photos from this stroll', stripHint: 'Tap a photo, or press and hold and slide to flick through all ' + phs.length + '.',
