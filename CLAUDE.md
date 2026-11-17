@@ -1,5 +1,7 @@
 # StrollTO walk companion: notes for Claude Code
 
+**Branches:** `main` = V1 (site root), `v2` = frozen V2 (`/v2/`), `v2.5` = the user-test build (`/v2.5/`, frozen for testing), `v3` = new design work (`/v3/`). Build new features on `v3`.
+
 A prototype walk companion for the City of Toronto's StrollTO self-guided strolls (TMU Master of Digital Media project with the City). People plan a stroll on the website, hand it to their phone with a QR code, then walk it on the phone. It's a static site, deployed to GitHub Pages by `.github/workflows/deploy.yml` on every push to `main`.
 
 ## Commands
@@ -29,7 +31,7 @@ A prototype walk companion for the City of Toronto's StrollTO self-guided stroll
 - Everything must work without location, camera, the walk buddy or an account.
 - WCAG 2.1 AA, with tap targets of at least 44 px. Respect `prefers-reduced-motion`.
 - Sample and placeholder content is labelled on screen.
-- Privacy (PRD DC15): no personal data, no analytics, and location stays on the device. Progress is kept in this browser's localStorage under `strollto.prototype.v3`.
+- Privacy (PRD DC15): no personal data, no analytics, and location stays on the device. Progress is kept in this browser's localStorage under `strollto.prototype.v3.b3` on the v3 branch (V2.5 uses `.b25`, so the versions don't share progress).
 - Don't add the City of Toronto logo or wordmark (it needs City marketing approval).
 - Stop stories are the City's StrollTO open data, word for word. "Look for" lines, titles and hooks are team drafts.
 - Photo credits are shown under each photo. Street View and some third-party photos are not cleared yet (see README).

@@ -41,7 +41,7 @@ test('list filters: Show applies, Clear all then close leaves no filter, close w
   await expect(sheet(page).getByRole('button', { name: 'Any' }).first()).toHaveAttribute('aria-pressed', 'true');
 });
 test('list filters: Hide walks I’ve finished hides walks with the green check', async ({ page }) => {
-  await page.addInitScript(() => { try { localStorage.setItem('strollto.prototype.v3.b25', JSON.stringify({ history: [{ strollId: 'cabbagetown', at: 1 }] })); } catch (e) {} });
+  await page.addInitScript(() => { try { localStorage.setItem('strollto.prototype.v3.b3', JSON.stringify({ history: [{ strollId: 'cabbagetown', at: 1 }] })); } catch (e) {} });
   await toList(page);
   await expect(page.locator('[data-tile="cabbagetown"] .v2t-done')).toHaveCount(1);
   await page.getByRole('button', { name: /^Filters/ }).click();
